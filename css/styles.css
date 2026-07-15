@@ -3902,6 +3902,27 @@ iframe {
 .bg-danger-subtle { background: rgba(239, 68, 68, 0.1); }
 
 /* ==========================================================================
+    Module 1 Playground Responsive
+    ========================================================================== */
+
+/* CT Phase viewer & simulation grids stack on mobile */
+@media (max-width: 768px) {
+  #module-1-ctphases .module-card > div,
+  #module-1-simulation .simulation-container > div > div,
+  #module-1-risk-wrap > div:first-child {
+    grid-template-columns: 1fr !important;
+  }
+
+  #m1-anatomy-cv { height: 340px !important; }
+  #m1-ct-cv { height: 280px !important; }
+  #m1-sim-cv { height: 250px !important; }
+
+  #m1-info { width: 180px !important; font-size: 11px !important; }
+
+  #m1-anatomy-legend { display: none !important; }
+}
+
+/* ==========================================================================
    14. Print Styles
    ========================================================================== */
 
