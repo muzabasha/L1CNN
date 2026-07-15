@@ -109,7 +109,7 @@ ModuleEngine.register('16', {
         <!-- Quiz -->
         <section class="section">
           <h3>Knowledge Check</h3>
-          <div id="quiz-container"></div>
+          <div id="m16-quiz-container"></div>
         </section>
 
         <!-- Reflection -->
@@ -376,7 +376,7 @@ ModuleEngine.register('16', {
   },
 
   initQuiz() {
-    Components.createQuiz(document.getElementById('quiz-container'), [
+    Components.createQuiz(document.getElementById('m16-quiz-container'), [
       {
         q: 'Why does the proposed fusion method outperform the phase-aware CNN alone?',
         options: [

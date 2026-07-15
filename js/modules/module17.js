@@ -146,7 +146,7 @@ ModuleEngine.register('17', {
         <!-- Quiz -->
         <section class="section">
           <h3>Knowledge Check</h3>
-          <div id="quiz-container"></div>
+          <div id="m17-quiz-container"></div>
         </section>
 
         <!-- Reflection -->
@@ -328,7 +328,7 @@ ModuleEngine.register('17', {
   },
 
   initQuiz() {
-    Components.createQuiz(document.getElementById('quiz-container'), [
+    Components.createQuiz(document.getElementById('m17-quiz-container'), [
       {
         q: 'Which research gap is most critical for clinical adoption of automated liver lesion classification?',
         options: [

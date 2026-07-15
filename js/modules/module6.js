@@ -26,7 +26,7 @@ ModuleEngine.register('6', {
               <input type="range" id="base-filters" min="16" max="64" value="32" step="8">
             </div>
             <div class="control-group">
-              <label>Depth: <span id="depth-val">4</span></label>
+              <label>Depth: <span id="m6-depth-val">4</span></label>
               <input type="range" id="unet-depth" min="2" max="5" value="4" step="1">
             </div>
             <div class="control-group">
@@ -764,7 +764,7 @@ print(f"Output shape: {output.shape}")`;
     if (depthSlider) {
       depthSlider.addEventListener('input', (e) => {
         this._depth = parseInt(e.target.value);
-        document.getElementById('depth-val').textContent = this._depth;
+        document.getElementById('m6-depth-val').textContent = this._depth;
         this._layerInfo = this._buildLayerInfo();
         this._calculateParams();
         this._drawUNet();

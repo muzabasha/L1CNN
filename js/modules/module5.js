@@ -181,7 +181,7 @@ ModuleEngine.register('5', {
                   <input type="range" id="matrix-size" min="64" max="512" value="128" step="64">
                 </div>
                 <div class="control-group">
-                  <label>Volume Depth: <span id="depth-val">32</span>slices</label>
+                  <label>Volume Depth: <span id="m5-depth-val">32</span>slices</label>
                   <input type="range" id="volume-depth" min="16" max="64" value="32" step="8">
                 </div>
               </div>
@@ -215,8 +215,8 @@ ModuleEngine.register('5', {
                 <canvas id="phase-mask" width="200" height="200"></canvas>
               </div>
               <div class="generation-progress" id="gen-progress" style="display:none;">
-                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-                <p id="progress-text">Generating...</p>
+                <div class="progress-bar"><div class="progress-fill m5-progress-fill"></div></div>
+                <p class="m5-progress-text">Generating...</p>
               </div>
             </div>
           </div>
@@ -403,8 +403,8 @@ ModuleEngine.register('5', {
 
   _runGeneration() {
     const progressEl = document.getElementById('gen-progress');
-    const fillEl = document.getElementById('progress-fill');
-    const textEl = document.getElementById('progress-text');
+    const fillEl = progressEl?.querySelector('.m5-progress-fill');
+    const textEl = progressEl?.querySelector('.m5-progress-text');
     if (progressEl) progressEl.style.display = 'block';
 
     const steps = [

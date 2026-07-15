@@ -562,12 +562,12 @@ function initScrollAnimations() {
     );
   });
 
-  const heroTitle = document.querySelector('.hero-title');
+  const heroTitle = document.querySelector('.hero-glow');
   if (heroTitle) {
     gsap.fromTo(heroTitle, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, delay: 0.3, ease: 'power3.out' });
   }
 
-  const heroSub = document.querySelector('.hero-subtitle');
+  const heroSub = document.querySelector('#home .text-accent-400');
   if (heroSub) {
     gsap.fromTo(heroSub, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, delay: 0.6, ease: 'power2.out' });
   }

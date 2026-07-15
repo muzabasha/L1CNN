@@ -23,7 +23,7 @@ ModuleEngine.register('18', {
           <div id="pipeline-animation" class="pipeline-flow"></div>
           <div id="pipeline-progress" class="pipeline-progress-bar">
             <div class="progress-fill" id="pipeline-fill"></div>
-            <span class="progress-text" id="progress-text">0% Complete</span>
+            <span class="m18-progress-text" id="m18-progress-text">0% Complete</span>
           </div>
         </section>
 
@@ -221,7 +221,7 @@ ModuleEngine.register('18', {
         <!-- Quiz -->
         <section class="section">
           <h3>Knowledge Check</h3>
-          <div id="quiz-container"></div>
+          <div id="m18-quiz-container"></div>
         </section>
 
         <!-- Reflection -->
@@ -299,7 +299,7 @@ ModuleEngine.register('18', {
   updatePipelineProgress(step, total) {
     const pct = (step / total) * 100;
     document.getElementById('pipeline-fill').style.width = pct + '%';
-    document.getElementById('progress-text').textContent = Math.round(pct) + '% Complete';
+    document.getElementById('m18-progress-text').textContent = Math.round(pct) + '% Complete';
   },
 
   updateStepUI(step, status) {
@@ -909,7 +909,7 @@ ModuleEngine.register('18', {
   },
 
   initQuiz() {
-    Components.createQuiz(document.getElementById('quiz-container'), [
+    Components.createQuiz(document.getElementById('m18-quiz-container'), [
       {
         q: 'Why is feature-level fusion preferred over decision-level fusion in this pipeline?',
         options: [
