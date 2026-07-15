@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Interactive Virtual Research Laboratory - Phase-aware 3D CNN–Radiomics Fusion for Automated LI-RADS v2018 Classification" />
+  <meta name="author" content="VRL Research Team" />
+  <title>Interactive Virtual Research Laboratory</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            orbitron: ['Orbitron', 'sans-serif'],
+          },
+          colors: {
+            primary: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' },
+            accent: { 50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4', 400: '#2dd4bf', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 800: '#115e59', 900: '#134e4a' },
+            dark: { 700: '#2a2a3e', 800: '#1e1e2f', 900: '#12121f' },
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+<body class="bg-dark-900 text-white font-sans overflow-x-hidden">
+
+  <!-- ===================== SIDEBAR NAVIGATION ===================== -->
+  <nav id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-glass border-r border-white/10 z-50 flex flex-col transition-all duration-300">
+    <!-- Logo -->
+    <div class="p-6 border-b border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+          <span class="font-orbitron font-bold text-sm">VR</span>
+        </div>
+        <div>
+          <h1 class="font-orbitron font-bold text-lg leading-tight">VRL</h1>
+          <p class="text-xs text-gray-400">Virtual Research Lab</p>
+        </div>
+      </div>
+      <button id="sidebar-toggle" class="text-gray-400 hover:text-white transition-colors" title="Collapse sidebar">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
+      </button>
+    </div>
+
+    <!-- Navigation Items -->
+    <div class="flex-1 overflow-y-auto py-4 scrollbar-thin" id="nav-items">
+      <!-- Home -->
+      <a href="#home" data-module="home" class="nav-item active flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">🏠</span>
+        <span class="nav-label">Home</span>
+      </a>
+
+      <div class="px-6 py-2 text-xs text-gray-500 uppercase tracking-wider font-semibold">Research Modules</div>
+
+      <!-- Module 1 -->
+      <a href="#module-1" data-module="1" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">🫁</span>
+        <span class="nav-label">Module 1: Clinical Background</span>
+      </a>
+      <!-- Module 2 -->
+      <a href="#module-2" data-module="2" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">📷</span>
+        <span class="nav-label">Module 2: CT Imaging</span>
+      </a>
+      <!-- Module 3 -->
+      <a href="#module-3" data-module="3" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">💉</span>
+        <span class="nav-label">Module 3: Multiphase CT</span>
+      </a>
+      <!-- Module 4 -->
+      <a href="#module-4" data-module="4" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">📋</span>
+        <span class="nav-label">Module 4: LI-RADS</span>
+      </a>
+      <!-- Module 5 -->
+      <a href="#module-5" data-module="5" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">🗄️</span>
+        <span class="nav-label">Module 5: Synthetic Dataset</span>
+      </a>
+      <!-- Module 6 -->
+      <a href="#module-6" data-module="6" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">🧠</span>
+        <span class="nav-label">Module 6: 3D nnU-Net</span>
+      </a>
+      <!-- Module 7 -->
+      <a href="#module-7" data-module="7" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">✂️</span>
+        <span class="nav-label">Module 7: Segmentation</span>
+      </a>
+      <!-- Module 8 -->
+      <a href="#module-8" data-module="8" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">📊</span>
+        <span class="nav-label">Module 8: Radiomics</span>
+      </a>
+      <!-- Module 9 -->
+      <a href="#module-9" data-module="9" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">🤖</span>
+        <span class="nav-label">Module 9: Traditional ML</span>
+      </a>
+      <!-- Module 10 -->
+      <a href="#module-10" data-module="10" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">🔮</span>
+        <span class="nav-label">Module 10: 3D CNN</span>
+      </a>
+      <!-- Module 11 -->
+      <a href="#module-11" data-module="11" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">👁️</span>
+        <span class="nav-label">Module 11: CNN Visualization</span>
+      </a>
+      <!-- Module 12 -->
+      <a href="#module-12" data-module="12" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">🔗</span>
+        <span class="nav-label">Module 12: Fusion</span>
+      </a>
+      <!-- Module 13 -->
+      <a href="#module-13" data-module="13" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">🎯</span>
+        <span class="nav-label">Module 13: Classification</span>
+      </a>
+      <!-- Module 14 -->
+      <a href="#module-14" data-module="14" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">💡</span>
+        <span class="nav-label">Module 14: Explainable AI</span>
+      </a>
+      <!-- Module 15 -->
+      <a href="#module-15" data-module="15" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">📈</span>
+        <span class="nav-label">Module 15: Metrics</span>
+      </a>
+      <!-- Module 16 -->
+      <a href="#module-16" data-module="16" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">⚖️</span>
+        <span class="nav-label">Module 16: Comparison</span>
+      </a>
+      <!-- Module 17 -->
+      <a href="#module-17" data-module="17" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">🔬</span>
+        <span class="nav-label">Module 17: Research Gap</span>
+      </a>
+      <!-- Module 18 -->
+      <a href="#module-18" data-module="18" class="nav-item flex items-center gap-3 px-6 py-3 text-sm hover:bg-white/5 transition-colors cursor-pointer">
+        <span class="text-lg">🎓</span>
+        <span class="nav-label">Module 18: PhD Workflow</span>
+      </a>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="p-4 border-t border-white/10">
+      <div class="flex justify-between text-xs text-gray-400 mb-2">
+        <span>Progress</span>
+        <span id="progress-text">0%</span>
+      </div>
+      <div class="w-full h-2 bg-dark-700 rounded-full overflow-hidden">
+        <div id="progress-fill" class="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile sidebar overlay -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden"></div>
+
+  <!-- Sidebar collapse spacer -->
+  <div id="sidebar-spacer" class="w-72 transition-all duration-300"></div>
+
+  <!-- Mobile Menu Button -->
+  <button id="mobile-menu-btn" class="fixed top-4 left-4 z-50 p-2 rounded-lg bg-dark-800 border border-white/10 text-white md:hidden" style="display:none;">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- ===================== MAIN CONTENT ===================== -->
+  <main id="main-content" class="min-h-screen">
+
+    <!-- ===================== HOME SECTION ===================== -->
+    <section id="home" class="module-section relative">
+
+      <!-- Hero -->
+      <div class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <!-- Particle Canvas -->
+        <canvas id="particles-canvas" class="absolute inset-0 w-full h-full z-0"></canvas>
+
+        <!-- Three.js 3D Canvas -->
+        <canvas id="hero-3d" class="absolute inset-0 w-full h-full z-0 opacity-60"></canvas>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
+          <div class="mb-6">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-primary-500/20 border border-primary-500/30 text-primary-300 text-sm font-medium mb-4">
+              Interactive Virtual Research Laboratory
+            </span>
+          </div>
+
+          <h1 class="font-orbitron text-5xl md:text-7xl font-bold mb-6 leading-tight hero-glow">
+            Interactive Virtual<br />Research Laboratory
+          </h1>
+
+          <p class="text-lg md:text-xl text-gray-300 mb-4 max-w-3xl mx-auto leading-relaxed">
+            Phase-aware 3D CNN–Radiomics Fusion for Automated LI-RADS v2018 LR-3/LR-4/LR-5 Classification using Multiphase CT
+          </p>
+
+          <p class="text-sm text-accent-400 font-medium mb-10 tracking-wide">
+            Learn by Doing &bull; Interactive AI Laboratory &bull; STEM Based Learning Environment
+          </p>
+
+          <div class="flex flex-wrap justify-center gap-4 mb-16">
+            <button onclick="window.vrlApp?.navigateTo('module-1')" class="px-8 py-3.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg shadow-primary-500/25">
+              Start Learning
+            </button>
+            <button onclick="document.getElementById('research-pipeline')?.scrollIntoView({behavior:'smooth'})" class="px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/20 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
+              Explore Pipeline
+            </button>
+            <button onclick="window.vrlApp?.navigateTo('module-7')" class="px-8 py-3.5 bg-gradient-to-r from-accent-500 to-accent-600 hover:from-accent-600 hover:to-accent-700 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg shadow-accent-500/25">
+              Launch Virtual Lab
+            </button>
+          </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+          <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </div>
+      </div>
+
+      <!-- Animated Stats -->
+      <div class="py-20 px-6">
+        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div class="text-center stat-card p-6 rounded-2xl bg-white/5 border border-white/10">
+            <div class="font-orbitron text-4xl font-bold text-primary-400 mb-2" data-count="18">0</div>
+            <div class="text-gray-400 text-sm">Modules</div>
+          </div>
+          <div class="text-center stat-card p-6 rounded-2xl bg-white/5 border border-white/10">
+            <div class="font-orbitron text-4xl font-bold text-accent-400 mb-2" data-count="20">0</div>
+            <div class="text-gray-400 text-sm">Experiments</div>
+          </div>
+          <div class="text-center stat-card p-6 rounded-2xl bg-white/5 border border-white/10">
+            <div class="font-orbitron text-4xl font-bold text-primary-300 mb-2" data-count="15">0</div>
+            <div class="text-gray-400 text-sm">Algorithms</div>
+          </div>
+          <div class="text-center stat-card p-6 rounded-2xl bg-white/5 border border-white/10">
+            <div class="font-orbitron text-4xl font-bold text-accent-300 mb-2">100%</div>
+            <div class="text-gray-400 text-sm">Interactive</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Research Pipeline -->
+      <div id="research-pipeline" class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+          <h2 class="font-orbitron text-3xl font-bold text-center mb-4">Research Pipeline</h2>
+          <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">Follow the end-to-end research methodology from clinical problem formulation to validated AI classification</p>
+
+          <div class="relative overflow-x-auto pb-6 scrollbar-thin">
+            <div class="flex items-center gap-0 min-w-max">
+              <!-- Pipeline Steps -->
+              <div class="pipeline-step flex flex-col items-center text-center w-36 flex-shrink-0 cursor-pointer" data-step="1">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500/20 to-red-600/20 border border-red-500/30 flex items-center justify-center text-2xl mb-3 transition-transform hover:scale-110">🏥</div>
+                <span class="text-xs font-semibold text-gray-300">Clinical Problem</span>
+              </div>
+              <div class="pipeline-arrow text-gray-600 mx-1 flex-shrink-0">→</div>
+
+              <div class="pipeline-step flex flex-col items-center text-center w-36 flex-shrink-0 cursor-pointer" data-step="2">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/30 flex items-center justify-center text-2xl mb-3 transition-transform hover:scale-110">📷</div>
+                <span class="text-xs font-semibold text-gray-300">CT Imaging</span>
+              </div>
+              <div class="pipeline-arrow text-gray-600 mx-1 flex-shrink-0">→</div>
+
+              <div class="pipeline-step flex flex-col items-center text-center w-36 flex-shrink-0 cursor-pointer" data-step="3">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 border border-yellow-500/30 flex items-center justify-center text-2xl mb-3 transition-transform hover:scale-110">📋</div>
+                <span class="text-xs font-semibold text-gray-300">LI-RADS</span>
+              </div>
+              <div class="pipeline-arrow text-gray-600 mx-1 flex-shrink-0">→</div>
+
+              <div class="pipeline-step flex flex-col items-center text-center w-36 flex-shrink-0 cursor-pointer" data-step="4">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-green-600/20 border border-green-500/30 flex items-center justify-center text-2xl mb-3 transition-transform hover:scale-110">✂️</div>
+                <span class="text-xs font-semibold text-gray-300">Segmentation</span>
+              </div>
+              <div class="pipeline-arrow text-gray-600 mx-1 flex-shrink-0">→</div>
+
+              <div class="pipeline-step flex flex-col items-center text-center w-36 flex-shrink-0 cursor-pointer" data-step="5">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/30 flex items-center justify-center text-2xl mb-3 transition-transform hover:scale-110">📊</div>
+                <span class="text-xs font-semibold text-gray-300">Radiomics</span>
+              </div>
+              <div class="pipeline-arrow text-gray-600 mx-1 flex-shrink-0">→</div>
+
+              <div class="pipeline-step flex flex-col items-center text-center w-36 flex-shrink-0 cursor-pointer" data-step="6">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-2xl mb-3 transition-transform hover:scale-110">🧠</div>
+                <span class="text-xs font-semibold text-gray-300">CNN</span>
+              </div>
+              <div class="pipeline-arrow text-gray-600 mx-1 flex-shrink-0">→</div>
+
+              <div class="pipeline-step flex flex-col items-center text-center w-36 flex-shrink-0 cursor-pointer" data-step="7">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 border border-cyan-500/30 flex items-center justify-center text-2xl mb-3 transition-transform hover:scale-110">🔗</div>
+                <span class="text-xs font-semibold text-gray-300">Fusion</span>
+              </div>
+              <div class="pipeline-arrow text-gray-600 mx-1 flex-shrink-0">→</div>
+
+              <div class="pipeline-step flex flex-col items-center text-center w-36 flex-shrink-0 cursor-pointer" data-step="8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-pink-600/20 border border-pink-500/30 flex items-center justify-center text-2xl mb-3 transition-transform hover:scale-110">🎯</div>
+                <span class="text-xs font-semibold text-gray-300">Classification</span>
+              </div>
+              <div class="pipeline-arrow text-gray-600 mx-1 flex-shrink-0">→</div>
+
+              <div class="pipeline-step flex flex-col items-center text-center w-36 flex-shrink-0 cursor-pointer" data-step="9">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/20 border border-amber-500/30 flex items-center justify-center text-2xl mb-3 transition-transform hover:scale-110">💡</div>
+                <span class="text-xs font-semibold text-gray-300">Explainability</span>
+              </div>
+              <div class="pipeline-arrow text-gray-600 mx-1 flex-shrink-0">→</div>
+
+              <div class="pipeline-step flex flex-col items-center text-center w-36 flex-shrink-0 cursor-pointer" data-step="10">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-2xl mb-3 transition-transform hover:scale-110">✅</div>
+                <span class="text-xs font-semibold text-gray-300">Validation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Modules -->
+      <div class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+          <h2 class="font-orbitron text-3xl font-bold text-center mb-4">Featured Modules</h2>
+          <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">Explore our most impactful learning modules</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Featured Card 1 -->
+            <div class="featured-card group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-primary-500/50 transition-all duration-300 cursor-pointer overflow-hidden" onclick="window.vrlApp?.navigateTo('module-4')">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-bl-full transition-all duration-500 group-hover:w-full group-hover:h-full group-hover:rounded-none opacity-50"></div>
+              <div class="relative z-10">
+                <div class="w-12 h-12 rounded-xl bg-primary-500/20 flex items-center justify-center text-xl mb-4">📋</div>
+                <h3 class="font-semibold text-lg mb-2">LI-RADS Classification</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Master the LI-RADS v2018 system for categorizing liver lesions from CT imaging.</p>
+                <div class="mt-4 flex items-center text-primary-400 text-sm font-medium group-hover:gap-2 transition-all">
+                  <span>Explore Module 4</span>
+                  <span class="ml-1 group-hover:ml-2 transition-all">→</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Featured Card 2 -->
+            <div class="featured-card group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-accent-500/50 transition-all duration-300 cursor-pointer overflow-hidden" onclick="window.vrlApp?.navigateTo('module-10')">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-accent-500/10 rounded-bl-full transition-all duration-500 group-hover:w-full group-hover:h-full group-hover:rounded-none opacity-50"></div>
+              <div class="relative z-10">
+                <div class="w-12 h-12 rounded-xl bg-accent-500/20 flex items-center justify-center text-xl mb-4">🔮</div>
+                <h3 class="font-semibold text-lg mb-2">3D CNN Architecture</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Design and train phase-aware 3D convolutional neural networks for volumetric CT analysis.</p>
+                <div class="mt-4 flex items-center text-accent-400 text-sm font-medium group-hover:gap-2 transition-all">
+                  <span>Explore Module 10</span>
+                  <span class="ml-1 group-hover:ml-2 transition-all">→</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Featured Card 3 -->
+            <div class="featured-card group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-primary-500/50 transition-all duration-300 cursor-pointer overflow-hidden" onclick="window.vrlApp?.navigateTo('module-12')">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-bl-full transition-all duration-500 group-hover:w-full group-hover:h-full group-hover:rounded-none opacity-50"></div>
+              <div class="relative z-10">
+                <div class="w-12 h-12 rounded-xl bg-primary-500/20 flex items-center justify-center text-xl mb-4">🔗</div>
+                <h3 class="font-semibold text-lg mb-2">CNN + Radiomics Fusion</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Fuse deep learning features with handcrafted radiomics for superior classification.</p>
+                <div class="mt-4 flex items-center text-primary-400 text-sm font-medium group-hover:gap-2 transition-all">
+                  <span>Explore Module 12</span>
+                  <span class="ml-1 group-hover:ml-2 transition-all">→</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Featured Card 4 -->
+            <div class="featured-card group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-accent-500/50 transition-all duration-300 cursor-pointer overflow-hidden" onclick="window.vrlApp?.navigateTo('module-7')">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-accent-500/10 rounded-bl-full transition-all duration-500 group-hover:w-full group-hover:h-full group-hover:rounded-none opacity-50"></div>
+              <div class="relative z-10">
+                <div class="w-12 h-12 rounded-xl bg-accent-500/20 flex items-center justify-center text-xl mb-4">✂️</div>
+                <h3 class="font-semibold text-lg mb-2">Hands-on Segmentation</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Interactive liver and tumor segmentation using 3D nnU-Net with real-time visualization.</p>
+                <div class="mt-4 flex items-center text-accent-400 text-sm font-medium group-hover:gap-2 transition-all">
+                  <span>Explore Module 7</span>
+                  <span class="ml-1 group-hover:ml-2 transition-all">→</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Featured Card 5 -->
+            <div class="featured-card group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-primary-500/50 transition-all duration-300 cursor-pointer overflow-hidden" onclick="window.vrlApp?.navigateTo('module-14')">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-bl-full transition-all duration-500 group-hover:w-full group-hover:h-full group-hover:rounded-none opacity-50"></div>
+              <div class="relative z-10">
+                <div class="w-12 h-12 rounded-xl bg-primary-500/20 flex items-center justify-center text-xl mb-4">💡</div>
+                <h3 class="font-semibold text-lg mb-2">Explainable AI</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Open the black box with Grad-CAM, SHAP, and attention visualization techniques.</p>
+                <div class="mt-4 flex items-center text-primary-400 text-sm font-medium group-hover:gap-2 transition-all">
+                  <span>Explore Module 14</span>
+                  <span class="ml-1 group-hover:ml-2 transition-all">→</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Featured Card 6 -->
+            <div class="featured-card group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-accent-500/50 transition-all duration-300 cursor-pointer overflow-hidden" onclick="window.vrlApp?.navigateTo('module-18')">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-accent-500/10 rounded-bl-full transition-all duration-500 group-hover:w-full group-hover:h-full group-hover:rounded-none opacity-50"></div>
+              <div class="relative z-10">
+                <div class="w-12 h-12 rounded-xl bg-accent-500/20 flex items-center justify-center text-xl mb-4">🎓</div>
+                <h3 class="font-semibold text-lg mb-2">Complete PhD Workflow</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Synthesize all modules into a complete PhD research workflow and publication pipeline.</p>
+                <div class="mt-4 flex items-center text-accent-400 text-sm font-medium group-hover:gap-2 transition-all">
+                  <span>Explore Module 18</span>
+                  <span class="ml-1 group-hover:ml-2 transition-all">→</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Why This Lab -->
+      <div class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+          <h2 class="font-orbitron text-3xl font-bold text-center mb-4">Why This Lab?</h2>
+          <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">A unique STEM-based learning environment designed for the next generation of AI researchers</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-8 rounded-2xl bg-gradient-to-br from-primary-500/10 to-transparent border border-primary-500/20">
+              <div class="w-14 h-14 rounded-xl bg-primary-500/20 flex items-center justify-center text-2xl mb-5">🧪</div>
+              <h3 class="text-xl font-semibold mb-3">Learn by Doing</h3>
+              <p class="text-gray-400 leading-relaxed">Every module includes interactive experiments. Tune parameters, observe outcomes, and build intuition through direct experimentation with real research workflows.</p>
+            </div>
+
+            <div class="p-8 rounded-2xl bg-gradient-to-br from-accent-500/10 to-transparent border border-accent-500/20">
+              <div class="w-14 h-14 rounded-xl bg-accent-500/20 flex items-center justify-center text-2xl mb-5">🧠</div>
+              <h3 class="text-xl font-semibold mb-3">AI-Powered Research</h3>
+              <p class="text-gray-400 leading-relaxed">Explore cutting-edge deep learning architectures specifically designed for medical imaging, including 3D CNNs and multimodal fusion networks.</p>
+            </div>
+
+            <div class="p-8 rounded-2xl bg-gradient-to-br from-primary-500/10 to-transparent border border-primary-500/20">
+              <div class="w-14 h-14 rounded-xl bg-primary-500/20 flex items-center justify-center text-2xl mb-5">📐</div>
+              <h3 class="text-xl font-semibold mb-3">STEM Aligned</h3>
+              <p class="text-gray-400 leading-relaxed">Follows scientific method rigor: hypothesis formation, experimentation, data analysis, and peer-reviewed validation at every stage.</p>
+            </div>
+
+            <div class="p-8 rounded-2xl bg-gradient-to-br from-accent-500/10 to-transparent border border-accent-500/20">
+              <div class="w-14 h-14 rounded-xl bg-accent-500/20 flex items-center justify-center text-2xl mb-5">🌍</div>
+              <h3 class="text-xl font-semibold mb-3">Clinical Impact</h3>
+              <p class="text-gray-400 leading-relaxed">Bridge the gap between AI research and clinical practice. Understand how automated LI-RADS classification can improve patient outcomes globally.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Supervisor Section -->
+      <div class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+          <h2 class="font-orbitron text-3xl font-bold text-center mb-4">Supervisor</h2>
+          <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">Meet your research supervisor and explore their academic profile</p>
+
+          <div class="max-w-lg mx-auto">
+            <div class="group relative p-8 rounded-2xl bg-gradient-to-br from-primary-500/10 to-accent-500/10 border border-primary-500/20 hover:border-primary-500/40 transition-all duration-300 text-center">
+              <div class="w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-4xl mx-auto mb-6 shadow-lg shadow-primary-500/20">
+                👨‍🔬
+              </div>
+              <h3 class="text-xl font-semibold mb-2">Research Supervisor</h3>
+              <p class="text-gray-400 text-sm mb-6">Guiding PhD research in AI-driven medical imaging and LI-RADS classification</p>
+              <a href="https://scholar-sparkle-web.lovable.app/" target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg shadow-primary-500/25">
+                <span>Visit Supervisor Profile</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================== MODULE 1 ===================== -->
+    <section id="module-1" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 1</span>
+        <h2 class="module-title">Clinical Background: Understanding Liver Cancer</h2>
+        <p class="module-subtitle">Foundation knowledge about hepatocellular carcinoma, risk factors, and clinical presentation</p>
+      </div>
+      <div class="module-card" id="module-1-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-1-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-1-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-1-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-1-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-1-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-1-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 2 ===================== -->
+    <section id="module-2" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 2</span>
+        <h2 class="module-title">Understanding CT Imaging</h2>
+        <p class="module-subtitle">Principles of computed tomography, Hounsfield units, and liver imaging protocols</p>
+      </div>
+      <div class="module-card" id="module-2-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-2-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-2-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-2-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-2-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-2-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-2-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 3 ===================== -->
+    <section id="module-3" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 3</span>
+        <h2 class="module-title">Multiphase CT: The Power of Contrast</h2>
+        <p class="module-subtitle">Arterial, portal venous, delayed phases and their role in lesion characterization</p>
+      </div>
+      <div class="module-card" id="module-3-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-3-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-3-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-3-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-3-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-3-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-3-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 4 ===================== -->
+    <section id="module-4" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 4</span>
+        <h2 class="module-title">LI-RADS: The Classification System</h2>
+        <p class="module-subtitle">Deep dive into LI-RADS v2018 categories LR-1 through LR-5 and their diagnostic criteria</p>
+      </div>
+      <div class="module-card" id="module-4-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-4-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-4-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-4-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-4-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-4-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-4-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 5 ===================== -->
+    <section id="module-5" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 5</span>
+        <h2 class="module-title">Synthetic Dataset Generator</h2>
+        <p class="module-subtitle">Generate realistic synthetic multiphase CT data for training and evaluation</p>
+      </div>
+      <div class="module-card" id="module-5-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-5-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-5-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-5-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-5-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-5-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-5-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 6 ===================== -->
+    <section id="module-6" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 6</span>
+        <h2 class="module-title">3D nnU-Net: Medical Image Segmentation</h2>
+        <p class="module-subtitle">Architecture, training strategy, and self-adapting framework for volumetric segmentation</p>
+      </div>
+      <div class="module-card" id="module-6-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-6-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-6-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-6-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-6-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-6-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-6-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 7 ===================== -->
+    <section id="module-7" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 7</span>
+        <h2 class="module-title">Hands-on Segmentation</h2>
+        <p class="module-subtitle">Interactive liver and lesion segmentation with parameter tuning and quality assessment</p>
+      </div>
+      <div class="module-card" id="module-7-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-7-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-7-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-7-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-7-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-7-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-7-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 8 ===================== -->
+    <section id="module-8" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 8</span>
+        <h2 class="module-title">Radiomics: Extracting Texture Features</h2>
+        <p class="module-subtitle">Shape, texture, and higher-order features from segmented regions using PyRadiomics</p>
+      </div>
+      <div class="module-card" id="module-8-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-8-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-8-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-8-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-8-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-8-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-8-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 9 ===================== -->
+    <section id="module-9" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 9</span>
+        <h2 class="module-title">Traditional Machine Learning for Classification</h2>
+        <p class="module-subtitle">SVM, Random Forest, XGBoost baselines with radiomics feature inputs</p>
+      </div>
+      <div class="module-card" id="module-9-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-9-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-9-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-9-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-9-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-9-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-9-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 10 ===================== -->
+    <section id="module-10" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 10</span>
+        <h2 class="module-title">Phase-aware 3D CNN Architecture</h2>
+        <p class="module-subtitle">Multi-branch 3D convolutional network with phase-specific feature extraction</p>
+      </div>
+      <div class="module-card" id="module-10-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-10-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-10-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-10-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-10-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-10-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-10-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 11 ===================== -->
+    <section id="module-11" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 11</span>
+        <h2 class="module-title">CNN Feature Visualization</h2>
+        <p class="module-subtitle">Visualizing learned filters, feature maps, and activation patterns in 3D CNNs</p>
+      </div>
+      <div class="module-card" id="module-11-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-11-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-11-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-11-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-11-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-11-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-11-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 12 ===================== -->
+    <section id="module-12" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 12</span>
+        <h2 class="module-title">CNN + Radiomics Fusion</h2>
+        <p class="module-subtitle">Strategies for combining deep learning features with handcrafted radiomics descriptors</p>
+      </div>
+      <div class="module-card" id="module-12-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-12-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-12-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-12-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-12-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-12-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-12-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 13 ===================== -->
+    <section id="module-13" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 13</span>
+        <h2 class="module-title">LI-RADS Classification Engine</h2>
+        <p class="module-subtitle">Multi-class classification pipeline for LR-3, LR-4, and LR-5 differentiation</p>
+      </div>
+      <div class="module-card" id="module-13-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-13-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-13-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-13-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-13-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-13-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-13-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 14 ===================== -->
+    <section id="module-14" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 14</span>
+        <h2 class="module-title">Explainable AI: Opening the Black Box</h2>
+        <p class="module-subtitle">Grad-CAM, SHAP, LIME, and attention mechanisms for model interpretability</p>
+      </div>
+      <div class="module-card" id="module-14-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-14-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-14-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-14-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-14-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-14-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-14-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 15 ===================== -->
+    <section id="module-15" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 15</span>
+        <h2 class="module-title">Performance Evaluation Metrics</h2>
+        <p class="module-subtitle">Accuracy, AUC-ROC, sensitivity, specificity, and clinical decision thresholds</p>
+      </div>
+      <div class="module-card" id="module-15-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-15-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-15-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-15-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-15-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-15-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-15-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 16 ===================== -->
+    <section id="module-16" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 16</span>
+        <h2 class="module-title">Traditional vs Proposed Methods</h2>
+        <p class="module-subtitle">Comprehensive ablation study comparing all approaches head-to-head</p>
+      </div>
+      <div class="module-card" id="module-16-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-16-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-16-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-16-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-16-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-16-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-16-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 17 ===================== -->
+    <section id="module-17" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 17</span>
+        <h2 class="module-title">Research Gap Explorer</h2>
+        <p class="module-subtitle">Identifying and articulating novel contributions in the literature landscape</p>
+      </div>
+      <div class="module-card" id="module-17-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-17-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-17-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-17-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-17-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-17-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-17-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MODULE 18 ===================== -->
+    <section id="module-18" class="module-section hidden">
+      <div class="module-header">
+        <span class="module-number">Module 18</span>
+        <h2 class="module-title">Complete PhD Workflow</h2>
+        <p class="module-subtitle">End-to-end research pipeline from problem formulation to publication</p>
+      </div>
+      <div class="module-card" id="module-18-objectives">
+        <h3 class="card-title">🎯 Learning Objectives</h3>
+        <div class="objectives-grid"></div>
+      </div>
+      <div class="module-card" id="module-18-animation">
+        <h3 class="card-title">🎬 Interactive Visualization</h3>
+        <div class="animation-container"></div>
+      </div>
+      <div class="module-card" id="module-18-theory">
+        <h3 class="card-title">📚 Theory</h3>
+        <div class="theory-content"></div>
+      </div>
+      <div class="module-card" id="module-18-simulation">
+        <h3 class="card-title">🧪 Simulation Lab</h3>
+        <div class="simulation-container"></div>
+      </div>
+      <div class="module-card" id="module-18-code">
+        <h3 class="card-title">💻 Python Implementation</h3>
+        <div class="code-container">
+          <pre><code class="language-python"></code></pre>
+        </div>
+      </div>
+      <div class="module-card" id="module-18-quiz">
+        <h3 class="card-title">✅ Knowledge Check</h3>
+        <div class="quiz-container"></div>
+      </div>
+      <div class="module-card" id="module-18-reflection">
+        <h3 class="card-title">🔍 Research Insight</h3>
+        <div class="reflection-content"></div>
+      </div>
+    </section>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="border-t border-white/10 py-12 px-6 mt-10">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div>
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                <span class="font-orbitron font-bold text-xs">VR</span>
+              </div>
+              <span class="font-orbitron font-bold">VRL</span>
+            </div>
+            <p class="text-gray-400 text-sm leading-relaxed">Interactive Virtual Research Laboratory for AI-driven medical imaging research. Built for STEM-based learning.</p>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-4">Quick Links</h4>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li><a href="#home" class="hover:text-white transition-colors">Home</a></li>
+              <li><a href="#module-1" class="hover:text-white transition-colors">Start Learning</a></li>
+              <li><a href="#module-18" class="hover:text-white transition-colors">Complete Workflow</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-4">STEM Alignment</h4>
+            <p class="text-gray-400 text-sm leading-relaxed">This laboratory follows STEM education principles: Science (clinical research), Technology (AI/deep learning), Engineering (system design), and Mathematics (statistical evaluation).</p>
+          </div>
+        </div>
+        <div class="border-t border-white/10 pt-6 text-center text-gray-500 text-xs">
+          <p>Interactive Virtual Research Laboratory &copy; 2026 &mdash; Phase-aware 3D CNN–Radiomics Fusion for LI-RADS Classification</p>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ===================== CDN SCRIPTS ===================== -->
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- GSAP + Plugins -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Prism.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+  <!-- D3.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+  <!-- ===================== APPLICATION SCRIPTS ===================== -->
+  <script src="js/app.js"></script>
+
+  <!-- Module Scripts -->
+  <script src="js/modules/module1.js"></script>
+  <script src="js/modules/module2.js"></script>
+  <script src="js/modules/module3.js"></script>
+  <script src="js/modules/module4.js"></script>
+  <script src="js/modules/module5.js"></script>
+  <script src="js/modules/module6.js"></script>
+  <script src="js/modules/module7.js"></script>
+  <script src="js/modules/module8.js"></script>
+  <script src="js/modules/module9.js"></script>
+  <script src="js/modules/module10.js"></script>
+  <script src="js/modules/module11.js"></script>
+  <script src="js/modules/module12.js"></script>
+  <script src="js/modules/module13.js"></script>
+  <script src="js/modules/module14.js"></script>
+  <script src="js/modules/module15.js"></script>
+  <script src="js/modules/module16.js"></script>
+  <script src="js/modules/module17.js"></script>
+  <script src="js/modules/module18.js"></script>
+
+</body>
+</html>
