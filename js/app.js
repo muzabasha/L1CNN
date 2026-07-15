@@ -89,6 +89,10 @@ const Utils = {
 
   isMobile() {
     return window.innerWidth <= 768;
+  },
+
+  isTablet() {
+    return window.innerWidth <= 1024;
   }
 };
 
@@ -597,6 +601,7 @@ const App = {
   currentModule: 'home',
   modules: {},
   sidebarCollapsed: false,
+  sidebarOpen: false,
   initialized: false,
   progress: 0,
   totalModules: 0,
@@ -623,6 +628,7 @@ const App = {
     setTimeout(initScrollAnimations, 100);
 
     this._updateProgress();
+    this._onResize();
     EventBus.emit('app:init');
   },
 
@@ -778,43 +784,75 @@ const App = {
   /* ── Sidebar ────────────────────────────── */
 
   toggleSidebar(force) {
-    const shouldCollapse = force !== undefined ? force : !this.sidebarCollapsed;
-    this.sidebarCollapsed = shouldCollapse;
+    var isTab = Utils.isTablet();
 
-    if (this.sidebar) {
-      this.sidebar.style.width = shouldCollapse ? '60px' : '288px';
-      this.sidebar.classList.toggle('collapsed', shouldCollapse);
+    if (isTab) {
+      // Mobile/tablet: overlay mode
+      var show = force !== undefined ? force : !this.sidebarOpen;
+      this.sidebarOpen = show;
 
-      this.sidebar.querySelectorAll('.nav-label').forEach(function(el) {
-        el.style.display = shouldCollapse ? 'none' : '';
-        el.style.opacity = shouldCollapse ? '0' : '1';
-        el.style.width = shouldCollapse ? '0' : '';
-        el.style.overflow = shouldCollapse ? 'hidden' : '';
-      });
+      if (this.sidebar) {
+        this.sidebar.classList.toggle('mobile-open', show);
+        // Reset any desktop collapse inline styles
+        this.sidebar.style.width = '';
+        this.sidebar.style.transform = show ? 'translateX(0)' : '';
+        this.sidebar.classList.remove('collapsed');
+      }
 
-      this.sidebar.querySelectorAll('.nav-item').forEach(function(el) {
-        el.style.justifyContent = shouldCollapse ? 'center' : '';
-        el.style.padding = shouldCollapse ? '0.75rem' : '';
-      });
+      if (this.sidebarOverlay) {
+        if (show) {
+          this.sidebarOverlay.classList.add('active');
+        } else {
+          this.sidebarOverlay.classList.remove('active');
+        }
+      }
 
-      var logoText = this.sidebar.querySelector('h1.font-orbitron');
-      if (logoText) logoText.parentElement.style.display = shouldCollapse ? 'none' : '';
-    }
+      // Show/hide mobile menu button
+      if (this.mobileMenuBtn) {
+        this.mobileMenuBtn.style.display = show ? 'none' : 'flex';
+      }
+    } else {
+      // Desktop: collapse mode
+      var shouldCollapse = force !== undefined ? force : !this.sidebarCollapsed;
+      this.sidebarCollapsed = shouldCollapse;
 
-    var spacer = document.getElementById('sidebar-spacer');
-    if (spacer) spacer.style.width = shouldCollapse ? '60px' : '288px';
+      if (this.sidebar) {
+        this.sidebar.style.width = shouldCollapse ? '60px' : '288px';
+        this.sidebar.style.transform = '';
+        this.sidebar.classList.toggle('collapsed', shouldCollapse);
+        this.sidebar.classList.remove('mobile-open');
 
-    var mainContent = document.getElementById('main-content');
-    if (mainContent) mainContent.style.marginLeft = shouldCollapse ? '60px' : '288px';
+        this.sidebar.querySelectorAll('.nav-label').forEach(function(el) {
+          el.style.display = shouldCollapse ? 'none' : '';
+          el.style.opacity = shouldCollapse ? '0' : '1';
+          el.style.width = shouldCollapse ? '0' : '';
+          el.style.overflow = shouldCollapse ? 'hidden' : '';
+        });
 
-    var toggleBtn = document.getElementById('sidebar-toggle');
-    if (toggleBtn) {
-      var svg = toggleBtn.querySelector('svg');
-      if (svg) svg.style.transform = shouldCollapse ? 'rotate(180deg)' : '';
-    }
+        this.sidebar.querySelectorAll('.nav-item').forEach(function(el) {
+          el.style.justifyContent = shouldCollapse ? 'center' : '';
+          el.style.padding = shouldCollapse ? '0.75rem' : '';
+        });
 
-    if (this.sidebarOverlay) {
-      this.sidebarOverlay.classList.add('hidden');
+        var logoText = this.sidebar.querySelector('h1.font-orbitron');
+        if (logoText) logoText.parentElement.style.display = shouldCollapse ? 'none' : '';
+      }
+
+      var spacer = document.getElementById('sidebar-spacer');
+      if (spacer) spacer.style.width = shouldCollapse ? '60px' : '288px';
+
+      var mainContent = document.getElementById('main-content');
+      if (mainContent) mainContent.style.marginLeft = shouldCollapse ? '60px' : '288px';
+
+      var toggleBtn = document.getElementById('sidebar-toggle');
+      if (toggleBtn) {
+        var svg = toggleBtn.querySelector('svg');
+        if (svg) svg.style.transform = shouldCollapse ? 'rotate(180deg)' : '';
+      }
+
+      if (this.sidebarOverlay) {
+        this.sidebarOverlay.classList.remove('active');
+      }
     }
   },
 
@@ -852,12 +890,41 @@ const App = {
   /* ── Resize ─────────────────────────────── */
 
   _onResize() {
-    if (Utils.isMobile()) {
-      if (this.sidebar && !this.sidebarCollapsed) {
-        this.sidebar.classList.add('collapsed');
-        this.sidebarCollapsed = true;
-        if (this.sidebarSpacer) this.sidebarSpacer.style.width = '60px';
+    var isTab = Utils.isTablet();
+    if (isTab) {
+      // On tablet/mobile: ensure sidebar is in overlay mode
+      if (this.sidebar && this.sidebarCollapsed) {
+        this.sidebarCollapsed = false;
+        this.sidebar.classList.remove('collapsed');
+        this.sidebar.style.width = '';
+        this.sidebar.style.transform = '';
       }
+      // Reset desktop offset
+      var spacer = document.getElementById('sidebar-spacer');
+      if (spacer) spacer.style.width = '0';
+      var mainContent = document.getElementById('main-content');
+      if (mainContent) mainContent.style.marginLeft = '0';
+    } else {
+      // On desktop: ensure sidebar is not in mobile-open mode
+      if (this.sidebar) {
+        this.sidebar.classList.remove('mobile-open');
+        this.sidebarOpen = false;
+      }
+      if (this.sidebarOverlay) {
+        this.sidebarOverlay.classList.remove('active');
+      }
+      // If not collapsed, restore full width
+      if (!this.sidebarCollapsed) {
+        if (this.sidebar) this.sidebar.style.width = '288px';
+        var spacer = document.getElementById('sidebar-spacer');
+        if (spacer) spacer.style.width = '288px';
+        var mainContent = document.getElementById('main-content');
+        if (mainContent) mainContent.style.marginLeft = '288px';
+      }
+    }
+    // Show/hide mobile menu button
+    if (this.mobileMenuBtn) {
+      this.mobileMenuBtn.style.display = isTab ? 'flex' : 'none';
     }
   }
 };
