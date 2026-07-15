@@ -631,11 +631,10 @@ const App = {
     this.sidebarOverlay = document.getElementById('sidebar-overlay');
     this.sidebarToggle = document.getElementById('sidebar-toggle');
     this.mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    this.sidebarSpacer = document.getElementById('sidebar-spacer');
     this.progressFill = document.getElementById('progress-fill');
     this.progressText = document.getElementById('progress-text');
-    this.moduleSections = document.querySelectorAll('.module-section');
     this.navItems = document.querySelectorAll('.nav-item');
-    this.ctaButtons = document.querySelectorAll('[data-navigate]');
   },
 
   _bindEvents() {
@@ -660,7 +659,7 @@ const App = {
       });
     });
 
-    this.ctaButtons.forEach(btn => {
+    document.querySelectorAll('[data-navigate]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const target = btn.dataset.navigate;
@@ -692,31 +691,37 @@ const App = {
   navigateTo(moduleId) {
     if (moduleId === this.currentModule) return;
 
-    const sectionId = moduleId === 'home' ? 'home' : 'module-' + String(moduleId).replace(/^module-?/, '');
-    const prevId = this.currentModule === 'home' ? 'home' : 'module-' + String(this.currentModule).replace(/^module-?/, '');
+    const normalizeId = (id) => String(id).replace(/^module-?/, '');
+    const toSectionId = (id) => id === 'home' ? 'home' : 'module-' + normalizeId(id);
 
-    const prev = document.getElementById(prevId);
+    const prevSectionId = toSectionId(this.currentModule);
+    const prev = document.getElementById(prevSectionId);
     if (prev) {
-      prev.classList.remove('active');
       prev.style.opacity = '0';
       prev.style.transform = 'translateY(10px)';
-      setTimeout(() => { prev.style.display = 'none'; }, 200);
+      setTimeout(() => {
+        prev.classList.add('hidden');
+        prev.classList.remove('active');
+      }, 300);
     }
 
-    const target = document.getElementById(sectionId);
+    const targetSectionId = toSectionId(moduleId);
+    const target = document.getElementById(targetSectionId);
     if (target) {
-      target.style.display = '';
+      target.classList.remove('hidden');
       target.style.opacity = '0';
       target.style.transform = 'translateY(10px)';
       requestAnimationFrame(() => {
-        target.classList.add('active');
-        target.style.opacity = '1';
-        target.style.transform = 'translateY(0)';
+        requestAnimationFrame(() => {
+          target.classList.add('active');
+          target.style.opacity = '1';
+          target.style.transform = 'translateY(0)';
+        });
       });
     }
 
     this.currentModule = moduleId;
-    window.location.hash = sectionId;
+    window.location.hash = targetSectionId;
     this._updateSidebarActive(moduleId);
     this._initModuleIfFirst(moduleId);
     this._recordVisit(moduleId);
@@ -756,25 +761,42 @@ const App = {
 
   _initAllModuleSections() {
     document.querySelectorAll('.module-section').forEach(sec => {
-      sec.style.display = 'none';
+      sec.classList.add('hidden');
       sec.style.opacity = '0';
       sec.style.transform = 'translateY(10px)';
       sec.style.transition = 'opacity .35s ease, transform .35s ease';
     });
     const home = document.getElementById('home');
     if (home) {
-      home.style.display = '';
-      requestAnimationFrame(() => { home.style.opacity = '1'; home.style.transform = 'translateY(0)'; home.classList.add('active'); });
+      home.classList.remove('hidden');
+      home.style.opacity = '1';
+      home.style.transform = 'translateY(0)';
+      home.classList.add('active');
     }
   },
 
   /* ── Sidebar ────────────────────────────── */
 
   toggleSidebar(force) {
-    const show = force !== undefined ? force : this.sidebarCollapsed;
-    this.sidebarCollapsed = !show;
-    if (this.sidebar) this.sidebar.classList.toggle('collapsed', show);
-    if (this.sidebarOverlay) this.sidebarOverlay.classList.toggle('active', !show);
+    const shouldCollapse = force !== undefined ? force : !this.sidebarCollapsed;
+    this.sidebarCollapsed = shouldCollapse;
+
+    if (this.sidebar) {
+      this.sidebar.classList.toggle('collapsed', shouldCollapse);
+    }
+
+    const spacer = document.getElementById('sidebar-spacer');
+    if (spacer) {
+      spacer.style.width = shouldCollapse ? '60px' : '288px';
+    }
+
+    if (this.sidebarOverlay) {
+      if (shouldCollapse) {
+        this.sidebarOverlay.classList.add('hidden');
+      } else if (Utils.isMobile()) {
+        this.sidebarOverlay.classList.remove('hidden');
+      }
+    }
   },
 
   _updateSidebarActive(moduleId) {
@@ -811,8 +833,12 @@ const App = {
   /* ── Resize ─────────────────────────────── */
 
   _onResize() {
-    if (Utils.isMobile() && this.sidebar && !this.sidebarCollapsed) {
-      this.toggleSidebar(false);
+    if (Utils.isMobile()) {
+      if (this.sidebar && !this.sidebarCollapsed) {
+        this.sidebar.classList.add('collapsed');
+        this.sidebarCollapsed = true;
+        if (this.sidebarSpacer) this.sidebarSpacer.style.width = '60px';
+      }
     }
   }
 };
