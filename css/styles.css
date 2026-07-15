@@ -486,13 +486,16 @@ tr:hover td {
 }
 
 /* Sidebar Collapsed State - ID selector for Tailwind sidebar */
+#sidebar {
+  width: 288px;
+}
+
 #sidebar.collapsed {
-  width: var(--sidebar-collapsed-width) !important;
+  width: 60px !important;
 }
 
 #sidebar.collapsed .nav-label,
-#sidebar.collapsed #progress-text,
-#sidebar.collapsed .nav-item span:not(.text-lg):not([class*="text-"]) {
+#sidebar.collapsed #progress-text {
   opacity: 0;
   width: 0;
   overflow: hidden;
@@ -504,22 +507,21 @@ tr:hover td {
   padding: 0.75rem;
 }
 
-#sidebar.collapsed .flex.items-center.gap-3 {
-  justify-content: center;
+#sidebar.collapsed > div:first-child > div:last-child {
+  display: none;
 }
 
-#sidebar.collapsed > div:first-child {
-  justify-content: center;
-  padding: 1rem 0.5rem;
+#sidebar-spacer {
+  width: 288px;
 }
 
 #sidebar.collapsed ~ #sidebar-spacer {
-  width: var(--sidebar-collapsed-width) !important;
+  width: 60px !important;
 }
 
 /* Main content offset for collapsed sidebar */
 #sidebar.collapsed ~ #main-content {
-  margin-left: var(--sidebar-collapsed-width);
+  margin-left: 60px;
 }
 
 .content-wrapper {
