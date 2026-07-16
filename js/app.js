@@ -35,6 +35,9 @@ const App = (() => {
     EventManager.on('route:changed', ({ from, to }) => {
       if (from && from !== 'home') ModuleEngine.destroy(from);
       const sectionId = to === 'home' ? 'home' : 'module-' + to;
+      if (to !== 'home' && !Renderer.getSection(sectionId)) {
+        Renderer.createModuleContainer(to);
+      }
       Renderer.showSection(sectionId);
       UIManager.updateSidebarActive(to);
       if (to !== 'home') {
