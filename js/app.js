@@ -603,6 +603,7 @@ const App = {
   sidebarCollapsed: false,
   sidebarOpen: false,
   initialized: false,
+  _navigating: false,
   progress: 0,
   totalModules: 0,
   visitedModules: new Set(),
@@ -622,8 +623,8 @@ const App = {
     this._particleEngine = initParticles();
     this._hero3D = initHero3D();
 
-    this._handleHashNavigation();
     this._initAllModuleSections();
+    this._handleHashNavigation();
 
     setTimeout(initScrollAnimations, 100);
 
@@ -699,7 +700,9 @@ const App = {
   /* ── Navigation ─────────────────────────── */
 
   navigateTo(moduleId) {
-    if (moduleId === this.currentModule) return;
+    // Skip only if already on this module AND it has been initialized
+    const mod = this.modules[moduleId];
+    if (moduleId === this.currentModule && mod && mod.initialized) return;
 
     const normalizeId = (id) => String(id).replace(/^module-?/, '');
     const toSectionId = (id) => id === 'home' ? 'home' : 'module-' + normalizeId(id);
@@ -738,7 +741,9 @@ const App = {
 
     const targetSectionId = toSectionId(moduleId);
     this.currentModule = moduleId;
+    this._navigating = true;
     window.location.hash = targetSectionId;
+    this._navigating = false;
     this._updateSidebarActive(moduleId);
     this._initModuleIfFirst(moduleId);
     this._recordVisit(moduleId);
@@ -749,6 +754,7 @@ const App = {
   },
 
   _handleHashNavigation() {
+    if (this._navigating) return;
     const hash = window.location.hash.replace('#', '') || 'home';
     let moduleId = hash;
     if (hash.startsWith('module-')) {
