@@ -686,10 +686,14 @@ const App = {
     window.addEventListener('resize', this._resizeHandler);
 
     document.querySelectorAll('.module-section').forEach((sec, i) => {
-      const id = sec.id || sec.dataset.module;
-      if (id) this.modules[id] = { index: i, element: sec, initialized: false };
+      const rawId = sec.id || sec.dataset.module;
+      if (!rawId) return;
+      // Normalize: "module-1" → "1", "home" → "home"
+      const key = rawId === 'home' ? 'home' : rawId.replace(/^module-/, '');
+      this.modules[key] = { index: i, element: sec, initialized: false };
     });
     this.totalModules = Object.keys(this.modules).length;
+
   },
 
   /* ── Navigation ─────────────────────────── */
@@ -763,14 +767,14 @@ const App = {
   },
 
   _initModuleIfFirst(moduleId) {
-    const sectionKey = moduleId === 'home' ? 'home' : 'module-' + String(moduleId).replace(/^module-?/, '');
-    const mod = this.modules[sectionKey] || this.modules[moduleId];
+    const mod = this.modules[moduleId];
     if (mod && !mod.initialized) {
       mod.initialized = true;
       ModuleEngine.init(moduleId);
       EventBus.emit('module:firstInit', moduleId);
     }
   },
+
 
   _initAllModuleSections() {
     document.querySelectorAll('.module-section').forEach(sec => {
