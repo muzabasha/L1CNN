@@ -2,7 +2,7 @@
  * Interactive Virtual Research Laboratory - Main Application Engine
  * Single Page Application with modular architecture, particle effects,
  * Three.js hero scene, GSAP animations, and interactive components.
- * @version 1.0.0
+ * @version 2.0.0
  */
 
 /* ─────────────────────────────────────────────
@@ -93,6 +93,14 @@ const Utils = {
 
   isTablet() {
     return window.innerWidth <= 1024;
+  },
+
+  normalizeModuleId(id) {
+    return String(id).replace(/^module-?/, '');
+  },
+
+  toSectionId(id) {
+    return id === 'home' ? 'home' : 'module-' + this.normalizeModuleId(id);
   }
 };
 
@@ -376,11 +384,371 @@ const Components = {
 
     container.appendChild(table);
     return { element: table };
+  },
+
+  destroyChart(chartInstance) {
+    if (chartInstance && typeof chartInstance.destroy === 'function') {
+      chartInstance.destroy();
+    }
   }
 };
 
 /* ─────────────────────────────────────────────
-   5. Particles Background Animation
+   5. NavigationController
+   ───────────────────────────────────────────── */
+
+const NavigationController = {
+  currentModule: 'home',
+  modules: {},
+  sidebarCollapsed: false,
+  sidebarOpen: false,
+  _navigating: false,
+  _navItems: [],
+  _moduleSections: [],
+
+  init() {
+    this._cacheDOM();
+    this._populateModuleRegistry();
+    this._bindDelegatedEvents();
+    this._syncFromURL();
+  },
+
+  _cacheDOM() {
+    this.sidebar = document.getElementById('sidebar');
+    this.sidebarOverlay = document.getElementById('sidebar-overlay');
+    this.sidebarSpacer = document.getElementById('sidebar-spacer');
+    this.progressFill = document.getElementById('progress-fill');
+    this.progressText = document.getElementById('progress-text');
+    this.mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    this.mainContent = document.getElementById('main-content');
+  },
+
+  _populateModuleRegistry() {
+    const sections = document.querySelectorAll('.module-section');
+    this._moduleSections = [];
+    this.modules = {};
+    sections.forEach((sec, i) => {
+      const rawId = sec.id || sec.dataset.module;
+      if (!rawId) return;
+      const key = rawId === 'home' ? 'home' : Utils.normalizeModuleId(rawId);
+      this.modules[key] = { index: i, element: sec, initialized: false };
+      this._moduleSections.push(sec);
+    });
+  },
+
+  _bindDelegatedEvents() {
+    // Sidebar navigation via event delegation
+    document.getElementById('nav-items').addEventListener('click', (e) => {
+      const item = e.target.closest('.nav-item');
+      if (!item) return;
+      e.preventDefault();
+      const target = item.dataset.module || (item.getAttribute('href') || '').replace(/.*#/, '') || '';
+      if (target) {
+        this.navigate(Utils.normalizeModuleId(target));
+      }
+    });
+
+    // Sidebar toggle
+    if (this.sidebar) {
+      this.sidebar.addEventListener('click', (e) => {
+        const toggle = e.target.closest('#sidebar-toggle, .sidebar-toggle');
+        if (toggle) {
+          e.preventDefault();
+          this.toggleSidebar();
+        }
+      });
+    }
+
+    // Mobile menu button
+    if (this.mobileMenuBtn) {
+      this.mobileMenuBtn.addEventListener('click', () => this.toggleSidebar());
+    }
+
+    // Sidebar overlay close
+    if (this.sidebarOverlay) {
+      this.sidebarOverlay.addEventListener('click', () => this.toggleSidebar(false));
+    }
+
+    // data-navigate delegation (pipeline steps, featured cards)
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-navigate]');
+      if (btn) {
+        e.preventDefault();
+        const target = btn.dataset.navigate;
+        if (target) this.navigate(target);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      const btn = e.target.closest('[data-navigate]');
+      if (btn && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        const target = btn.dataset.navigate;
+        if (target) this.navigate(target);
+      }
+    });
+
+    // keyboard nav: arrow keys
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        this._navigateByOffset(1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this._navigateByOffset(-1);
+      }
+    });
+
+    // Hash change
+    window.addEventListener('hashchange', () => this._onHashChange());
+
+    // Resize
+    window.addEventListener('resize', Utils.debounce(() => this._onResize(), 250));
+  },
+
+  navigate(moduleId) {
+    const normalized = Utils.normalizeModuleId(moduleId);
+    const mod = this.modules[normalized];
+
+    // Guard: if module doesn't exist, go home
+    if (!mod && normalized !== 'home') {
+      this.navigate('home');
+      return;
+    }
+
+    // Guard: skip if already on this module — but allow re-navigate if never initialized
+    if (normalized === this.currentModule && mod && mod.initialized) return;
+
+    // Destroy previous module
+    const prevKey = this.currentModule;
+    const prevMod = this.modules[prevKey];
+    if (prevMod && prevMod.initialized) {
+      ModuleEngine.destroy(prevKey);
+      prevMod.initialized = false;
+    }
+
+    // Hide all sections
+    this._moduleSections.forEach(sec => {
+      sec.classList.add('hidden');
+      sec.classList.remove('active');
+      sec.style.opacity = '0';
+      sec.style.transform = 'translateY(10px)';
+    });
+
+    // Show target section
+    const sectionId = Utils.toSectionId(normalized);
+    const target = document.getElementById(sectionId);
+    if (target) {
+      target.classList.remove('hidden');
+      target.style.opacity = '0';
+      target.style.transform = 'translateY(10px)';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          target.classList.add('active');
+          target.style.opacity = '1';
+          target.style.transform = 'translateY(0)';
+        });
+      });
+    }
+
+    // Update state
+    this.currentModule = normalized;
+    this._updateSidebarActive(normalized);
+    this._syncURL(normalized);
+
+    // Initialize module
+    this._initModuleIfFirst(normalized);
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Auto-close sidebar on mobile
+    if (Utils.isMobile()) this.toggleSidebar(false);
+
+    EventBus.emit('module:change', normalized);
+  },
+
+  _initModuleIfFirst(moduleId) {
+    const mod = this.modules[moduleId];
+    if (mod && !mod.initialized) {
+      mod.initialized = true;
+      ModuleEngine.init(moduleId);
+      // Record visit & update progress
+      this._recordVisit(moduleId);
+      this._updateProgress();
+      EventBus.emit('module:firstInit', moduleId);
+    }
+  },
+
+  _syncURL(moduleId) {
+    const sectionId = Utils.toSectionId(moduleId);
+    const currentHash = window.location.hash.replace('#', '');
+    if (currentHash !== sectionId) {
+      this._navigating = true;
+      window.location.hash = sectionId;
+      this._navigating = false;
+    }
+  },
+
+  _onHashChange() {
+    if (this._navigating) return;
+    const hash = window.location.hash.replace('#', '') || 'home';
+    const moduleId = hash.startsWith('module-') ? hash.replace('module-', '') : hash;
+    if (this.modules[moduleId]) {
+      this.navigate(moduleId);
+    } else if (hash !== 'home') {
+      window.location.hash = 'home';
+    }
+  },
+
+  _syncFromURL() {
+    const hash = window.location.hash.replace('#', '') || 'home';
+    const moduleId = hash.startsWith('module-') ? hash.replace('module-', '') : hash;
+    if (this.modules[moduleId]) {
+      this.currentModule = moduleId;
+      this._showSection(moduleId);
+      this._updateSidebarActive(moduleId);
+      this._initModuleIfFirst(moduleId);
+    } else {
+      this._showSection('home');
+      this._updateSidebarActive('home');
+    }
+  },
+
+  _showSection(moduleId) {
+    this._moduleSections.forEach(sec => {
+      sec.classList.add('hidden');
+      sec.classList.remove('active');
+      sec.style.opacity = '0';
+      sec.style.transform = 'translateY(10px)';
+    });
+    const sectionId = Utils.toSectionId(moduleId);
+    const target = document.getElementById(sectionId);
+    if (target) {
+      target.classList.remove('hidden');
+      target.classList.add('active');
+      target.style.opacity = '1';
+      target.style.transform = 'translateY(0)';
+    }
+  },
+
+  _navigateByOffset(offset) {
+    const ids = Object.keys(this.modules);
+    const idx = ids.indexOf(this.currentModule);
+    const next = ids[idx + offset];
+    if (next) this.navigate(next);
+  },
+
+  _updateSidebarActive(moduleId) {
+    document.querySelectorAll('.nav-item').forEach(item => {
+      const raw = item.dataset.module || (item.getAttribute('href') || '').replace(/.*#/, '') || '';
+      const itemNorm = Utils.normalizeModuleId(raw);
+      const isActive = itemNorm === moduleId;
+      item.classList.toggle('active', isActive);
+      if (isActive) {
+        item.setAttribute('aria-current', 'page');
+      } else {
+        item.removeAttribute('aria-current');
+      }
+    });
+  },
+
+  toggleSidebar(force) {
+    var isTab = Utils.isTablet();
+    if (isTab) {
+      var show = force !== undefined ? force : !this.sidebarOpen;
+      this.sidebarOpen = show;
+      if (this.sidebar) {
+        this.sidebar.classList.toggle('mobile-open', show);
+        this.sidebar.style.width = '';
+        this.sidebar.style.transform = show ? 'translateX(0)' : '';
+        this.sidebar.classList.remove('collapsed');
+      }
+      if (this.sidebarOverlay) {
+        this.sidebarOverlay.classList.toggle('active', show);
+      }
+      if (this.mobileMenuBtn) {
+        this.mobileMenuBtn.style.display = show ? 'none' : 'flex';
+      }
+    } else {
+      var shouldCollapse = force !== undefined ? force : !this.sidebarCollapsed;
+      this.sidebarCollapsed = shouldCollapse;
+      if (this.sidebar) {
+        this.sidebar.style.width = shouldCollapse ? '60px' : '';
+        this.sidebar.style.transform = '';
+        this.sidebar.classList.toggle('collapsed', shouldCollapse);
+        this.sidebar.classList.remove('mobile-open');
+      }
+      if (this.sidebarSpacer) {
+        this.sidebarSpacer.style.width = shouldCollapse ? '60px' : '';
+      }
+      if (this.mainContent) {
+        this.mainContent.style.marginLeft = shouldCollapse ? '60px' : '';
+      }
+      if (this.sidebarOverlay) {
+        this.sidebarOverlay.classList.remove('active');
+      }
+    }
+  },
+
+  _recordVisit(moduleId) {
+    if (moduleId === 'home') return;
+    let visited = new Set();
+    try {
+      const saved = localStorage.getItem('lab-visited');
+      if (saved) visited = new Set(JSON.parse(saved));
+    } catch (e) { /* noop */ }
+    visited.add(moduleId);
+    try { localStorage.setItem('lab-visited', JSON.stringify([...visited])); } catch (e) { /* noop */ }
+  },
+
+  _updateProgress() {
+    const total = Object.keys(this.modules).length - 1; // exclude home
+    if (total <= 0) return;
+    let visited = new Set();
+    try {
+      const saved = localStorage.getItem('lab-visited');
+      if (saved) visited = new Set(JSON.parse(saved));
+    } catch (e) { /* noop */ }
+    const pct = Math.round((visited.size / total) * 100);
+    if (this.progressFill) this.progressFill.style.width = `${pct}%`;
+    if (this.progressText) this.progressText.textContent = `${pct}%`;
+  },
+
+  _onResize() {
+    var isTab = Utils.isTablet();
+    if (isTab) {
+      if (this.sidebar) {
+        this.sidebar.classList.remove('collapsed');
+        this.sidebar.style.width = '';
+        this.sidebar.style.transform = '';
+      }
+      if (this.sidebarSpacer) this.sidebarSpacer.style.width = '0';
+      if (this.mainContent) this.mainContent.style.marginLeft = '0';
+    } else {
+      if (this.sidebar) {
+        this.sidebar.classList.remove('mobile-open');
+        this.sidebarOpen = false;
+      }
+      if (this.sidebarOverlay) {
+        this.sidebarOverlay.classList.remove('active');
+      }
+      if (!this.sidebarCollapsed) {
+        if (this.sidebar) this.sidebar.style.width = '';
+        if (this.sidebarSpacer) this.sidebarSpacer.style.width = '';
+        if (this.mainContent) this.mainContent.style.marginLeft = '';
+      }
+    }
+    if (this.mobileMenuBtn) {
+      this.mobileMenuBtn.style.display = isTab ? 'flex' : 'none';
+    }
+  }
+};
+
+/* ─────────────────────────────────────────────
+   6. Particles Background Animation
    ───────────────────────────────────────────── */
 
 function initParticles() {
@@ -417,19 +785,16 @@ function initParticles() {
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
       p.x += p.vx;
       p.y += p.vy;
       if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
       if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
       ctx.fillStyle = `${p.color}${p.opacity})`;
       ctx.fill();
-
       for (let j = i + 1; j < particles.length; j++) {
         const p2 = particles[j];
         const dx = p.x - p2.x;
@@ -456,7 +821,7 @@ function initParticles() {
 }
 
 /* ─────────────────────────────────────────────
-   6. Three.js Hero Scene
+   7. Three.js Hero Scene
    ───────────────────────────────────────────── */
 
 function initHero3D() {
@@ -545,7 +910,7 @@ function initHero3D() {
 }
 
 /* ─────────────────────────────────────────────
-   7. GSAP Scroll Animations
+   8. GSAP Scroll Animations
    ───────────────────────────────────────────── */
 
 function initScrollAnimations() {
@@ -584,497 +949,109 @@ function initScrollAnimations() {
 }
 
 /* ─────────────────────────────────────────────
-   9. Main Application
+   9. Module Prev/Next Navigation Builder
    ───────────────────────────────────────────── */
 
-const App = {
-  currentModule: 'home',
-  modules: {},
-  sidebarCollapsed: false,
-  sidebarOpen: false,
-  initialized: false,
-  _navigating: false,
-  progress: 0,
-  totalModules: 0,
-  visitedModules: new Set(),
-  _particleEngine: null,
-  _hero3D: null,
-  _resizeHandler: null,
+function buildModuleNavigation() {
+  const TOTAL = 18;
+  for (let n = 1; n <= TOTAL; n++) {
+    const sec = document.getElementById('module-' + n);
+    if (!sec) continue;
+    if (sec.querySelector('.module-nav-footer')) continue;
 
-  /** Initialise the entire application */
-  init() {
-    if (this.initialized) return;
-    this.initialized = true;
+    const prevId = n === 1 ? 'home' : String(n - 1);
+    const nextId = n === TOTAL ? null : String(n + 1);
 
-    this._cacheDOM();
-    this._bindEvents();
-    this._loadSavedState();
+    const nav = document.createElement('div');
+    nav.className = 'module-nav-footer';
+    nav.style.cssText = [
+      'display:flex',
+      'justify-content:space-between',
+      'align-items:center',
+      'padding:1.5rem 2rem',
+      'margin-top:2rem',
+      'border-top:1px solid rgba(59,130,246,0.2)',
+      'gap:1rem'
+    ].join(';');
 
-    this._particleEngine = initParticles();
-    this._hero3D = initHero3D();
+    const btnStyle = [
+      'display:inline-flex',
+      'align-items:center',
+      'gap:8px',
+      'padding:10px 20px',
+      'border-radius:10px',
+      'font-size:14px',
+      'font-weight:600',
+      'cursor:pointer',
+      'border:1px solid rgba(59,130,246,0.35)',
+      'background:rgba(59,130,246,0.1)',
+      'color:#60a5fa',
+      'transition:all .2s ease',
+      'text-decoration:none'
+    ].join(';');
 
-    this._initAllModuleSections();
-    this._handleHashNavigation();
+    const prevLabel = n === 1 ? '← Home' : ('← Module ' + (n - 1));
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'module-nav-btn module-nav-prev';
+    prevBtn.setAttribute('aria-label', n === 1 ? 'Go to Home' : 'Go to previous module');
+    prevBtn.style.cssText = btnStyle;
+    prevBtn.innerHTML = prevLabel;
+    prevBtn.addEventListener('click', () => NavigationController.navigate(prevId));
+    prevBtn.addEventListener('mouseover', () => { prevBtn.style.background = 'rgba(59,130,246,0.25)'; prevBtn.style.borderColor = '#60a5fa'; });
+    prevBtn.addEventListener('mouseout', () => { prevBtn.style.background = 'rgba(59,130,246,0.1)'; prevBtn.style.borderColor = 'rgba(59,130,246,0.35)'; });
 
-    setTimeout(initScrollAnimations, 100);
+    const counter = document.createElement('span');
+    counter.style.cssText = 'font-size:12px;color:#64748b;white-space:nowrap;';
+    counter.textContent = 'Module ' + n + ' / ' + TOTAL;
 
-    // Lazy-load the first visible module after init
-    setTimeout(() => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash && hash !== 'home') {
-        const norm = (id) => String(id).replace(/^module-?/, '');
-        const mId = norm(hash);
-        if (this.modules[mId]) this._initModuleIfFirst(mId);
-      }
-    }, 200);
+    nav.appendChild(prevBtn);
+    nav.appendChild(counter);
 
-    this._updateProgress();
-    this._onResize();
-    EventBus.emit('app:init');
-  },
-
-  _cacheDOM() {
-    this.sidebar = document.getElementById('sidebar');
-    this.sidebarOverlay = document.getElementById('sidebar-overlay');
-    this.sidebarToggle = document.getElementById('sidebar-toggle');
-    this.mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    this.sidebarSpacer = document.getElementById('sidebar-spacer');
-    this.progressFill = document.getElementById('progress-fill');
-    this.progressText = document.getElementById('progress-text');
-    this.navItems = document.querySelectorAll('.nav-item');
-  },
-
-  _bindEvents() {
-    window.addEventListener('hashchange', () => this._handleHashNavigation());
-
-    if (this.mobileMenuBtn) {
-      this.mobileMenuBtn.addEventListener('click', () => this.toggleSidebar());
-    }
-    if (this.sidebarToggle) {
-      this.sidebarToggle.addEventListener('click', () => this.toggleSidebar());
-    }
-    if (this.sidebarOverlay) {
-      this.sidebarOverlay.addEventListener('click', () => this.toggleSidebar(false));
-    }
-
-    document.querySelectorAll('.nav-item').forEach(item => {
-      item.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = item.dataset.module || item.getAttribute('href')?.replace(/.*#/, '') || '';
-        if (target && this.modules[target]) {
-          this.navigateTo(target);
-        } else if (target === 'home') {
-          this.navigateTo('home');
-        }
-      });
-    });
-
-    // Wire data-navigate click AND keyboard (Enter/Space) for pipeline steps & featured cards
-    document.querySelectorAll('[data-navigate]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = btn.dataset.navigate;
-        if (target) this.navigateTo(target);
-      });
-      btn.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          const target = btn.dataset.navigate;
-          if (target) this.navigateTo(target);
-        }
-      });
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      const keys = { ArrowRight: 1, ArrowLeft: -1 };
-      if (keys[e.key] !== undefined) {
-        e.preventDefault();
-        this._navigateByOffset(keys[e.key]);
-      }
-    });
-
-    this._resizeHandler = Utils.debounce(() => this._onResize(), 250);
-    window.addEventListener('resize', this._resizeHandler);
-
-    document.querySelectorAll('.module-section').forEach((sec, i) => {
-      const rawId = sec.id || sec.dataset.module;
-      if (!rawId) return;
-      // Normalize: "module-1" → "1", "home" → "home"
-      const key = rawId === 'home' ? 'home' : rawId.replace(/^module-/, '');
-      this.modules[key] = { index: i, element: sec, initialized: false };
-    });
-    this.totalModules = Object.keys(this.modules).length;
-
-    // Inject Prev/Next navigation into all numbered module sections
-    this._buildModuleNavigation();
-
-  },
-
-  /* ── Navigation ─────────────────────────── */
-
-  navigateTo(moduleId) {
-    // Normalize
-    const norm = (id) => String(id).replace(/^module-?/, '');
-    const normalized = norm(moduleId);
-
-    // Protect: if module doesn't exist, go home
-    const mod = this.modules[normalized];
-    if (!mod && normalized !== 'home') {
-      this.navigateTo('home');
-      return;
-    }
-
-    // Skip if already on this module AND initialized
-    if (normalized === this.currentModule && mod && mod.initialized) return;
-
-    const toSectionId = (id) => id === 'home' ? 'home' : 'module-' + norm(id);
-
-    const prevSectionId = toSectionId(this.currentModule);
-    const prev = document.getElementById(prevSectionId);
-
-    const performFadeIn = () => {
-      const targetSectionId = toSectionId(normalized);
-      const target = document.getElementById(targetSectionId);
-      if (target) {
-        target.classList.remove('hidden');
-        target.style.opacity = '0';
-        target.style.transform = 'translateY(10px)';
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            target.classList.add('active');
-            target.style.opacity = '1';
-            target.style.transform = 'translateY(0)';
-          });
-        });
-      }
-    };
-
-    if (prev) {
-      prev.style.opacity = '0';
-      prev.style.transform = 'translateY(10px)';
-      setTimeout(() => {
-        prev.classList.add('hidden');
-        prev.classList.remove('active');
-        performFadeIn();
-      }, 200);
+    if (nextId) {
+      const nextLabel = 'Module ' + (n + 1) + ' →';
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'module-nav-btn module-nav-next';
+      nextBtn.setAttribute('aria-label', 'Go to next module');
+      const nextBtnStyle = btnStyle
+        .replace('rgba(59,130,246,0.1)', 'rgba(59,130,246,0.2)')
+        .replace('color:#60a5fa', 'color:#93c5fd');
+      nextBtn.style.cssText = nextBtnStyle;
+      nextBtn.innerHTML = nextLabel;
+      nextBtn.addEventListener('click', () => NavigationController.navigate(nextId));
+      nextBtn.addEventListener('mouseover', () => { nextBtn.style.background = 'rgba(59,130,246,0.35)'; nextBtn.style.borderColor = '#93c5fd'; });
+      nextBtn.addEventListener('mouseout', () => { nextBtn.style.background = 'rgba(59,130,246,0.2)'; nextBtn.style.borderColor = 'rgba(59,130,246,0.35)'; });
+      nav.appendChild(nextBtn);
     } else {
-      performFadeIn();
+      const homeBtn = document.createElement('button');
+      homeBtn.className = 'module-nav-btn module-nav-home';
+      homeBtn.setAttribute('aria-label', 'Return to Home');
+      homeBtn.style.cssText = btnStyle
+        .replace('rgba(59,130,246,0.1)', 'rgba(16,185,129,0.15)')
+        .replace('rgba(59,130,246,0.35)', 'rgba(16,185,129,0.4)')
+        .replace('color:#60a5fa', 'color:#34d399');
+      homeBtn.innerHTML = '\u{1F3E0} Back to Home';
+      homeBtn.addEventListener('click', () => NavigationController.navigate('home'));
+      nav.appendChild(homeBtn);
     }
 
-    const targetSectionId = toSectionId(normalized);
-    this.currentModule = normalized;
-    this._navigating = true;
-    window.location.hash = targetSectionId;
-    this._navigating = false;
-    this._updateSidebarActive(normalized);
-    this._initModuleIfFirst(normalized);
-    this._recordVisit(normalized);
-    this._updateProgress();
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    EventBus.emit('module:change', normalized);
-
-    // Auto-close sidebar on mobile
-    if (Utils.isMobile()) this.toggleSidebar(false);
-  },
-
-  _handleHashNavigation() {
-    if (this._navigating) return;
-    const hash = window.location.hash.replace('#', '') || 'home';
-    let moduleId = hash;
-    if (hash.startsWith('module-')) {
-      moduleId = hash.replace('module-', '');
-    }
-    // Navigate only if the module exists in our registry
-    if (this.modules[moduleId]) {
-      this.navigateTo(moduleId);
-    } else if (hash !== 'home' && !this.modules[hash]) {
-      // Unknown hash — fallback to home
-      window.location.hash = 'home';
-    }
-  },
-
-  _navigateByOffset(offset) {
-    const ids = Object.keys(this.modules);
-    const idx = ids.indexOf(this.currentModule);
-    const next = ids[idx + offset];
-    if (next) this.navigateTo(next);
-  },
-
-  _initModuleIfFirst(moduleId) {
-    const mod = this.modules[moduleId];
-    if (mod && !mod.initialized) {
-      mod.initialized = true;
-      ModuleEngine.init(moduleId);
-      EventBus.emit('module:firstInit', moduleId);
-    }
-  },
-
-
-  _initAllModuleSections() {
-    document.querySelectorAll('.module-section').forEach(sec => {
-      sec.classList.add('hidden');
-      sec.style.opacity = '0';
-      sec.style.transform = 'translateY(10px)';
-      sec.style.transition = 'opacity .2s ease, transform .2s ease';
-    });
-    const home = document.getElementById('home');
-    if (home) {
-      home.classList.remove('hidden');
-      home.style.opacity = '1';
-      home.style.transform = 'translateY(0)';
-      home.classList.add('active');
-    }
-  },
-
-  /* ── Module Prev/Next Navigation ─────────── */
-
-  _buildModuleNavigation() {
-    const TOTAL = 18;
-    for (let n = 1; n <= TOTAL; n++) {
-      const sec = document.getElementById('module-' + n);
-      if (!sec) continue;
-
-      // Don't add if already exists
-      if (sec.querySelector('.module-nav-footer')) continue;
-
-      const prevId = n === 1 ? 'home' : String(n - 1);
-      const nextId = n === TOTAL ? null : String(n + 1);
-
-      const nav = document.createElement('div');
-      nav.className = 'module-nav-footer';
-      nav.style.cssText = [
-        'display:flex',
-        'justify-content:space-between',
-        'align-items:center',
-        'padding:1.5rem 2rem',
-        'margin-top:2rem',
-        'border-top:1px solid rgba(59,130,246,0.2)',
-        'gap:1rem'
-      ].join(';');
-
-      const btnStyle = [
-        'display:inline-flex',
-        'align-items:center',
-        'gap:8px',
-        'padding:10px 20px',
-        'border-radius:10px',
-        'font-size:14px',
-        'font-weight:600',
-        'cursor:pointer',
-        'border:1px solid rgba(59,130,246,0.35)',
-        'background:rgba(59,130,246,0.1)',
-        'color:#60a5fa',
-        'transition:all .2s ease',
-        'text-decoration:none'
-      ].join(';');
-
-      // Prev button
-      const prevLabel = n === 1 ? '← Home' : ('← Module ' + (n - 1));
-      const prevBtn = document.createElement('button');
-      prevBtn.id = 'module-' + n + '-btn-prev';
-      prevBtn.setAttribute('aria-label', n === 1 ? 'Go to Home' : 'Go to previous module');
-      prevBtn.style.cssText = btnStyle;
-      prevBtn.innerHTML = prevLabel;
-      prevBtn.addEventListener('click', () => this.navigateTo(prevId));
-      prevBtn.addEventListener('mouseover', () => { prevBtn.style.background = 'rgba(59,130,246,0.25)'; prevBtn.style.borderColor = '#60a5fa'; });
-      prevBtn.addEventListener('mouseout', () => { prevBtn.style.background = 'rgba(59,130,246,0.1)'; prevBtn.style.borderColor = 'rgba(59,130,246,0.35)'; });
-
-      // Center: module counter
-      const counter = document.createElement('span');
-      counter.style.cssText = 'font-size:12px;color:#64748b;white-space:nowrap;';
-      counter.textContent = 'Module ' + n + ' / ' + TOTAL;
-
-      nav.appendChild(prevBtn);
-      nav.appendChild(counter);
-
-      // Next button (not shown on last module)
-      if (nextId) {
-        const nextLabel = 'Module ' + (n + 1) + ' →';
-        const nextBtn = document.createElement('button');
-        nextBtn.id = 'module-' + n + '-btn-next';
-        nextBtn.setAttribute('aria-label', 'Go to next module');
-        const nextBtnStyle = btnStyle
-          .replace('rgba(59,130,246,0.1)', 'rgba(59,130,246,0.2)')
-          .replace('color:#60a5fa', 'color:#93c5fd');
-        nextBtn.style.cssText = nextBtnStyle;
-        nextBtn.innerHTML = nextLabel;
-        nextBtn.addEventListener('click', () => this.navigateTo(nextId));
-        nextBtn.addEventListener('mouseover', () => { nextBtn.style.background = 'rgba(59,130,246,0.35)'; nextBtn.style.borderColor = '#93c5fd'; });
-        nextBtn.addEventListener('mouseout', () => { nextBtn.style.background = 'rgba(59,130,246,0.2)'; nextBtn.style.borderColor = 'rgba(59,130,246,0.35)'; });
-        nav.appendChild(nextBtn);
-      } else {
-        // Last module — show 'Back to Home' instead
-        const homeBtn = document.createElement('button');
-        homeBtn.id = 'module-' + n + '-btn-home';
-        homeBtn.setAttribute('aria-label', 'Return to Home');
-        homeBtn.style.cssText = btnStyle
-          .replace('rgba(59,130,246,0.1)', 'rgba(16,185,129,0.15)')
-          .replace('rgba(59,130,246,0.35)', 'rgba(16,185,129,0.4)')
-          .replace('color:#60a5fa', 'color:#34d399');
-        homeBtn.innerHTML = '🏠 Back to Home';
-        homeBtn.addEventListener('click', () => this.navigateTo('home'));
-        nav.appendChild(homeBtn);
-      }
-
-      sec.appendChild(nav);
-    }
-  },
-  /* ── Sidebar ────────────────────────────── */
-
-  toggleSidebar(force) {
-    var isTab = Utils.isTablet();
-
-    if (isTab) {
-      // Mobile/tablet: overlay mode
-      var show = force !== undefined ? force : !this.sidebarOpen;
-      this.sidebarOpen = show;
-
-      if (this.sidebar) {
-        this.sidebar.classList.toggle('mobile-open', show);
-        // Reset any desktop collapse inline styles
-        this.sidebar.style.width = '';
-        this.sidebar.style.transform = show ? 'translateX(0)' : '';
-        this.sidebar.classList.remove('collapsed');
-      }
-
-      if (this.sidebarOverlay) {
-        if (show) {
-          this.sidebarOverlay.classList.add('active');
-        } else {
-          this.sidebarOverlay.classList.remove('active');
-        }
-      }
-
-      // Show/hide mobile menu button
-      if (this.mobileMenuBtn) {
-        this.mobileMenuBtn.style.display = show ? 'none' : 'flex';
-      }
-    } else {
-      // Desktop: collapse mode
-      var shouldCollapse = force !== undefined ? force : !this.sidebarCollapsed;
-      this.sidebarCollapsed = shouldCollapse;
-
-      if (this.sidebar) {
-        this.sidebar.style.width = shouldCollapse ? '60px' : '280px';
-        this.sidebar.style.transform = '';
-        this.sidebar.classList.toggle('collapsed', shouldCollapse);
-        this.sidebar.classList.remove('mobile-open');
-
-        this.sidebar.querySelectorAll('.nav-label').forEach(function(el) {
-          el.style.display = shouldCollapse ? 'none' : '';
-          el.style.opacity = shouldCollapse ? '0' : '1';
-          el.style.width = shouldCollapse ? '0' : '';
-          el.style.overflow = shouldCollapse ? 'hidden' : '';
-        });
-
-        this.sidebar.querySelectorAll('.nav-item').forEach(function(el) {
-          el.style.justifyContent = shouldCollapse ? 'center' : '';
-          el.style.padding = shouldCollapse ? '0.75rem' : '';
-        });
-
-        var logoText = this.sidebar.querySelector('h1.font-orbitron');
-        if (logoText) logoText.parentElement.style.display = shouldCollapse ? 'none' : '';
-      }
-
-      var spacer = document.getElementById('sidebar-spacer');
-      if (spacer) spacer.style.width = shouldCollapse ? '60px' : '280px';
-
-      var mainContent = document.getElementById('main-content');
-      if (mainContent) mainContent.style.marginLeft = shouldCollapse ? '60px' : '280px';
-
-      var toggleBtn = document.getElementById('sidebar-toggle');
-      if (toggleBtn) {
-        var svg = toggleBtn.querySelector('svg');
-        if (svg) svg.style.transform = shouldCollapse ? 'rotate(180deg)' : '';
-      }
-
-      if (this.sidebarOverlay) {
-        this.sidebarOverlay.classList.remove('active');
-      }
-    }
-  },
-
-  _updateSidebarActive(moduleId) {
-    const norm = (id) => String(id).replace(/^module-?/, '');
-    const normalizedId = norm(moduleId);
-    this.navItems.forEach(item => {
-      const raw = item.dataset.module || item.getAttribute('href')?.replace(/.*#/, '') || '';
-      const itemNorm = norm(raw);
-      item.classList.toggle('active', itemNorm === normalizedId);
-    });
-  },
-
-  /* ── Progress ───────────────────────────── */
-
-  _recordVisit(moduleId) {
-    this.visitedModules.add(moduleId);
-    try { localStorage.setItem('lab-visited', JSON.stringify([...this.visitedModules])); } catch (e) { /* noop */ }
-  },
-
-  _updateProgress() {
-    if (this.totalModules === 0) return;
-    this.progress = Math.round((this.visitedModules.size / this.totalModules) * 100);
-    if (this.progressFill) this.progressFill.style.width = `${this.progress}%`;
-    if (this.progressText) this.progressText.textContent = `${this.progress}%`;
-    try { localStorage.setItem('lab-progress', String(this.progress)); } catch (e) { /* noop */ }
-  },
-
-  _loadSavedState() {
-    try {
-      const saved = localStorage.getItem('lab-visited');
-      if (saved) this.visitedModules = new Set(JSON.parse(saved));
-    } catch (e) { /* noop */ }
-  },
-
-  /* ── Resize ─────────────────────────────── */
-
-  _onResize() {
-    var isTab = Utils.isTablet();
-    if (isTab) {
-      // On tablet/mobile: ensure sidebar is in overlay mode
-      if (this.sidebar && this.sidebarCollapsed) {
-        this.sidebarCollapsed = false;
-        this.sidebar.classList.remove('collapsed');
-        this.sidebar.style.width = '';
-        this.sidebar.style.transform = '';
-      }
-      // Reset desktop offset
-      var spacer = document.getElementById('sidebar-spacer');
-      if (spacer) spacer.style.width = '0';
-      var mainContent = document.getElementById('main-content');
-      if (mainContent) mainContent.style.marginLeft = '0';
-    } else {
-      // On desktop: ensure sidebar is not in mobile-open mode
-      if (this.sidebar) {
-        this.sidebar.classList.remove('mobile-open');
-        this.sidebarOpen = false;
-      }
-      if (this.sidebarOverlay) {
-        this.sidebarOverlay.classList.remove('active');
-      }
-      // If not collapsed, restore full width
-      if (!this.sidebarCollapsed) {
-        if (this.sidebar) this.sidebar.style.width = '280px';
-        var spacer = document.getElementById('sidebar-spacer');
-        if (spacer) spacer.style.width = '280px';
-        var mainContent = document.getElementById('main-content');
-        if (mainContent) mainContent.style.marginLeft = '280px';
-      }
-    }
-    // Show/hide mobile menu button
-    if (this.mobileMenuBtn) {
-      this.mobileMenuBtn.style.display = isTab ? 'flex' : 'none';
-    }
+    sec.appendChild(nav);
   }
-};
+}
 
 /* ─────────────────────────────────────────────
    10. Bootstrap
    ───────────────────────────────────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
-  App.init();
-  window.vrlApp = App;
+  NavigationController.init();
+  buildModuleNavigation();
+  initParticles();
+  initHero3D();
+  setTimeout(initScrollAnimations, 100);
 });
+
+// Expose for inline onclick in index.html
+window.vrlApp = {
+  navigateTo: (id) => NavigationController.navigate(id),
+  toggleSidebar: (force) => NavigationController.toggleSidebar(force)
+};
