@@ -584,16 +584,6 @@ function initScrollAnimations() {
 }
 
 /* ─────────────────────────────────────────────
-   8. Quiz System (legacy wrapper)
-   ───────────────────────────────────────────── */
-
-function initQuiz(moduleId, questions) {
-  const section = document.getElementById(moduleId) || document.querySelector(`[data-module="${moduleId}"]`);
-  if (!section) return null;
-  return Components.createQuiz(section, questions);
-}
-
-/* ─────────────────────────────────────────────
    9. Main Application
    ───────────────────────────────────────────── */
 
@@ -967,7 +957,7 @@ const App = {
       this.sidebarCollapsed = shouldCollapse;
 
       if (this.sidebar) {
-        this.sidebar.style.width = shouldCollapse ? '60px' : '288px';
+        this.sidebar.style.width = shouldCollapse ? '60px' : '280px';
         this.sidebar.style.transform = '';
         this.sidebar.classList.toggle('collapsed', shouldCollapse);
         this.sidebar.classList.remove('mobile-open');
@@ -989,10 +979,10 @@ const App = {
       }
 
       var spacer = document.getElementById('sidebar-spacer');
-      if (spacer) spacer.style.width = shouldCollapse ? '60px' : '288px';
+      if (spacer) spacer.style.width = shouldCollapse ? '60px' : '280px';
 
       var mainContent = document.getElementById('main-content');
-      if (mainContent) mainContent.style.marginLeft = shouldCollapse ? '60px' : '288px';
+      if (mainContent) mainContent.style.marginLeft = shouldCollapse ? '60px' : '280px';
 
       var toggleBtn = document.getElementById('sidebar-toggle');
       if (toggleBtn) {
@@ -1066,11 +1056,11 @@ const App = {
       }
       // If not collapsed, restore full width
       if (!this.sidebarCollapsed) {
-        if (this.sidebar) this.sidebar.style.width = '288px';
+        if (this.sidebar) this.sidebar.style.width = '280px';
         var spacer = document.getElementById('sidebar-spacer');
-        if (spacer) spacer.style.width = '288px';
+        if (spacer) spacer.style.width = '280px';
         var mainContent = document.getElementById('main-content');
-        if (mainContent) mainContent.style.marginLeft = '288px';
+        if (mainContent) mainContent.style.marginLeft = '280px';
       }
     }
     // Show/hide mobile menu button

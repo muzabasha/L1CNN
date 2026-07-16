@@ -1176,11 +1176,13 @@ ModuleEngine.register('9', {
             status.textContent = 'Training in progress...';
 
             let progress = 0;
-            const interval = setInterval(() => {
+            if (this._trainInterval) clearInterval(this._trainInterval);
+            this._trainInterval = setInterval(() => {
                 progress += Math.random() * 25 + 10;
                 if (progress >= 100) {
                     progress = 100;
-                    clearInterval(interval);
+                    clearInterval(this._trainInterval);
+                    this._trainInterval = null;
                     bar.style.width = '100%';
                     status.textContent = 'Training complete!';
                     trainModel();
@@ -1293,5 +1295,6 @@ print(classification_report(labels, y_pred,
     },
 
     destroy() {
+      if (this._trainInterval) clearInterval(this._trainInterval);
     }
 });

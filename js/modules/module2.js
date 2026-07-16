@@ -21,6 +21,7 @@
     destroy: function () {
       if (_animId) cancelAnimationFrame(_animId);
       if (_simId) cancelAnimationFrame(_simId);
+      if (_resizeHandler) window.removeEventListener('resize', _resizeHandler);
     }
   });
 
@@ -69,7 +70,8 @@
       H = canvas.height = 440;
     }
     resize();
-    window.addEventListener('resize', resize);
+    var _resizeHandler = resize;
+    window.addEventListener('resize', _resizeHandler);
 
     var ctrl = document.getElementById('ct-anim-controls');
     if (ctrl) {

@@ -21,6 +21,7 @@
     destroy: function () {
       if (_animId) cancelAnimationFrame(_animId);
       if (_simId) cancelAnimationFrame(_simId);
+      if (_resizeHandler) window.removeEventListener('resize', _resizeHandler);
     }
   });
 
@@ -100,7 +101,8 @@
       H = canvas.height = 280;
     }
     resize();
-    window.addEventListener('resize', resize);
+    var _resizeHandler = resize;
+    window.addEventListener('resize', _resizeHandler);
 
     /* phase click */
     var cards = wrapper.querySelectorAll('.phase-card');

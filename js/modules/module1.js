@@ -23,7 +23,11 @@
       buildQuiz();
       buildReflection();
     },
-    destroy: _cancel
+    destroy: function () {
+      _cancel();
+      if (_resizeHandler) window.removeEventListener('resize', _resizeHandler);
+      if (_resizeCTHandler) window.removeEventListener('resize', _resizeCTHandler);
+    }
   });
 
   /* ═══════════════════════════════════════════
@@ -81,7 +85,8 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     resize();
-    window.addEventListener('resize', resize);
+    var _resizeHandler = resize;
+    window.addEventListener('resize', _resizeHandler);
 
     cv.addEventListener('mousemove', function (e) { var r = cv.getBoundingClientRect(); mouseX = e.clientX - r.left; mouseY = e.clientY - r.top; });
     cv.addEventListener('mouseleave', function () { mouseX = -999; mouseY = -999; });
@@ -410,7 +415,8 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     resizeCT();
-    window.addEventListener('resize', resizeCT);
+    var _resizeCTHandler = resizeCT;
+    window.addEventListener('resize', _resizeCTHandler);
 
     function drawCT() {
       var w = cv.width / dpr, h = cv.height / dpr;

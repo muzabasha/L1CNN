@@ -77,7 +77,7 @@ ModuleEngine.register('18', {
               <div class="step-header">
                 <span class="step-number">1</span>
                 <h4>Data Generation</h4>
-                <button class="btn btn-run" onclick="ModuleEngine._modules['module18'].runStep(1)">Run</button>
+                <button class="btn btn-run" data-step="1">Run</button>
                 <span class="step-status" id="step1-status">Pending</span>
               </div>
               <div class="step-content" id="step1-content" style="display:none;">
@@ -91,7 +91,7 @@ ModuleEngine.register('18', {
               <div class="step-header">
                 <span class="step-number">2</span>
                 <h4>Preprocessing</h4>
-                <button class="btn btn-run" onclick="ModuleEngine._modules['module18'].runStep(2)" disabled>Run</button>
+                <button class="btn btn-run" data-step="2" disabled>Run</button>
                 <span class="step-status" id="step2-status">Pending</span>
               </div>
               <div class="step-content" id="step2-content" style="display:none;">
@@ -105,7 +105,7 @@ ModuleEngine.register('18', {
               <div class="step-header">
                 <span class="step-number">3</span>
                 <h4>Segmentation</h4>
-                <button class="btn btn-run" onclick="ModuleEngine._modules['module18'].runStep(3)" disabled>Run</button>
+                <button class="btn btn-run" data-step="3" disabled>Run</button>
                 <span class="step-status" id="step3-status">Pending</span>
               </div>
               <div class="step-content" id="step3-content" style="display:none;">
@@ -119,7 +119,7 @@ ModuleEngine.register('18', {
               <div class="step-header">
                 <span class="step-number">4</span>
                 <h4>Radiomics Extraction</h4>
-                <button class="btn btn-run" onclick="ModuleEngine._modules['module18'].runStep(4)" disabled>Run</button>
+                <button class="btn btn-run" data-step="4" disabled>Run</button>
                 <span class="step-status" id="step4-status">Pending</span>
               </div>
               <div class="step-content" id="step4-content" style="display:none;">
@@ -133,7 +133,7 @@ ModuleEngine.register('18', {
               <div class="step-header">
                 <span class="step-number">5</span>
                 <h4>CNN Feature Extraction</h4>
-                <button class="btn btn-run" onclick="ModuleEngine._modules['module18'].runStep(5)" disabled>Run</button>
+                <button class="btn btn-run" data-step="5" disabled>Run</button>
                 <span class="step-status" id="step5-status">Pending</span>
               </div>
               <div class="step-content" id="step5-content" style="display:none;">
@@ -147,7 +147,7 @@ ModuleEngine.register('18', {
               <div class="step-header">
                 <span class="step-number">6</span>
                 <h4>Feature Fusion</h4>
-                <button class="btn btn-run" onclick="ModuleEngine._modules['module18'].runStep(6)" disabled>Run</button>
+                <button class="btn btn-run" data-step="6" disabled>Run</button>
                 <span class="step-status" id="step6-status">Pending</span>
               </div>
               <div class="step-content" id="step6-content" style="display:none;">
@@ -161,7 +161,7 @@ ModuleEngine.register('18', {
               <div class="step-header">
                 <span class="step-number">7</span>
                 <h4>Classification</h4>
-                <button class="btn btn-run" onclick="ModuleEngine._modules['module18'].runStep(7)" disabled>Run</button>
+                <button class="btn btn-run" data-step="7" disabled>Run</button>
                 <span class="step-status" id="step7-status">Pending</span>
               </div>
               <div class="step-content" id="step7-content" style="display:none;">
@@ -175,7 +175,7 @@ ModuleEngine.register('18', {
               <div class="step-header">
                 <span class="step-number">8</span>
                 <h4>Explainability</h4>
-                <button class="btn btn-run" onclick="ModuleEngine._modules['module18'].runStep(8)" disabled>Run</button>
+                <button class="btn btn-run" data-step="8" disabled>Run</button>
                 <span class="step-status" id="step8-status">Pending</span>
               </div>
               <div class="step-content" id="step8-content" style="display:none;">
@@ -189,7 +189,7 @@ ModuleEngine.register('18', {
               <div class="step-header">
                 <span class="step-number">9</span>
                 <h4>Evaluation</h4>
-                <button class="btn btn-run" onclick="ModuleEngine._modules['module18'].runStep(9)" disabled>Run</button>
+                <button class="btn btn-run" data-step="9" disabled>Run</button>
                 <span class="step-status" id="step9-status">Pending</span>
               </div>
               <div class="step-content" id="step9-content" style="display:none;">
@@ -203,7 +203,7 @@ ModuleEngine.register('18', {
               <div class="step-header">
                 <span class="step-number">10</span>
                 <h4>Research Report</h4>
-                <button class="btn btn-run" onclick="ModuleEngine._modules['module18'].runStep(10)" disabled>Run</button>
+                <button class="btn btn-run" data-step="10" disabled>Run</button>
                 <span class="step-status" id="step10-status">Pending</span>
               </div>
               <div class="step-content" id="step10-content" style="display:none;">
@@ -214,7 +214,7 @@ ModuleEngine.register('18', {
             </div>
           </div>
           <div id="run-all-container">
-            <button id="run-all-btn" class="btn btn-primary btn-lg" onclick="ModuleEngine._modules['module18'].runAllSteps()">Run Complete Pipeline</button>
+            <button id="run-all-btn" class="btn btn-primary btn-lg">Run Complete Pipeline</button>
           </div>
         </section>
 
@@ -279,6 +279,12 @@ ModuleEngine.register('18', {
     this.currentStep = 0;
     this.initPipelineAnimation();
     this.initQuiz();
+    document.querySelectorAll('#pipeline-steps .btn-run').forEach(function(btn) {
+      var step = parseInt(btn.getAttribute('data-step'));
+      if (step) btn.addEventListener('click', function() { ModuleEngine._modules['18'].runStep(step); });
+    });
+    var runAllBtn = document.getElementById('run-all-btn');
+    if (runAllBtn) runAllBtn.addEventListener('click', function() { ModuleEngine._modules['18'].runAllSteps(); });
   },
 
   initPipelineAnimation() {
@@ -903,7 +909,7 @@ ModuleEngine.register('18', {
       }
       this.runStep(step);
       step++;
-      setTimeout(runNext, 800);
+      this._runTimer = setTimeout(runNext, 800);
     };
     runNext();
   },
@@ -960,6 +966,7 @@ ModuleEngine.register('18', {
   destroy() {
     this.pipelineData = {};
     this.currentStep = 0;
+    if (this._runTimer) { clearTimeout(this._runTimer); this._runTimer = null; }
     document.querySelectorAll('.step-content').forEach(el => { el.style.display = 'none'; });
   }
 });
