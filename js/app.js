@@ -660,17 +660,28 @@ const App = {
     document.querySelectorAll('.nav-item').forEach(item => {
       item.addEventListener('click', (e) => {
         e.preventDefault();
-        const target = item.dataset.module || item.getAttribute('href')?.replace('#', '');
-        if (target) this.navigateTo(target);
-        if (Utils.isMobile()) this.toggleSidebar(false);
+        const target = item.dataset.module || item.getAttribute('href')?.replace(/.*#/, '') || '';
+        if (target && this.modules[target]) {
+          this.navigateTo(target);
+        } else if (target === 'home') {
+          this.navigateTo('home');
+        }
       });
     });
 
+    // Wire data-navigate click AND keyboard (Enter/Space) for pipeline steps & featured cards
     document.querySelectorAll('[data-navigate]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const target = btn.dataset.navigate;
         if (target) this.navigateTo(target);
+      });
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const target = btn.dataset.navigate;
+          if (target) this.navigateTo(target);
+        }
       });
     });
 
@@ -695,23 +706,35 @@ const App = {
     });
     this.totalModules = Object.keys(this.modules).length;
 
+    // Inject Prev/Next navigation into all numbered module sections
+    this._buildModuleNavigation();
+
   },
 
   /* ── Navigation ─────────────────────────── */
 
   navigateTo(moduleId) {
-    // Skip only if already on this module AND it has been initialized
-    const mod = this.modules[moduleId];
-    if (moduleId === this.currentModule && mod && mod.initialized) return;
+    // Normalize
+    const norm = (id) => String(id).replace(/^module-?/, '');
+    const normalized = norm(moduleId);
 
-    const normalizeId = (id) => String(id).replace(/^module-?/, '');
-    const toSectionId = (id) => id === 'home' ? 'home' : 'module-' + normalizeId(id);
+    // Protect: if module doesn't exist, go home
+    const mod = this.modules[normalized];
+    if (!mod && normalized !== 'home') {
+      this.navigateTo('home');
+      return;
+    }
+
+    // Skip if already on this module AND initialized
+    if (normalized === this.currentModule && mod && mod.initialized) return;
+
+    const toSectionId = (id) => id === 'home' ? 'home' : 'module-' + norm(id);
 
     const prevSectionId = toSectionId(this.currentModule);
     const prev = document.getElementById(prevSectionId);
 
     const performFadeIn = () => {
-      const targetSectionId = toSectionId(moduleId);
+      const targetSectionId = toSectionId(normalized);
       const target = document.getElementById(targetSectionId);
       if (target) {
         target.classList.remove('hidden');
@@ -739,18 +762,21 @@ const App = {
       performFadeIn();
     }
 
-    const targetSectionId = toSectionId(moduleId);
-    this.currentModule = moduleId;
+    const targetSectionId = toSectionId(normalized);
+    this.currentModule = normalized;
     this._navigating = true;
     window.location.hash = targetSectionId;
     this._navigating = false;
-    this._updateSidebarActive(moduleId);
-    this._initModuleIfFirst(moduleId);
-    this._recordVisit(moduleId);
+    this._updateSidebarActive(normalized);
+    this._initModuleIfFirst(normalized);
+    this._recordVisit(normalized);
     this._updateProgress();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    EventBus.emit('module:change', moduleId);
+    EventBus.emit('module:change', normalized);
+
+    // Auto-close sidebar on mobile
+    if (Utils.isMobile()) this.toggleSidebar(false);
   },
 
   _handleHashNavigation() {
@@ -760,8 +786,12 @@ const App = {
     if (hash.startsWith('module-')) {
       moduleId = hash.replace('module-', '');
     }
-    if (this.modules[moduleId] || this.modules[hash] || hash === 'home' || moduleId !== hash) {
+    // Navigate only if the module exists in our registry
+    if (this.modules[moduleId]) {
       this.navigateTo(moduleId);
+    } else if (hash !== 'home' && !this.modules[hash]) {
+      // Unknown hash — fallback to home
+      window.location.hash = 'home';
     }
   },
 
@@ -798,6 +828,99 @@ const App = {
     }
   },
 
+  /* ── Module Prev/Next Navigation ─────────── */
+
+  _buildModuleNavigation() {
+    const TOTAL = 18;
+    for (let n = 1; n <= TOTAL; n++) {
+      const sec = document.getElementById('module-' + n);
+      if (!sec) continue;
+
+      // Don't add if already exists
+      if (sec.querySelector('.module-nav-footer')) continue;
+
+      const prevId = n === 1 ? 'home' : String(n - 1);
+      const nextId = n === TOTAL ? null : String(n + 1);
+
+      const nav = document.createElement('div');
+      nav.className = 'module-nav-footer';
+      nav.style.cssText = [
+        'display:flex',
+        'justify-content:space-between',
+        'align-items:center',
+        'padding:1.5rem 2rem',
+        'margin-top:2rem',
+        'border-top:1px solid rgba(59,130,246,0.2)',
+        'gap:1rem'
+      ].join(';');
+
+      const btnStyle = [
+        'display:inline-flex',
+        'align-items:center',
+        'gap:8px',
+        'padding:10px 20px',
+        'border-radius:10px',
+        'font-size:14px',
+        'font-weight:600',
+        'cursor:pointer',
+        'border:1px solid rgba(59,130,246,0.35)',
+        'background:rgba(59,130,246,0.1)',
+        'color:#60a5fa',
+        'transition:all .2s ease',
+        'text-decoration:none'
+      ].join(';');
+
+      // Prev button
+      const prevLabel = n === 1 ? '← Home' : ('← Module ' + (n - 1));
+      const prevBtn = document.createElement('button');
+      prevBtn.id = 'module-' + n + '-btn-prev';
+      prevBtn.setAttribute('aria-label', n === 1 ? 'Go to Home' : 'Go to previous module');
+      prevBtn.style.cssText = btnStyle;
+      prevBtn.innerHTML = prevLabel;
+      prevBtn.addEventListener('click', () => this.navigateTo(prevId));
+      prevBtn.addEventListener('mouseover', () => { prevBtn.style.background = 'rgba(59,130,246,0.25)'; prevBtn.style.borderColor = '#60a5fa'; });
+      prevBtn.addEventListener('mouseout', () => { prevBtn.style.background = 'rgba(59,130,246,0.1)'; prevBtn.style.borderColor = 'rgba(59,130,246,0.35)'; });
+
+      // Center: module counter
+      const counter = document.createElement('span');
+      counter.style.cssText = 'font-size:12px;color:#64748b;white-space:nowrap;';
+      counter.textContent = 'Module ' + n + ' / ' + TOTAL;
+
+      nav.appendChild(prevBtn);
+      nav.appendChild(counter);
+
+      // Next button (not shown on last module)
+      if (nextId) {
+        const nextLabel = 'Module ' + (n + 1) + ' →';
+        const nextBtn = document.createElement('button');
+        nextBtn.id = 'module-' + n + '-btn-next';
+        nextBtn.setAttribute('aria-label', 'Go to next module');
+        const nextBtnStyle = btnStyle
+          .replace('rgba(59,130,246,0.1)', 'rgba(59,130,246,0.2)')
+          .replace('color:#60a5fa', 'color:#93c5fd');
+        nextBtn.style.cssText = nextBtnStyle;
+        nextBtn.innerHTML = nextLabel;
+        nextBtn.addEventListener('click', () => this.navigateTo(nextId));
+        nextBtn.addEventListener('mouseover', () => { nextBtn.style.background = 'rgba(59,130,246,0.35)'; nextBtn.style.borderColor = '#93c5fd'; });
+        nextBtn.addEventListener('mouseout', () => { nextBtn.style.background = 'rgba(59,130,246,0.2)'; nextBtn.style.borderColor = 'rgba(59,130,246,0.35)'; });
+        nav.appendChild(nextBtn);
+      } else {
+        // Last module — show 'Back to Home' instead
+        const homeBtn = document.createElement('button');
+        homeBtn.id = 'module-' + n + '-btn-home';
+        homeBtn.setAttribute('aria-label', 'Return to Home');
+        homeBtn.style.cssText = btnStyle
+          .replace('rgba(59,130,246,0.1)', 'rgba(16,185,129,0.15)')
+          .replace('rgba(59,130,246,0.35)', 'rgba(16,185,129,0.4)')
+          .replace('color:#60a5fa', 'color:#34d399');
+        homeBtn.innerHTML = '🏠 Back to Home';
+        homeBtn.addEventListener('click', () => this.navigateTo('home'));
+        nav.appendChild(homeBtn);
+      }
+
+      sec.appendChild(nav);
+    }
+  },
   /* ── Sidebar ────────────────────────────── */
 
   toggleSidebar(force) {
@@ -874,11 +997,12 @@ const App = {
   },
 
   _updateSidebarActive(moduleId) {
-    const normalizedId = String(moduleId).replace(/^module-?/, '');
+    const norm = (id) => String(id).replace(/^module-?/, '');
+    const normalizedId = norm(moduleId);
     this.navItems.forEach(item => {
-      const mod = item.dataset.module || item.getAttribute('href')?.replace('#', '');
-      const itemNormalized = String(mod).replace(/^module-?/, '');
-      item.classList.toggle('active', itemNormalized === normalizedId || mod === moduleId);
+      const raw = item.dataset.module || item.getAttribute('href')?.replace(/.*#/, '') || '';
+      const itemNorm = norm(raw);
+      item.classList.toggle('active', itemNorm === normalizedId);
     });
   },
 
