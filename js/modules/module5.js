@@ -1,7 +1,7 @@
 ModuleEngine.register('5', {
   init(container) {
     container.innerHTML = `
-      <div class="module-section" id="module5-content">
+      <div class="module-content" id="module5-content">
         <h2 class="module-title">Module 5: Synthetic Dataset Generator</h2>
         <p class="module-subtitle">Creating Realistic Training Data for Deep Learning</p>
 

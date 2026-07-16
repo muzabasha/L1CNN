@@ -702,30 +702,37 @@ const App = {
 
     const prevSectionId = toSectionId(this.currentModule);
     const prev = document.getElementById(prevSectionId);
+
+    const performFadeIn = () => {
+      const targetSectionId = toSectionId(moduleId);
+      const target = document.getElementById(targetSectionId);
+      if (target) {
+        target.classList.remove('hidden');
+        target.style.opacity = '0';
+        target.style.transform = 'translateY(10px)';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            target.classList.add('active');
+            target.style.opacity = '1';
+            target.style.transform = 'translateY(0)';
+          });
+        });
+      }
+    };
+
     if (prev) {
       prev.style.opacity = '0';
       prev.style.transform = 'translateY(10px)';
       setTimeout(() => {
         prev.classList.add('hidden');
         prev.classList.remove('active');
+        performFadeIn();
       }, 300);
+    } else {
+      performFadeIn();
     }
 
     const targetSectionId = toSectionId(moduleId);
-    const target = document.getElementById(targetSectionId);
-    if (target) {
-      target.classList.remove('hidden');
-      target.style.opacity = '0';
-      target.style.transform = 'translateY(10px)';
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          target.classList.add('active');
-          target.style.opacity = '1';
-          target.style.transform = 'translateY(0)';
-        });
-      });
-    }
-
     this.currentModule = moduleId;
     window.location.hash = targetSectionId;
     this._updateSidebarActive(moduleId);

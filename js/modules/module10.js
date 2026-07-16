@@ -26,12 +26,12 @@ ModuleEngine.register('10', {
     page.appendChild(header);
 
     const objectives = document.createElement('div');
-    objectives.className = 'module-section objectives';
+    objectives.className = 'module-card objectives';
     objectives.innerHTML = '<h2>Learning Objectives</h2><ul><li>Understand why multiphase CT requires phase-aware processing</li><li>Learn the three-branch CNN architecture design</li><li>Understand attention-based feature fusion</li><li>Explore residual connections and their benefits</li><li>Compare phase-aware vs standard 3D CNN approaches</li></ul>';
     page.appendChild(objectives);
 
     const archSection = document.createElement('div');
-    archSection.className = 'module-section';
+    archSection.className = 'module-card';
     archSection.innerHTML = '<h2>Interactive Architecture Explorer</h2>';
     page.appendChild(archSection);
 
@@ -483,7 +483,7 @@ ModuleEngine.register('10', {
     draw();
 
     const theorySection = document.createElement('div');
-    theorySection.className = 'module-section';
+    theorySection.className = 'module-card';
     theorySection.innerHTML = '<h2>Theory: Phase-aware Architecture Design</h2>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">' +
       '<div class="theory-card"><h3>Why Phase-Aware Processing?</h3><p>Standard 3D CNNs treat all contrast phases equally, losing critical phase-specific diagnostic information. Hepatocellular carcinoma (HCC) exhibits characteristic <strong>arterial enhancement</strong> and <strong>washout</strong> patterns across phases that are essential for LI-RADS classification.</p><p>A phase-aware architecture processes each contrast phase through dedicated feature extractors, preserving and learning phase-specific discriminative patterns before fusing them.</p></div>' +
@@ -494,7 +494,7 @@ ModuleEngine.register('10', {
     page.appendChild(theorySection);
 
     const mathSection = document.createElement('div');
-    mathSection.className = 'module-section';
+    mathSection.className = 'module-card';
     mathSection.innerHTML = '<h2>Mathematical Formulations</h2>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">' +
       '<div class="theory-card" style="font-family:monospace"><h3>3D Convolution</h3><p>(f ∗ x)(t, i, j) = Σ<sub>k</sub> Σ<sub>l</sub> Σ<sub>m</sub> f(k, l, m) · x(t+k, i+l, j+m)</p><p style="font-size:11px;color:#8b949e">Output at position (t,i,j) is the weighted sum of the input volume overlapped by the 3D kernel.</p></div>' +
@@ -505,7 +505,7 @@ ModuleEngine.register('10', {
     page.appendChild(mathSection);
 
     const noveltySection = document.createElement('div');
-    noveltySection.className = 'module-section';
+    noveltySection.className = 'module-card';
     noveltySection.innerHTML = '<h2>Research Novelty</h2>' +
       '<div class="theory-card"><h3>Comparison with Existing Approaches</h3>' +
       '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="border-bottom:2px solid #30363d"><th style="text-align:left;padding:8px;color:#58a6ff">Approach</th><th style="text-align:left;padding:8px;color:#58a6ff">Phase Info</th><th style="text-align:left;padding:8px;color:#58a6ff">Inter-phase Fusion</th><th style="text-align:left;padding:8px;color:#58a6ff">Adaptive Weighting</th><th style="text-align:left;padding:8px;color:#58a6ff">Residual</th></tr></thead><tbody>' +
@@ -517,7 +517,7 @@ ModuleEngine.register('10', {
     page.appendChild(noveltySection);
 
     const codeSection = document.createElement('div');
-    codeSection.className = 'module-section';
+    codeSection.className = 'module-card';
     codeSection.innerHTML = '<h2>Implementation Code</h2>';
     Components.createCodeBlock(codeSection, `import torch
 import torch.nn as nn
@@ -604,7 +604,7 @@ print(f"Attention weights: {attn}")
     page.appendChild(codeSection);
 
     const quizSection = document.createElement('div');
-    quizSection.className = 'module-section';
+    quizSection.className = 'module-card';
     quizSection.innerHTML = '<h2>Knowledge Check</h2>';
     Components.createQuiz(quizSection, [
       { q: 'Why does the Phase-aware 3D CNN use separate branches for each contrast phase instead of concatenating all phases into a single input?', options: ['To reduce computational cost', 'To preserve phase-specific feature representations before fusion', 'To use different architectures for each phase', 'To enable parallel training on multiple GPUs'], correct: 1, explanation: 'Separary branches allow each phase to be processed by dedicated filters that learn phase-specific patterns (e.g., arterial enhancement, portal washout). This preserves phase-specific information that would be lost if all phases were naively concatenated into a single input volume.' },
@@ -615,7 +615,7 @@ print(f"Attention weights: {attn}")
     page.appendChild(quizSection);
 
     const reflectionSection = document.createElement('div');
-    reflectionSection.className = 'module-section reflection';
+    reflectionSection.className = 'module-card reflection';
     reflectionSection.innerHTML = '<h2>Reflection: Research Contribution</h2>' +
       '<div class="theory-card"><h3>Novelty of the Approach</h3><p>This phase-aware 3D CNN represents a <strong>novel contribution</strong> to medical image analysis by:</p><ul><li><strong>Clinical grounding</strong>: The architecture mirrors how radiologists systematically evaluate multiphase CT, processing each phase before integrating findings</li><li><strong>Adaptive fusion</strong>: Cross-attention dynamically weights phase contributions, unlike fixed concatenation approaches</li><li><strong>End-to-end learning</strong>: Joint optimization of phase-specific features and fusion strategy</li><li><strong>Interpretable attention maps</strong>: The learned attention weights provide clinical insights into which phases are most diagnostic</li></ul></div>' +
       '<div class="theory-card"><h3>Comparison with Single-Phase Methods</h3><p>Single-phase approaches discard 2/3 of the available diagnostic information. Studies show that LI-RADS classification requires evaluation across all contrast phases to distinguish between LR-4 (probable HCC) and LR-5 (definite HCC), as the characteristic enhancement-washout pattern is inherently a multi-phase phenomenon.</p></div>' +

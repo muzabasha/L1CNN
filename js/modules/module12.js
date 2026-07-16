@@ -24,12 +24,12 @@ ModuleEngine.register('12', {
     page.appendChild(header);
 
     const objectives = document.createElement('div');
-    objectives.className = 'module-section objectives';
+    objectives.className = 'module-card objectives';
     objectives.innerHTML = '<h2>Learning Objectives</h2><ul><li>Understand why combining CNN and radiomics features improves performance</li><li>Learn different fusion strategies (early, intermediate, late)</li><li>Understand feature normalization and selection</li><li>Explore the feature-level fusion pipeline</li><li>Compare fusion approaches quantitatively</li></ul>';
     page.appendChild(objectives);
 
     const pipelineSection = document.createElement('div');
-    pipelineSection.className = 'module-section';
+    pipelineSection.className = 'module-card';
     pipelineSection.innerHTML = '<h2>Interactive Fusion Pipeline</h2>';
     page.appendChild(pipelineSection);
 
@@ -444,7 +444,7 @@ ModuleEngine.register('12', {
     drawPipeline();
 
     const theorySection = document.createElement('div');
-    theorySection.className = 'module-section';
+    theorySection.className = 'module-card';
     theorySection.innerHTML = '<h2>Theory: Feature Fusion for Medical Image Analysis</h2>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">' +
       '<div class="theory-card"><h3>Why Fusion?</h3><p>CNN features and radiomics features capture <strong>complementary information</strong>:</p><ul><li><strong>CNN features</strong>: Automatically learned discriminative representations capturing spatial hierarchies, contextual relationships, and complex non-linear patterns</li><li><strong>Radiomics features</strong>: Hand-crafted quantitative measurements of texture (GLCM, GLRLM), shape, intensity distribution, and wavelet transforms</li></ul><p>Fusion combines the representation power of deep learning with the clinical interpretability of radiomics.</p></div>' +
@@ -455,7 +455,7 @@ ModuleEngine.register('12', {
     page.appendChild(theorySection);
 
     const comparisonChart = document.createElement('div');
-    comparisonChart.className = 'module-section';
+    comparisonChart.className = 'module-card';
     comparisonChart.innerHTML = '<h2>Fusion Approach Comparison</h2>';
     Components.createChart(comparisonChart, 'bar', {
       labels: ['CNN Only', 'Radiomics Only', 'Early Fusion', 'Intermediate Fusion', 'Late Fusion', 'Attention Fusion'],
@@ -473,7 +473,7 @@ ModuleEngine.register('12', {
     page.appendChild(comparisonChart);
 
     const featureImportanceSection = document.createElement('div');
-    featureImportanceSection.className = 'module-section';
+    featureImportanceSection.className = 'module-card';
     featureImportanceSection.innerHTML = '<h2>Top Feature Importance After Fusion</h2>';
     Components.createChart(featureImportanceSection, 'doughnut', {
       labels: ['CNN Spatial', 'CNN Texture', 'CNN Context', 'GLCM Texture', 'GLRLM Texture', 'Shape Features', 'Intensity Stats', 'Wavelet Features'],
@@ -487,7 +487,7 @@ ModuleEngine.register('12', {
     page.appendChild(featureImportanceSection);
 
     const codeSection = document.createElement('div');
-    codeSection.className = 'module-section';
+    codeSection.className = 'module-card';
     codeSection.innerHTML = '<h2>Implementation: CNN + Radiomics Fusion Model</h2>';
     Components.createCodeBlock(codeSection, `import torch
 import torch.nn as nn
@@ -628,7 +628,7 @@ def select_topk_features(X, y, k=20):
     page.appendChild(codeSection);
 
     const quizSection = document.createElement('div');
-    quizSection.className = 'module-section';
+    quizSection.className = 'module-card';
     quizSection.innerHTML = '<h2>Knowledge Check</h2>';
     Components.createQuiz(quizSection, [
       { q: 'Why is feature-level fusion often preferred over late fusion for combining CNN and radiomics features?', options: ['Late fusion requires more computational resources', 'Feature-level fusion allows the model to learn cross-feature interactions between CNN and radiomics representations', 'Late fusion cannot handle different feature dimensions', 'Feature-level fusion always uses fewer parameters'], correct: 1, explanation: 'Feature-level fusion concatenates or merges feature vectors before classification, allowing the model to learn complex interactions between CNN and radiomics features. Late fusion only combines final predictions, missing opportunities to leverage complementary information at the feature level.' },
@@ -639,7 +639,7 @@ def select_topk_features(X, y, k=20):
     page.appendChild(quizSection);
 
     const reflectionSection = document.createElement('div');
-    reflectionSection.className = 'module-section reflection';
+    reflectionSection.className = 'module-card reflection';
     reflectionSection.innerHTML = '<h2>Reflection: Complementarity of Features</h2>' +
       '<div class="theory-card"><h3>The Best of Both Worlds</h3><p>Fusion combines the strengths of two paradigms:</p><ul><li><strong>Deep learning power</strong>: CNN automatically discovers discriminative features that may not be apparent to human observers, capturing subtle patterns in high-dimensional data</li><li><strong>Clinical interpretability</strong>: Radiomics features have established clinical meaning — texture heterogeneity correlates with tumor aggressiveness, shape irregularity suggests malignancy</li></ul><p>This combination achieves higher accuracy than either approach alone while maintaining a degree of clinical interpretability.</p></div>' +
       '<div class="theory-card"><h3>Clinical Interpretability</h3><p>Radiomics features provide a bridge between AI predictions and clinical reasoning:</p><ul><li>GLCM texture features relate to tissue heterogeneity (malignant tumors tend to be more heterogeneous)</li><li>Shape features correlate with tumor aggressiveness (irregular margins suggest invasion)</li><li>Intensity statistics capture enhancement patterns (key to LI-RADS classification)</li></ul><p>When radiomics features drive the classification, clinicians can understand and validate the reasoning process.</p></div>' +

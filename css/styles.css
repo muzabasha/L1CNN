@@ -4373,3 +4373,264 @@ iframe {
   border-color: var(--danger);
   color: var(--danger);
 }
+
+/* ==========================================================================
+   12. Refactored Panel Card & Grid Styles (Unified Layout)
+   ========================================================================== */
+
+.objectives-panel,
+.animation-panel,
+.theory-panel,
+.simulation-panel,
+.code-panel,
+.quiz-panel,
+.reflection-panel,
+.feature-highlights-panel,
+.features-panel,
+.results-panel,
+.compare-section,
+.results-section,
+.algo-card,
+.theory-card,
+.method-card,
+.concept-card,
+.nnunet-card,
+.m13-card,
+.m14-card,
+.m15-card,
+.m1-risk-card,
+.phase-card {
+  background: var(--bg-glass);
+  backdrop-filter: var(--glass-blur-xl);
+  -webkit-backdrop-filter: var(--glass-blur-xl);
+  border: 1px solid var(--border-glass);
+  border-radius: 1.5rem;
+  padding: var(--card-padding);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.objectives-panel::before,
+.animation-panel::before,
+.theory-panel::before,
+.simulation-panel::before,
+.code-panel::before,
+.quiz-panel::before,
+.reflection-panel::before,
+.feature-highlights-panel::before,
+.features-panel::before,
+.results-panel::before,
+.compare-section::before,
+.results-section::before,
+.algo-card::before,
+.theory-card::before,
+.method-card::before,
+.concept-card::before,
+.nnunet-card::before,
+.m13-card::before,
+.m14-card::before,
+.m15-card::before,
+.m1-risk-card::before,
+.phase-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.objectives-panel:hover,
+.animation-panel:hover,
+.theory-panel:hover,
+.simulation-panel:hover,
+.code-panel:hover,
+.quiz-panel:hover,
+.reflection-panel:hover,
+.feature-highlights-panel:hover,
+.features-panel:hover,
+.results-panel:hover,
+.compare-section:hover,
+.results-section:hover,
+.algo-card:hover,
+.theory-card:hover,
+.method-card:hover,
+.concept-card:hover,
+.nnunet-card:hover,
+.m13-card:hover,
+.m14-card:hover,
+.m15-card:hover,
+.m1-risk-card:hover,
+.phase-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.3),
+    0 0 20px var(--primary-glow);
+}
+
+.objectives-panel:hover::before,
+.animation-panel:hover::before,
+.theory-panel:hover::before,
+.simulation-panel:hover::before,
+.code-panel:hover::before,
+.quiz-panel:hover::before,
+.reflection-panel:hover::before,
+.feature-highlights-panel:hover::before,
+.features-panel:hover::before,
+.results-panel:hover::before,
+.compare-section:hover::before,
+.results-section:hover::before,
+.algo-card:hover::before,
+.theory-card:hover::before,
+.method-card:hover::before,
+.concept-card:hover::before,
+.nnunet-card:hover::before,
+.m13-card:hover::before,
+.m14-card:hover::before,
+.m15-card:hover::before,
+.m1-risk-card:hover::before,
+.phase-card:hover::before {
+  opacity: 1;
+}
+
+.objectives-panel h3,
+.animation-panel h3,
+.theory-panel h3,
+.simulation-panel h3,
+.code-panel h3,
+.quiz-panel h3,
+.reflection-panel h3,
+.feature-highlights-panel h3,
+.features-panel h3,
+.results-panel h3,
+.theory-card h3,
+.concept-card h3,
+.nnunet-card h3,
+.m13-card h3,
+.m14-card h3,
+.m15-card h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 0.5rem;
+}
+
+.two-column,
+.algo-grid,
+.chart-grid,
+.results-grid,
+.method-grid,
+.feature-cards-grid,
+.concept-grid,
+.eval-grid,
+.m14-compare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.m13-root, .m14-root, .m15-root {
+  font-family: inherit !important;
+  background: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+/* Comparison Race Styles */
+.race-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+.race-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.race-label {
+  width: 180px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.race-track {
+  flex: 1;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.race-bar {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 1s ease-in-out;
+  background: var(--gradient-primary);
+}
+.race-value {
+  width: 60px;
+  text-align: right;
+  font-family: 'Orbitron', monospace;
+  color: var(--primary-light);
+}
+
+/* Timeline Styles */
+.timeline-wrapper {
+  position: relative;
+  padding: 2rem 0;
+}
+.timeline-track {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--border-glass);
+  transform: translateX(-50%);
+}
+.timeline-item {
+  position: relative;
+  width: 50%;
+  padding: 1rem 2rem;
+  box-sizing: border-box;
+}
+.timeline-item:nth-child(even) {
+  left: 50%;
+}
+.timeline-item:nth-child(odd) {
+  left: 0;
+}
+.timeline-years {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.5rem;
+  color: var(--accent-light);
+  margin-bottom: 0.5rem;
+}
+
+/* Confusion Matrix */
+.confusion-matrix, .conf-table {
+  width: auto;
+  margin: 1.5rem auto;
+  border-collapse: separate;
+  border-spacing: 4px;
+}
+.confusion-matrix td, .conf-table td {
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 8px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--border-glass);
+}
+

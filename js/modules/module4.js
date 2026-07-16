@@ -1,7 +1,7 @@
 ModuleEngine.register('4', {
   init(container) {
     container.innerHTML = `
-      <div class="module-section" id="module4-content">
+      <div class="module-content" id="module4-content">
         <h2 class="module-title">Module 4: LI-RADS - The Classification System</h2>
         <p class="module-subtitle">Liver Imaging Reporting and Data System v2018</p>
 

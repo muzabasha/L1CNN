@@ -20,12 +20,12 @@ ModuleEngine.register('11', {
     page.appendChild(header);
 
     const objectives = document.createElement('div');
-    objectives.className = 'module-section objectives';
+    objectives.className = 'module-card objectives';
     objectives.innerHTML = '<h2>Learning Objectives</h2><ul><li>Understand what CNN layers learn at different depths</li><li>Visualize feature maps, activation maps, and attention maps</li><li>Interpret filter responses for medical images</li><li>Learn about feature hierarchy (edges → textures → parts → objects)</li><li>Understand why visualization matters for building trust in medical AI</li></ul>';
     page.appendChild(objectives);
 
     const vizSection = document.createElement('div');
-    vizSection.className = 'module-section';
+    vizSection.className = 'module-card';
     vizSection.innerHTML = '<h2>Interactive Feature Visualization</h2>';
     page.appendChild(vizSection);
 
@@ -427,7 +427,7 @@ ModuleEngine.register('11', {
     drawViz();
 
     const theorySection = document.createElement('div');
-    theorySection.className = 'module-section';
+    theorySection.className = 'module-card';
     theorySection.innerHTML = '<h2>Theory: Feature Hierarchy in CNNs</h2>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">' +
       '<div class="theory-card"><h3>Feature Hierarchy</h3><p>CNNs learn a hierarchy of features from low-level to high-level:</p><ol><li><strong>Layer 1-2</strong>: Edges, gradients, simple textures — universal features shared across domains</li><li><strong>Layer 3-4</strong>: Parts, complex textures — domain-specific features (lesion boundaries, vessel patterns)</li><li><strong>Layer 5+</strong>: Semantic concepts — task-specific features (LI-RADS class discriminators)</li></ol><p>This hierarchy emerges naturally from the training process without explicit supervision at intermediate layers.</p></div>' +
@@ -438,7 +438,7 @@ ModuleEngine.register('11', {
     page.appendChild(theorySection);
 
     const simSection = document.createElement('div');
-    simSection.className = 'module-section';
+    simSection.className = 'module-card';
     simSection.innerHTML = '<h2>Feature Visualization Comparison Chart</h2>';
     Components.createChart(simSection, 'radar', {
       labels: ['Edge Detection', 'Texture Sensitivity', 'Spatial Resolution', 'Semantic Abstraction', 'Clinical Relevance', 'Computational Cost'],
@@ -451,7 +451,7 @@ ModuleEngine.register('11', {
     page.appendChild(simSection);
 
     const codeSection = document.createElement('div');
-    codeSection.className = 'module-section';
+    codeSection.className = 'module-card';
     codeSection.innerHTML = '<h2>Implementation: Feature Visualization with PyTorch Hooks</h2>';
     Components.createCodeBlock(codeSection, `import torch
 import torch.nn as nn
@@ -550,7 +550,7 @@ for layer_name in list(visualizer.activations.keys())[:4]:
     page.appendChild(codeSection);
 
     const quizSection = document.createElement('div');
-    quizSection.className = 'module-section';
+    quizSection.className = 'module-card';
     quizSection.innerHTML = '<h2>Knowledge Check</h2>';
     Components.createQuiz(quizSection, [
       { q: 'What types of features do the earliest convolutional layers (Layer 1-2) typically detect?', options: ['High-level semantic concepts like tumor types', 'Low-level features like edges, gradients, and simple textures', 'Classification decisions for LI-RADS categories', 'Attention weights between different image regions'], correct: 1, explanation: 'Early layers detect universal low-level features such as edges, gradients, and simple texture patterns. These are shared across all image domains and do not encode task-specific information. They form the building blocks that deeper layers combine into more complex representations.' },
@@ -561,7 +561,7 @@ for layer_name in list(visualizer.activations.keys())[:4]:
     page.appendChild(quizSection);
 
     const reflectionSection = document.createElement('div');
-    reflectionSection.className = 'module-section reflection';
+    reflectionSection.className = 'module-card reflection';
     reflectionSection.innerHTML = '<h2>Reflection: Trust and Interpretability</h2>' +
       '<div class="theory-card"><h3>The Trust Gap in Medical AI</h3><p>Deep learning models often achieve impressive quantitative metrics but remain "black boxes" to clinicians. Feature visualization addresses this by revealing <strong>what</strong> the model learned and <strong>why</strong> it makes specific predictions.</p><p>For liver lesion classification, visualization can confirm whether the model focuses on clinically relevant regions (arterial enhancement, washout patterns) rather than artifacts or irrelevant features.</p></div>' +
       '<div class="theory-card"><h3>From Pixels to Diagnosis</h3><p>The feature hierarchy in CNNs mirrors the diagnostic process: radiologists first identify boundaries (edge detectors), then assess texture (texture features), evaluate enhancement patterns (part detectors), and finally classify the lesion (high-level features). This parallel suggests that deep networks learn clinically meaningful representations.</p></div>' +

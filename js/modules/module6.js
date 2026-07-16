@@ -1,7 +1,7 @@
 ModuleEngine.register('6', {
   init(container) {
     container.innerHTML = `
-      <div class="module-section" id="module6-content">
+      <div class="module-content" id="module6-content">
         <h2 class="module-title">Module 6: 3D nnU-Net</h2>
         <p class="module-subtitle">Advanced Neural Network Architecture for Volumetric Segmentation</p>
 
