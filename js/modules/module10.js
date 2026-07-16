@@ -1,3 +1,5 @@
+let _m10AnimFrame = null;
+
 ModuleEngine.register('10', {
   init(container) {
     container.innerHTML = '';
@@ -109,7 +111,6 @@ ModuleEngine.register('10', {
       'fusion_gating': { title: 'Gated Fusion', desc: 'Learnable gating mechanism that weights each branch.\n\ng = σ(W·[f1; f2; f3])\noutput = g⊙f1 + (1-g)⊙f2 + (1-g)⊙f3\n\nAdaptive but simpler than full attention.' }
     };
 
-    let animFrame = null;
     let componentBoxes = [];
 
     function calcParams() {
@@ -472,7 +473,7 @@ ModuleEngine.register('10', {
         ctx.fill();
         ctx.shadowBlur = 0;
       }
-      animFrame = requestAnimationFrame(animatePulse);
+      _m10AnimFrame = requestAnimationFrame(animatePulse);
     }
 
     const origToggle = makeBtn('Stop Animation', () => {
@@ -627,5 +628,9 @@ print(f"Attention weights: {attn}")
   },
 
   destroy() {
+    if (_m10AnimFrame) {
+      cancelAnimationFrame(_m10AnimFrame);
+      _m10AnimFrame = null;
+    }
   }
 });

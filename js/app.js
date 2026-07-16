@@ -1041,7 +1041,78 @@ function buildModuleNavigation() {
 }
 
 /* ─────────────────────────────────────────────
-   10. Bootstrap
+   10. FPS Benchmark
+   ───────────────────────────────────────────── */
+
+function startFPSBenchmark(durationSec) {
+  durationSec = durationSec || 5;
+  const overlay = document.createElement('div');
+  overlay.id = 'fps-benchmark';
+  overlay.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;background:rgba(0,0,0,0.85);color:#0f0;padding:12px 18px;border-radius:10px;font-family:monospace;font-size:14px;line-height:1.6;min-width:160px;border:1px solid rgba(0,255,0,0.3);backdrop-filter:blur(4px);';
+  overlay.innerHTML = 'FPS: <span id="fps-val">--</span><br>Min: <span id="fps-min">--</span> | Max: <span id="fps-max">--</span><br>Avg: <span id="fps-avg">--</span><br><span style="font-size:11px;color:#888" id="fps-remaining">Measuring ' + durationSec + 's...</span>';
+  document.body.appendChild(overlay);
+
+  let frames = 0;
+  let minFps = Infinity;
+  let maxFps = 0;
+  let fpsValues = [];
+
+  const fpsEl = document.getElementById('fps-val');
+  const minEl = document.getElementById('fps-min');
+  const maxEl = document.getElementById('fps-max');
+  const avgEl = document.getElementById('fps-avg');
+  const remEl = document.getElementById('fps-remaining');
+
+  let lastTime = performance.now();
+  let fpsCounter = 0;
+  let fpsTimer = 0;
+
+  const startTime = performance.now();
+
+  function tick(now) {
+    frames++;
+    fpsCounter++;
+    const elapsed = now - lastTime;
+
+    if (elapsed >= 1000) {
+      const currentFps = Math.round(fpsCounter * 1000 / elapsed);
+      fpsValues.push(currentFps);
+      if (currentFps < minFps) minFps = currentFps;
+      if (currentFps > maxFps) maxFps = currentFps;
+      fpsEl.textContent = currentFps;
+      minEl.textContent = minFps === Infinity ? '--' : minFps;
+      maxEl.textContent = maxFps;
+
+      const totalFps = fpsValues.reduce((a, b) => a + b, 0);
+      const avg = Math.round(totalFps / fpsValues.length);
+      avgEl.textContent = avg;
+
+      fpsCounter = 0;
+      lastTime = now;
+    }
+
+    const remaining = durationSec * 1000 - (now - startTime);
+    if (remaining > 0) {
+      remEl.textContent = 'Measuring ' + (remaining / 1000).toFixed(1) + 's...';
+      requestAnimationFrame(tick);
+    } else {
+      const totalFps = fpsValues.reduce((a, b) => a + b, 0);
+      const finalAvg = Math.round(totalFps / fpsValues.length);
+      overlay.innerHTML = [
+        'FPS: <span style="color:#fff">' + fpsEl.textContent + '</span>',
+        'Min: <span style="color:#ff6b6b">' + (minFps === Infinity ? '--' : minFps) + '</span> | ',
+        'Max: <span style="color:#51cf66">' + maxFps + '</span>',
+        'Avg: <span style="color:#ffd43b">' + finalAvg + '</span>',
+        '<br><span style="font-size:11px;color:#888">Done. F5 to re-run.</span>'
+      ].join('<br>');
+    }
+  }
+
+  requestAnimationFrame(tick);
+}
+
+/* ─────────────────────────────────────────────
+   11. Bootstrap
    ───────────────────────────────────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
