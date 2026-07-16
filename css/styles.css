@@ -1262,11 +1262,14 @@ code[class*="language-"] {
 /* ── Skip Link ────────────────────────────── */
 .skip-link {
   position: absolute;
-  left: -9999px;
-  top: auto;
   width: 1px;
   height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 .skip-link:focus {
   position: fixed;
@@ -1278,6 +1281,7 @@ code[class*="language-"] {
   overflow: visible;
   clip: auto;
   white-space: nowrap;
+  margin: 0;
   z-index: 99999;
   background: #1e1e2f;
   color: #fff;
