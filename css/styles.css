@@ -1799,7 +1799,7 @@ textarea.input-field {
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .module-header {
@@ -4632,5 +4632,59 @@ iframe {
   border-radius: 8px;
   background: rgba(30, 41, 59, 0.6);
   border: 1px solid var(--border-glass);
+}
+
+/* ==========================================================================
+    15. Module Grid Overrides — Responsive Alignment for All Modules
+    ========================================================================== */
+
+/* Force all 2-column grids to collapse on mobile */
+@media (max-width: 768px) {
+  [style*="grid-template-columns"][style*="1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="grid-template-columns"][style*="repeat(2"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="grid-template-columns"][style*="repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="grid-template-columns"][style*="repeat(4"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="grid-template-columns"][style*="repeat(5"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="grid-template-columns"][style*="320px"] {
+    grid-template-columns: 1fr !important;
+  }
+  /* Remove hardcoded min-width on canvas wrappers */
+  [style*="min-width"] {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  /* Canvas with hardcoded width/height attributes */
+  canvas[width="900"],
+  canvas[width="800"],
+  canvas[width="720"] {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 400px;
+  }
+  /* Module nav footer */
+  .module-nav-footer {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    padding: 1rem !important;
+  }
+  .module-nav-footer button {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+  /* Module 1 CT phase grid */
+  #module-1-ctphases .module-card > div {
+    grid-template-columns: 1fr !important;
+  }
 }
 

@@ -628,6 +628,16 @@ const App = {
 
     setTimeout(initScrollAnimations, 100);
 
+    // Lazy-load the first visible module after init
+    setTimeout(() => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && hash !== 'home') {
+        const norm = (id) => String(id).replace(/^module-?/, '');
+        const mId = norm(hash);
+        if (this.modules[mId]) this._initModuleIfFirst(mId);
+      }
+    }, 200);
+
     this._updateProgress();
     this._onResize();
     EventBus.emit('app:init');
@@ -757,7 +767,7 @@ const App = {
         prev.classList.add('hidden');
         prev.classList.remove('active');
         performFadeIn();
-      }, 300);
+      }, 200);
     } else {
       performFadeIn();
     }
@@ -817,7 +827,7 @@ const App = {
       sec.classList.add('hidden');
       sec.style.opacity = '0';
       sec.style.transform = 'translateY(10px)';
-      sec.style.transition = 'opacity .35s ease, transform .35s ease';
+      sec.style.transition = 'opacity .2s ease, transform .2s ease';
     });
     const home = document.getElementById('home');
     if (home) {
