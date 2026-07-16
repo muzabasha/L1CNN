@@ -47,16 +47,16 @@ ModuleEngine.register('15', {
           <h1>Module 15: Performance Evaluation Metrics</h1>
           <p>Confusion matrices, ROC curves, precision-recall, calibration, and beyond</p>
         </div>
-        <div class="m15-tabs">
-          <button class="m15-tab active" data-tab="objectives">Objectives</button>
-          <button class="m15-tab" data-tab="animation">Visualizer</button>
-          <button class="m15-tab" data-tab="theory">Theory</button>
-          <button class="m15-tab" data-tab="simulation">Simulation</button>
-          <button class="m15-tab" data-tab="code">Code</button>
-          <button class="m15-tab" data-tab="quiz">Quiz</button>
-          <button class="m15-tab" data-tab="reflection">Reflection</button>
+        <div class="m15-tabs" role="tablist" aria-label="Module sections">
+          <button class="m15-tab active" data-tab="objectives" role="tab" aria-selected="true">Objectives</button>
+          <button class="m15-tab" data-tab="animation" role="tab" aria-selected="false">Visualizer</button>
+          <button class="m15-tab" data-tab="theory" role="tab" aria-selected="false">Theory</button>
+          <button class="m15-tab" data-tab="simulation" role="tab" aria-selected="false">Simulation</button>
+          <button class="m15-tab" data-tab="code" role="tab" aria-selected="false">Code</button>
+          <button class="m15-tab" data-tab="quiz" role="tab" aria-selected="false">Quiz</button>
+          <button class="m15-tab" data-tab="reflection" role="tab" aria-selected="false">Reflection</button>
         </div>
-        <div class="m15-panel active" data-panel="objectives">
+        <div class="m15-panel active" data-panel="objectives" role="tabpanel">
           <div class="m15-card"><h3>Learning Objectives</h3>
             <ul class="m15-obj-list">
               <li>Compute and interpret standard evaluation metrics: accuracy, sensitivity, specificity, precision, F1</li>
@@ -67,7 +67,7 @@ ModuleEngine.register('15', {
             </ul>
           </div>
         </div>
-        <div class="m15-panel" data-panel="animation">
+        <div class="m15-panel" data-panel="animation" role="tabpanel" hidden>
           <div class="m15-card"><h3>Interactive Metric Visualizer</h3>
             <div style="text-align:center;margin-bottom:16px">
               <button class="m15-btn m15-bp" id="m15-anim">&#9654; Animate All</button>
@@ -80,7 +80,7 @@ ModuleEngine.register('15', {
             </div>
           </div>
         </div>
-        <div class="m15-panel" data-panel="theory">
+        <div class="m15-panel" data-panel="theory" role="tabpanel" hidden>
           <div class="m15-card"><h3>Theoretical Foundation</h3>
             <div class="m15-g2">
               <div>
@@ -122,14 +122,14 @@ ModuleEngine.register('15', {
             </div>
           </div>
         </div>
-        <div class="m15-panel" data-panel="simulation">
+        <div class="m15-panel" data-panel="simulation" role="tabpanel" hidden>
           <div class="m15-card"><h3>Interactive Metrics Dashboard</h3>
             <div class="m15-ctrls">
-              <div class="m15-ctrl"><label>TP Rate: <span id="m15-qv">80</span>%</label><input type="range" id="m15-q" min="10" max="99" value="80"></div>
-              <div class="m15-ctrl"><label>Imbalance: <span id="m15-bv">1</span>:1</label><input type="range" id="m15-b" min="1" max="10" value="1"></div>
-              <div class="m15-ctrl"><label>Samples: <span id="m15-sv">500</span></label><input type="range" id="m15-s" min="50" max="2000" value="500" step="50"></div>
-              <div class="m15-ctrl"><label>Threshold: <span id="m15-tv">0.50</span></label><input type="range" id="m15-t" min="5" max="95" value="50"></div>
-              <div class="m15-ctrl"><label>Model</label><select id="m15-ms"><option value="current">Current Model</option><option value="a">A (High Sensitivity)</option><option value="b">B (High Specificity)</option><option value="c">C (Balanced)</option></select></div>
+              <div class="m15-ctrl"><label for="m15-q">TP Rate: <span id="m15-qv">80</span>%</label><input type="range" id="m15-q" min="10" max="99" value="80"></div>
+              <div class="m15-ctrl"><label for="m15-b">Imbalance: <span id="m15-bv">1</span>:1</label><input type="range" id="m15-b" min="1" max="10" value="1"></div>
+              <div class="m15-ctrl"><label for="m15-s">Samples: <span id="m15-sv">500</span></label><input type="range" id="m15-s" min="50" max="2000" value="500" step="50"></div>
+              <div class="m15-ctrl"><label for="m15-t">Threshold: <span id="m15-tv">0.50</span></label><input type="range" id="m15-t" min="5" max="95" value="50"></div>
+              <div class="m15-ctrl"><label for="m15-ms">Model</label><select id="m15-ms"><option value="current">Current Model</option><option value="a">A (High Sensitivity)</option><option value="b">B (High Specificity)</option><option value="c">C (Balanced)</option></select></div>
             </div>
             <div style="text-align:center;margin-bottom:16px"><button class="m15-btn m15-bp" id="m15-run">&#9654; Generate &amp; Evaluate</button></div>
           </div>
@@ -161,13 +161,13 @@ ModuleEngine.register('15', {
             <div id="m15-ci" style="font-size:.88em;color:#cbd5e1">Generate predictions to see bootstrap CIs</div>
           </div>
         </div>
-        <div class="m15-panel" data-panel="code">
+        <div class="m15-panel" data-panel="code" role="tabpanel" hidden>
           <div class="m15-card"><h3>Python Implementation</h3><div class="m15-code" id="m15-code"></div></div>
         </div>
-        <div class="m15-panel" data-panel="quiz">
+        <div class="m15-panel" data-panel="quiz" role="tabpanel" hidden>
           <div class="m15-card"><h3>Knowledge Check</h3><div id="m15-quiz"></div></div>
         </div>
-        <div class="m15-panel" data-panel="reflection">
+        <div class="m15-panel" data-panel="reflection" role="tabpanel" hidden>
           <div class="m15-ref"><h4>Which Metrics Matter for Clinical Deployment?</h4>
             <ul>
               <li><strong>Sensitivity is paramount for screening:</strong> Missing LR-5 has severe consequences; maximize sensitivity even at cost of more FPs</li>
@@ -201,17 +201,26 @@ ModuleEngine.register('15', {
   },
   _initTabs(c) {
     c.querySelectorAll('.m15-tab').forEach(t => t.addEventListener('click', () => {
-      c.querySelectorAll('.m15-tab').forEach(x => x.classList.remove('active'));
-      c.querySelectorAll('.m15-panel').forEach(x => x.classList.remove('active'));
+      c.querySelectorAll('.m15-tab').forEach(x => { x.classList.remove('active'); x.setAttribute('aria-selected', 'false'); });
+      c.querySelectorAll('.m15-panel').forEach(x => { x.classList.remove('active'); x.setAttribute('hidden', ''); });
       t.classList.add('active');
-      c.querySelector('.m15-panel[data-panel="'+t.dataset.tab+'"]').classList.add('active');
+      t.setAttribute('aria-selected', 'true');
+      const panel = c.querySelector('.m15-panel[data-panel="'+t.dataset.tab+'"]');
+      if (panel) { panel.classList.add('active'); panel.removeAttribute('hidden'); }
     }));
   },
   _initSliders() {
+    let _m15Timer = null;
+    const debounceSim = () => {
+      if (_m15Timer) clearTimeout(_m15Timer);
+      _m15Timer = setTimeout(() => this._runSim(), 300);
+    };
     [['m15-q','m15-qv',v=>v+'%'],['m15-b','m15-bv',v=>v+':1'],['m15-s','m15-sv',v=>v],['m15-t','m15-tv',v=>(v/100).toFixed(2)]].forEach(([si,li,fn]) => {
       const s=document.getElementById(si),l=document.getElementById(li);
-      if(s&&l) s.addEventListener('input',()=>{l.textContent=fn(parseInt(s.value));});
+      if(s&&l) s.addEventListener('input',()=>{l.textContent=fn(parseInt(s.value));debounceSim();});
     });
+    const ms = document.getElementById('m15-ms');
+    if (ms) ms.addEventListener('change', debounceSim);
   },
   _initAnim() {
     document.getElementById('m15-anim')?.addEventListener('click',()=>this._runAnim());

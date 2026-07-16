@@ -65,17 +65,17 @@ ModuleEngine.register('13', {
           <h1>Module 13: LI-RADS Classification Engine</h1>
           <p>Train, run, and interpret a multi-class classifier for hepatocellular carcinoma</p>
         </div>
-        <div class="m13-tabs">
-          <button class="m13-tab active" data-tab="objectives">Objectives</button>
-          <button class="m13-tab" data-tab="animation">Pipeline</button>
-          <button class="m13-tab" data-tab="theory">Theory</button>
-          <button class="m13-tab" data-tab="simulation">Simulation</button>
-          <button class="m13-tab" data-tab="code">Code</button>
-          <button class="m13-tab" data-tab="quiz">Quiz</button>
-          <button class="m13-tab" data-tab="reflection">Reflection</button>
+        <div class="m13-tabs" role="tablist" aria-label="Module sections">
+          <button class="m13-tab active" data-tab="objectives" role="tab" aria-selected="true" aria-controls="panel-objectives" id="tab-objectives">Objectives</button>
+          <button class="m13-tab" data-tab="animation" role="tab" aria-selected="false" aria-controls="panel-animation" id="tab-animation">Pipeline</button>
+          <button class="m13-tab" data-tab="theory" role="tab" aria-selected="false" aria-controls="panel-theory" id="tab-theory">Theory</button>
+          <button class="m13-tab" data-tab="simulation" role="tab" aria-selected="false" aria-controls="panel-simulation" id="tab-simulation">Simulation</button>
+          <button class="m13-tab" data-tab="code" role="tab" aria-selected="false" aria-controls="panel-code" id="tab-code">Code</button>
+          <button class="m13-tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz" id="tab-quiz">Quiz</button>
+          <button class="m13-tab" data-tab="reflection" role="tab" aria-selected="false" aria-controls="panel-reflection" id="tab-reflection">Reflection</button>
         </div>
 
-        <div class="m13-panel active" data-panel="objectives">
+        <div class="m13-panel active" data-panel="objectives" role="tabpanel" id="panel-objectives" aria-labelledby="tab-objectives">
           <div class="m13-card">
             <h3>Learning Objectives</h3>
             <ul class="m13-obj-list">
@@ -89,7 +89,7 @@ ModuleEngine.register('13', {
           </div>
         </div>
 
-        <div class="m13-panel" data-panel="animation">
+        <div class="m13-panel" data-panel="animation" role="tabpanel" id="panel-animation" aria-labelledby="tab-animation" hidden>
           <div class="m13-card">
             <h3>Classification Pipeline Visualization</h3>
             <div style="text-align:center;margin-bottom:12px">
@@ -134,7 +134,7 @@ ModuleEngine.register('13', {
           </div>
         </div>
 
-        <div class="m13-panel" data-panel="theory">
+        <div class="m13-panel" data-panel="theory" role="tabpanel" id="panel-theory" aria-labelledby="tab-theory" hidden>
           <div class="m13-card">
             <h3>Theoretical Foundation</h3>
             <div class="m13-grid2">
@@ -178,14 +178,14 @@ ModuleEngine.register('13', {
           </div>
         </div>
 
-        <div class="m13-panel" data-panel="simulation">
+        <div class="m13-panel" data-panel="simulation" role="tabpanel" id="panel-simulation" aria-labelledby="tab-simulation" hidden>
           <div class="m13-card">
             <h3>Interactive Classification Engine</h3>
             <div class="m13-grid2">
               <div>
                 <div class="m13-controls">
                   <div class="m13-ctrl-group">
-                    <label>Test Case</label>
+                    <label for="m13-testcase">Test Case</label>
                     <select id="m13-testcase">
                       <option value="0">Case 1 – LR-3 (Intermediate)</option>
                       <option value="1">Case 2 – LR-4 (Probably HCC)</option>
@@ -195,23 +195,23 @@ ModuleEngine.register('13', {
                     </select>
                   </div>
                   <div class="m13-ctrl-group">
-                    <label>Artificial Enhancement: <span id="m13-feat1-v">75</span>%</label>
+                    <label for="m13-feat1">Artificial Enhancement: <span id="m13-feat1-v">75</span>%</label>
                     <input type="range" id="m13-feat1" min="0" max="100" value="75">
                   </div>
                   <div class="m13-ctrl-group">
-                    <label>Texture Heterogeneity: <span id="m13-feat2-v">60</span>%</label>
+                    <label for="m13-feat2">Texture Heterogeneity: <span id="m13-feat2-v">60</span>%</label>
                     <input type="range" id="m13-feat2" min="0" max="100" value="60">
                   </div>
                   <div class="m13-ctrl-group">
-                    <label>Washout Rate: <span id="m13-feat3-v">80</span>%</label>
+                    <label for="m13-feat3">Washout Rate: <span id="m13-feat3-v">80</span>%</label>
                     <input type="range" id="m13-feat3" min="0" max="100" value="80">
                   </div>
                   <div class="m13-ctrl-group">
-                    <label>Lesion Size: <span id="m13-feat4-v">45</span>mm</label>
+                    <label for="m13-feat4">Lesion Size: <span id="m13-feat4-v">45</span>mm</label>
                     <input type="range" id="m13-feat4" min="10" max="120" value="45">
                   </div>
                   <div class="m13-ctrl-group">
-                    <label>Margin Irregularity: <span id="m13-feat5-v">70</span>%</label>
+                    <label for="m13-feat5">Margin Irregularity: <span id="m13-feat5-v">70</span>%</label>
                     <input type="range" id="m13-feat5" min="0" max="100" value="70">
                   </div>
                 </div>
@@ -249,21 +249,21 @@ ModuleEngine.register('13', {
           </div>
         </div>
 
-        <div class="m13-panel" data-panel="code">
+        <div class="m13-panel" data-panel="code" role="tabpanel" id="panel-code" aria-labelledby="tab-code" hidden>
           <div class="m13-card">
             <h3>Python Implementation</h3>
             <div class="m13-code-block" id="m13-code"></div>
           </div>
         </div>
 
-        <div class="m13-panel" data-panel="quiz">
+        <div class="m13-panel" data-panel="quiz" role="tabpanel" id="panel-quiz" aria-labelledby="tab-quiz" hidden>
           <div class="m13-card">
             <h3>Knowledge Check</h3>
             <div id="m13-quiz"></div>
           </div>
         </div>
 
-        <div class="m13-panel" data-panel="reflection">
+        <div class="m13-panel" data-panel="reflection" role="tabpanel" id="panel-reflection" aria-labelledby="tab-reflection" hidden>
           <div class="m13-reflection">
             <h4>Clinical Deployment Considerations</h4>
             <ul>
@@ -305,15 +305,28 @@ ModuleEngine.register('13', {
   _initTabs(container) {
     container.querySelectorAll('.m13-tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        container.querySelectorAll('.m13-tab').forEach(t => t.classList.remove('active'));
-        container.querySelectorAll('.m13-panel').forEach(p => p.classList.remove('active'));
+        container.querySelectorAll('.m13-tab').forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        container.querySelectorAll('.m13-panel').forEach(p => {
+          p.classList.remove('active');
+          p.setAttribute('hidden', '');
+        });
         tab.classList.add('active');
-        container.querySelector(`.m13-panel[data-panel="${tab.dataset.tab}"]`).classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        const panel = container.querySelector(`.m13-panel[data-panel="${tab.dataset.tab}"]`);
+        if (panel) { panel.classList.add('active'); panel.removeAttribute('hidden'); }
       });
     });
   },
 
   _initSliders() {
+    let _m13Timer = null;
+    const triggerClassification = () => {
+      if (_m13Timer) clearTimeout(_m13Timer);
+      _m13Timer = setTimeout(() => this._runClassification(), 200);
+    };
     ['m13-feat1','m13-feat2','m13-feat3','m13-feat4','m13-feat5'].forEach(id => {
       const slider = document.getElementById(id);
       const vSpan = document.getElementById(id + '-v');
@@ -321,6 +334,7 @@ ModuleEngine.register('13', {
         slider.addEventListener('input', () => {
           vSpan.textContent = slider.value;
           document.getElementById('m13-testcase').value = 'custom';
+          triggerClassification();
         });
       }
     });
@@ -339,6 +353,7 @@ ModuleEngine.register('13', {
           document.getElementById(sid).value = p[key];
           document.getElementById(sid + '-v').textContent = p[key];
         });
+        triggerClassification();
       }
     });
   },

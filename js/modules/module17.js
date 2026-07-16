@@ -156,7 +156,7 @@ ModuleEngine.register('17', {
             <p>Identifying research gaps requires deep familiarity with the existing literature. A systematic approach involves categorizing papers by method, task, and limitations.</p>
             <p>Research positioning is about clearly articulating what your work does differently and why that matters. Every gap you address should map to a concrete contribution.</p>
             <div class="reflection-prompt">
-              <textarea placeholder="How would you identify gaps in a new research area? What systematic approach would you use?" rows="4" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px;"></textarea>
+              <textarea placeholder="How would you identify gaps in a new research area? What systematic approach would you use?" rows="4" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:4px;"></textarea>
             </div>
           </div>
         </section>

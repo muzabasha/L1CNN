@@ -1,3 +1,5 @@
+let _m7AnimFrame = null;
+
 ModuleEngine.register('7', {
     init(container) {
         container.innerHTML = `
@@ -140,7 +142,7 @@ ModuleEngine.register('7', {
                         <div class="canvas-overlay" id="segOverlay"></div>
                         <div class="sim-controls">
                             <div class="control-group">
-                                <label>Select Algorithm:</label>
+                                <label for="segAlgorithm">Select Algorithm:</label>
                                 <select id="segAlgorithm" class="form-select">
                                     <option value="threshold">Threshold Segmentation</option>
                                     <option value="regionGrowing">Region Growing</option>
@@ -276,7 +278,6 @@ ModuleEngine.register('7', {
     setupAnimation(container) {
         const canvas = document.getElementById('segAnimCanvas');
         const ctx = canvas.getContext('2d');
-        let animFrame = null;
         let phase = 0;
         let t = 0;
 
@@ -376,13 +377,13 @@ ModuleEngine.register('7', {
                 }
             }
             drawFrame();
-            animFrame = requestAnimationFrame(animate);
+            _m7AnimFrame = requestAnimationFrame(animate);
         }
 
         document.getElementById('btnPlaySegAnim').addEventListener('click', () => {
-            if (animFrame) {
-                cancelAnimationFrame(animFrame);
-                animFrame = null;
+            if (_m7AnimFrame) {
+                cancelAnimationFrame(_m7AnimFrame);
+                _m7AnimFrame = null;
                 document.getElementById('btnPlaySegAnim').textContent = '▶ Play';
                 document.getElementById('segAnimStatus').textContent = 'Paused';
             } else {
@@ -393,8 +394,8 @@ ModuleEngine.register('7', {
         });
 
         document.getElementById('btnResetSegAnim').addEventListener('click', () => {
-            if (animFrame) cancelAnimationFrame(animFrame);
-            animFrame = null;
+            if (_m7AnimFrame) cancelAnimationFrame(_m7AnimFrame);
+            _m7AnimFrame = null;
             phase = 0;
             t = 0;
             drawFrame();
@@ -758,23 +759,23 @@ ModuleEngine.register('7', {
 
         Components.createSlider(container.querySelector('#segThresholdLower'), {
             label: 'Lower Threshold', min: 0, max: 100, value: 25, step: 1,
-            onChange: () => {}
+            onChange: debounceRun
         });
         Components.createSlider(container.querySelector('#segThresholdUpper'), {
             label: 'Upper Threshold', min: 0, max: 100, value: 75, step: 1,
-            onChange: () => {}
+            onChange: debounceRun
         });
         Components.createSlider(container.querySelector('#segRGSimilarity'), {
             label: 'Similarity Threshold', min: 1, max: 50, value: 15, step: 1,
-            onChange: () => {}
+            onChange: debounceRun
         });
         Components.createSlider(container.querySelector('#segKMeansClusters'), {
             label: 'Number of Clusters (K)', min: 2, max: 8, value: 3, step: 1,
-            onChange: () => {}
+            onChange: debounceRun
         });
         Components.createSlider(container.querySelector('#segWatershedMarkers'), {
             label: 'Number of Markers', min: 5, max: 50, value: 15, step: 1,
-            onChange: () => {}
+            onChange: debounceRun
         });
 
         canvas.addEventListener('click', (e) => {
@@ -787,15 +788,14 @@ ModuleEngine.register('7', {
             renderImage();
         });
 
-        document.getElementById('btnRunSegmentation').addEventListener('click', () => {
+        let _m7Timer = null;
+        function runCurrentAlgorithm() {
             const algo = algorithmSelect.value;
             showGT = false;
             showDiff = false;
 
             switch (algo) {
                 case 'threshold': {
-                    const low = parseFloat(container.querySelector('#segThresholdLower .slider-value')?.textContent || 25);
-                    const high = parseFloat(container.querySelector('#segThresholdUpper .slider-value')?.textContent || 75);
                     const sliders = container.querySelectorAll('.slider-container');
                     let lowVal = 25, highVal = 75;
                     sliders.forEach(s => {
@@ -808,7 +808,7 @@ ModuleEngine.register('7', {
                     break;
                 }
                 case 'regionGrowing': {
-                    if (!seedPoint) { alert('Click on canvas to set seed point first!'); return; }
+                    if (!seedPoint) return;
                     let rgThresh = 15;
                     container.querySelectorAll('.slider-container input[type=range]').forEach(s => {
                         rgThresh = parseFloat(s.value);
@@ -834,12 +834,20 @@ ModuleEngine.register('7', {
                 }
             }
 
+            if (!segmentationResult) return;
             renderImage();
             const metrics = computeMetrics(segmentationResult, lesionMask);
             updateMetrics(metrics);
             comparisonData[algo] = metrics;
             drawCompareChart(comparisonData);
-        });
+        }
+
+        function debounceRun() {
+            if (_m7Timer) clearTimeout(_m7Timer);
+            _m7Timer = setTimeout(runCurrentAlgorithm, 200);
+        }
+
+        document.getElementById('btnRunSegmentation').addEventListener('click', runCurrentAlgorithm);
 
         document.getElementById('btnShowGT').addEventListener('click', () => {
             showGT = !showGT;
@@ -1001,5 +1009,9 @@ plt.tight_layout(); plt.show()`;
     },
 
     destroy() {
+        if (_m7AnimFrame) {
+            cancelAnimationFrame(_m7AnimFrame);
+            _m7AnimFrame = null;
+        }
     }
 });

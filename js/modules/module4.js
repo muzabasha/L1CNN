@@ -18,7 +18,7 @@ ModuleEngine.register('4', {
 
         <div class="animation-panel">
           <h3>Interactive LI-RADS Decision Tree</h3>
-          <canvas id="lirads-tree-canvas" width="900" height="520"></canvas>
+          <canvas id="lirads-tree-canvas" width="900" height="520" role="img" aria-label="Interactive LI-RADS decision tree diagram showing classification pathways from LR-1 through LR-TIV"></canvas>
           <div id="tree-node-info" class="tree-info-panel" style="display:none;"></div>
           <div class="tree-controls">
             <button id="tree-quiz-toggle" class="btn btn-primary">Toggle Quiz Mode</button>
@@ -126,12 +126,12 @@ ModuleEngine.register('4', {
           <p>Place a lesion on the liver and adjust its imaging features to see the LI-RADS classification in real-time.</p>
           <div class="classifier-layout">
             <div class="liver-canvas-wrap">
-              <canvas id="liver-cross-section" width="400" height="360"></canvas>
+              <canvas id="liver-cross-section" width="400" height="360" role="img" aria-label="Liver cross-section diagram for lesion placement"></canvas>
               <p class="hint">Click on the liver to place a lesion</p>
             </div>
             <div class="classifier-controls">
               <div class="control-group">
-                <label>Lesion Size (mm): <span id="size-val">15</span></label>
+                <label for="lesion-size">Lesion Size (mm): <span id="size-val">15</span></label>
                 <input type="range" id="lesion-size" min="2" max="80" value="15" step="1">
               </div>
               <div class="control-group">

@@ -119,7 +119,7 @@ ModuleEngine.register('16', {
             <p>Why do incremental improvements matter in research? Each step builds confidence that the proposed changes genuinely contribute to better performance, rather than random variation.</p>
             <p>The value of systematic comparison lies in establishing a fair baseline. Without it, claiming superiority of a new method is meaningless.</p>
             <div class="reflection-prompt">
-              <textarea placeholder="Write your reflection here..." rows="4" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px;"></textarea>
+              <textarea placeholder="Write your reflection here..." rows="4" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:4px;"></textarea>
             </div>
           </div>
         </section>

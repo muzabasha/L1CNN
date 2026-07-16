@@ -57,25 +57,41 @@ function initHero3D() {
   }
   pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   const pMat = new THREE.PointsMaterial({ color: 0x60a5fa, size: 0.04, transparent: true, opacity: 0.7 });
-  const particles = new THREE.Points(pGeo, pMat);
-  scene.add(particles);
+  const threeParticles = new THREE.Points(pGeo, pMat);
+  scene.add(threeParticles);
 
   let animId;
+  let running = true;
+  let _resizeHandler;
+
   function animate() {
+    if (!running) return;
     animId = requestAnimationFrame(animate);
     group.rotation.y += 0.004;
     group.rotation.x = Math.sin(Date.now() * 0.0005) * 0.1;
-    particles.rotation.y += 0.001;
-    particles.rotation.x += 0.0005;
+    threeParticles.rotation.y += 0.001;
+    threeParticles.rotation.x += 0.0005;
     renderer.render(scene, camera);
   }
   animate();
 
-  window.addEventListener('resize', Utils.debounce(() => {
+  _resizeHandler = Utils.debounce(() => {
+    if (!container.isConnected) return;
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(container.clientWidth, container.clientHeight);
-  }, 200));
+  }, 200);
+  window.addEventListener('resize', _resizeHandler);
 
-  _heroEngine = { destroy() { cancelAnimationFrame(animId); renderer.dispose(); if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement); } };
+  _heroEngine = {
+    destroy() {
+      running = false;
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', _resizeHandler);
+      renderer.dispose();
+      if (renderer.domElement && renderer.domElement.parentNode) {
+        renderer.domElement.parentNode.removeChild(renderer.domElement);
+      }
+    }
+  };
 }

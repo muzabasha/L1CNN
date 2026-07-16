@@ -30,7 +30,7 @@ const UIManager = (() => {
         const normId = String(moduleId).replace(/^module-?/, '');
         const isActive = itemNorm === normId;
         item.classList.toggle('active', isActive);
-        item.setAttribute('aria-current', isActive ? 'page' : 'false');
+        if (isActive) { item.setAttribute('aria-current', 'page'); } else { item.removeAttribute('aria-current'); }
         item.setAttribute('tabindex', isActive ? '-1' : '0');
       });
     },
@@ -48,7 +48,11 @@ const UIManager = (() => {
           _sidebar.classList.remove('collapsed');
         }
         if (_sidebarOverlay) _sidebarOverlay.classList.toggle('active', show);
-        if (_mobileMenuBtn) _mobileMenuBtn.style.display = show ? 'none' : 'flex';
+        document.body.classList.toggle('sidebar-open', show);
+        if (_mobileMenuBtn) {
+          _mobileMenuBtn.style.display = show ? 'none' : 'flex';
+          _mobileMenuBtn.setAttribute('aria-expanded', String(show));
+        }
       } else {
         const shouldCollapse = force !== undefined ? force : !StateManager.get('sidebarCollapsed');
         StateManager.set('sidebarCollapsed', shouldCollapse);
@@ -69,9 +73,9 @@ const UIManager = (() => {
           if (logoText) logoText.parentElement.style.display = shouldCollapse ? 'none' : '';
         }
         if (_sidebarSpacer) _sidebarSpacer.style.width = shouldCollapse ? '60px' : '';
-        if (_mainContent) _mainContent.style.marginLeft = shouldCollapse ? '60px' : '';
         const toggleBtn = document.getElementById('sidebar-toggle');
         if (toggleBtn) {
+          toggleBtn.setAttribute('aria-expanded', String(!shouldCollapse));
           const svg = toggleBtn.querySelector('svg');
           if (svg) svg.style.transform = shouldCollapse ? 'rotate(180deg)' : '';
         }
@@ -83,11 +87,15 @@ const UIManager = (() => {
       const pct = StorageManager.getProgress();
       if (_progressFill) _progressFill.style.width = `${pct}%`;
       if (_progressText) _progressText.textContent = `${pct}%`;
+      const progressBar = document.querySelector('[role="progressbar"]');
+      if (progressBar) progressBar.setAttribute('aria-valuenow', String(pct));
     },
 
     showToast(message, type = 'info', duration = 3000) {
       const toast = document.createElement('div');
       toast.className = 'toast toast-' + type;
+      toast.setAttribute('role', 'alert');
+      toast.setAttribute('aria-live', 'assertive');
       toast.textContent = message;
       toast.style.cssText = [
         'position:fixed', 'bottom:24px', 'right:24px', 'z-index:10000',
@@ -121,7 +129,6 @@ const UIManager = (() => {
           _sidebar.style.transform = '';
         }
         if (_sidebarSpacer) _sidebarSpacer.style.width = '0';
-        if (_mainContent) _mainContent.style.marginLeft = '0';
       } else {
         if (_sidebar) {
           _sidebar.classList.remove('mobile-open');
@@ -131,7 +138,6 @@ const UIManager = (() => {
         if (!StateManager.get('sidebarCollapsed')) {
           if (_sidebar) _sidebar.style.width = '';
           if (_sidebarSpacer) _sidebarSpacer.style.width = '';
-          if (_mainContent) _mainContent.style.marginLeft = '';
         }
       }
       if (_mobileMenuBtn) _mobileMenuBtn.style.display = isTab ? 'flex' : 'none';
@@ -169,7 +175,8 @@ const UIManager = (() => {
         const item = e.target.closest('.nav-item');
         if (!item) return;
         e.preventDefault();
-        const target = item.dataset.module || (item.getAttribute('href') || '').replace(/.*#/, '');
+        let target = item.dataset.module || (item.getAttribute('href') || '').replace(/.*#/, '');
+        if (target.startsWith('module-')) target = target.replace('module-', '');
         if (target) {
           Router.navigateTo(target);
         }

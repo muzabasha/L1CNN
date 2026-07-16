@@ -216,7 +216,7 @@ ModuleEngine.register('9', {
                     <div class="sim-right">
                         <h4>Model Configuration</h4>
                         <div class="control-group">
-                            <label>Classifier:</label>
+                            <label for="mlClassifier">Classifier:</label>
                             <select id="mlClassifier" class="form-select">
                                 <option value="rf">Random Forest</option>
                                 <option value="svm">SVM (RBF)</option>
@@ -234,7 +234,7 @@ ModuleEngine.register('9', {
                         <div id="svmParams" class="param-group" style="display:none;">
                             <div class="slider-container" id="mlSvmC"></div>
                             <div class="control-group">
-                                <label>Kernel:</label>
+                                <label for="mlSvmKernel">Kernel:</label>
                                 <select id="mlSvmKernel" class="form-select">
                                     <option value="rbf">RBF</option>
                                     <option value="linear">Linear</option>
@@ -1144,29 +1144,46 @@ ModuleEngine.register('9', {
         generateData();
         drawScatter();
 
+        let _m9Timer = null;
+        function debounceTrain() {
+            if (_m9Timer) clearTimeout(_m9Timer);
+            _m9Timer = setTimeout(() => {
+                const bar = document.getElementById('mlProgressBar');
+                const status = document.getElementById('mlTrainingStatus');
+                bar.style.width = '100%';
+                status.textContent = 'Training complete!';
+                trainModel();
+            }, 300);
+        }
+
         document.getElementById('mlClassifier').addEventListener('change', (e) => {
             const val = e.target.value;
             document.querySelectorAll('.param-group').forEach(el => el.style.display = 'none');
-            document.getElementById(val + 'Params').style.display = 'block';
+            const target = document.getElementById(val + 'Params');
+            if (target) target.style.display = 'block';
+            debounceTrain();
         });
 
+        const mlSvmKernel = document.getElementById('mlSvmKernel');
+        if (mlSvmKernel) mlSvmKernel.addEventListener('change', debounceTrain);
+
         Components.createSlider(container.querySelector('#mlRfNest'), {
-            label: 'n_estimators', min: 10, max: 200, value: 50, step: 10, onChange: () => {}
+            label: 'n_estimators', min: 10, max: 200, value: 50, step: 10, onChange: debounceTrain
         });
         Components.createSlider(container.querySelector('#mlRfDepth'), {
-            label: 'max_depth', min: 2, max: 20, value: 8, step: 1, onChange: () => {}
+            label: 'max_depth', min: 2, max: 20, value: 8, step: 1, onChange: debounceTrain
         });
         Components.createSlider(container.querySelector('#mlSvmC'), {
-            label: 'C (Regularization)', min: 0.1, max: 100, value: 10, step: 0.1, onChange: () => {}
+            label: 'C (Regularization)', min: 0.1, max: 100, value: 10, step: 0.1, onChange: debounceTrain
         });
         Components.createSlider(container.querySelector('#mlXgbNest'), {
-            label: 'n_estimators', min: 10, max: 200, value: 50, step: 10, onChange: () => {}
+            label: 'n_estimators', min: 10, max: 200, value: 50, step: 10, onChange: debounceTrain
         });
         Components.createSlider(container.querySelector('#mlXgbLR'), {
-            label: 'learning_rate', min: 0.01, max: 0.5, value: 0.1, step: 0.01, onChange: () => {}
+            label: 'learning_rate', min: 0.01, max: 0.5, value: 0.1, step: 0.01, onChange: debounceTrain
         });
         Components.createSlider(container.querySelector('#mlKnnK'), {
-            label: 'n_neighbors (k)', min: 1, max: 20, value: 5, step: 1, onChange: () => {}
+            label: 'n_neighbors (k)', min: 1, max: 20, value: 5, step: 1, onChange: debounceTrain
         });
 
         document.getElementById('btnTrainModel').addEventListener('click', () => {

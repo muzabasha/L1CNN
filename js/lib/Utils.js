@@ -77,6 +77,8 @@ const Utils = {
     }
     const toast = document.createElement('div');
     const colors = { success: '#10b981', error: '#ef4444', info: '#3b82f6', warning: '#f59e0b' };
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'polite');
     toast.style.cssText = 'padding:12px 20px;border-radius:8px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.3);background:' + (colors[type] || colors.info) + ';opacity:0;transform:translateX(40px);transition:all .3s ease;';
     toast.textContent = message;
     container.appendChild(toast);

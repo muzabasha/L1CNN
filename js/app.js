@@ -1,8 +1,3 @@
-/* ═══════════════════════════════════════════
-   Interactive Virtual Research Laboratory
-   Main Application Bootstrap v3.0.0
-   ═══════════════════════════════════════════ */
-
 const App = (() => {
   let _initialized = false;
 
@@ -38,16 +33,23 @@ const App = (() => {
 
   function _bindGlobalEvents() {
     EventManager.on('route:changed', ({ from, to }) => {
-      if (from) ModuleEngine.destroy(from);
+      if (from && from !== 'home') ModuleEngine.destroy(from);
       const sectionId = to === 'home' ? 'home' : 'module-' + to;
       Renderer.showSection(sectionId);
       UIManager.updateSidebarActive(to);
       if (to !== 'home') {
         ModuleEngine.init(to);
         _injectModuleNav(to);
+      } else {
+        ModuleEngine.destroy(to);
       }
       if (window.innerWidth <= 1024) UIManager.toggleSidebar(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      const announcer = document.getElementById('sr-announcer');
+      if (announcer) {
+        const label = to === 'home' ? 'Home' : 'Module ' + to;
+        announcer.textContent = 'Now viewing ' + label;
+      }
     });
 
     document.addEventListener('click', (e) => {
@@ -59,7 +61,7 @@ const App = (() => {
     });
 
     document.addEventListener('keydown', (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT' || e.target.closest('.simulation-panel') || e.target.closest('[role="tab"]')) return;
       const btn = e.target.closest('[data-navigate]');
       if (btn && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
@@ -76,7 +78,6 @@ const App = (() => {
       }
     });
 
-    window.addEventListener('popstate', () => Router.syncFromURL());
     window.addEventListener('resize', Utils.debounce(() => UIManager.onResize(), 200));
   }
 

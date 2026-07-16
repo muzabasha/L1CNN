@@ -36,6 +36,13 @@ const ModuleEngine = (() => {
       if (!mod || !mod.initialized) return;
 
       mod.destroy();
+
+      const container = document.getElementById('module-' + moduleId) ||
+                        document.getElementById(moduleId);
+      if (container) {
+        container.innerHTML = '';
+      }
+
       mod.initialized = false;
       if (_activeModuleId.current === moduleId) {
         _activeModuleId.current = null;

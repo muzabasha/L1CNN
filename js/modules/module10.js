@@ -40,17 +40,17 @@ ModuleEngine.register('10', {
     const archContainer = document.createElement('div');
     archContainer.style.cssText = 'display:flex;gap:16px;flex-wrap:wrap;';
     const canvasWrap = document.createElement('div');
-    canvasWrap.style.cssText = 'flex:1;min-width:700px;';
+    canvasWrap.style.cssText = 'flex:1;min-width:280px;';
     const canvas = document.createElement('canvas');
     canvas.width = 900;
     canvas.height = 620;
-    canvas.style.cssText = 'width:100%;border-radius:8px;background:#0d1117;border:1px solid #30363d;';
+    canvas.style.cssText = 'width:100%;border-radius:8px;background:var(--bg-primary);border:1px solid var(--border);';
     canvasWrap.appendChild(canvas);
     archContainer.appendChild(canvasWrap);
 
     const detailPanel = document.createElement('div');
-    detailPanel.style.cssText = 'width:300px;min-height:620px;background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-y:auto;font-size:13px;';
-    detailPanel.innerHTML = '<h3 style="color:#58a6ff;margin-top:0">Component Details</h3><p style="color:#8b949e">Click any component in the diagram to see details.</p>';
+    detailPanel.style.cssText = 'width:300px;min-height:620px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-y:auto;font-size:13px;';
+    detailPanel.innerHTML = '<h3 style="color:var(--color-primary-light);margin-top:0">Component Details</h3><p style="color:var(--text-muted)">Click any component in the diagram to see details.</p>';
     archContainer.appendChild(detailPanel);
     archSection.appendChild(archContainer);
 
@@ -68,7 +68,7 @@ ModuleEngine.register('10', {
     archSection.appendChild(btnRow);
 
     const fusionSelect = document.createElement('select');
-    fusionSelect.style.cssText = 'padding:6px 10px;border-radius:6px;background:#21262d;color:#c9d1d9;border:1px solid #30363d;';
+    fusionSelect.style.cssText = 'padding:6px 10px;border-radius:6px;background:var(--color-surface);color:var(--text-primary);border:1px solid var(--border);';
     ['attention', 'concatenation', 'gating'].forEach(m => {
       const o = document.createElement('option');
       o.value = m;
@@ -92,7 +92,7 @@ ModuleEngine.register('10', {
     const resBtn = makeBtn('Toggle Residual Connections', () => { state.showResidual = !state.showResidual; draw(); });
 
     const paramDisplay = document.createElement('div');
-    paramDisplay.style.cssText = 'margin-top:16px;padding:16px;background:#161b22;border:1px solid #30363d;border-radius:8px;display:flex;flex-wrap:wrap;gap:24px;';
+    paramDisplay.style.cssText = 'margin-top:16px;padding:16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;display:flex;flex-wrap:wrap;gap:24px;';
     archSection.appendChild(paramDisplay);
 
     const ctx = canvas.getContext('2d');
@@ -378,12 +378,12 @@ ModuleEngine.register('10', {
 
       const params = calcParams();
       paramDisplay.innerHTML = [
-        '<div style="flex:1;min-width:140px"><div style="color:#8b949e;font-size:11px">Total Parameters</div><div style="color:#58a6ff;font-size:20px;font-weight:bold">' + params.total.toLocaleString() + '</div></div>',
-        '<div style="flex:1;min-width:140px"><div style="color:#8b949e;font-size:11px">Model Size</div><div style="color:#58a6ff;font-size:20px;font-weight:bold">' + params.sizeMB.toFixed(2) + ' MB</div></div>',
-        '<div style="flex:1;min-width:140px"><div style="color:#8b949e;font-size:11px">Branch Params</div><div style="color:#7ee787;font-size:20px;font-weight:bold">' + params.totalBranch.toLocaleString() + '</div></div>',
-        '<div style="flex:1;min-width:140px"><div style="color:#8b949e;font-size:11px">Fusion Params</div><div style="color:#f0883e;font-size:20px;font-weight:bold">' + params.fusionP.toLocaleString() + '</div></div>',
-        '<div style="flex:1;min-width:140px"><div style="color:#8b949e;font-size:11px">Classifier Params</div><div style="color:#da3633;font-size:20px;font-weight:bold">' + params.clsP.toLocaleString() + '</div></div>',
-        '<div style="flex:1;min-width:140px"><div style="color:#8b949e;font-size:11px">Feature Dim</div><div style="color:#e6edf3;font-size:20px;font-weight:bold">' + f + '</div></div>'
+        '<div style="flex:1;min-width:140px"><div style="color:var(--text-muted);font-size:11px">Total Parameters</div><div style="color:var(--color-primary-light);font-size:20px;font-weight:bold">' + params.total.toLocaleString() + '</div></div>',
+        '<div style="flex:1;min-width:140px"><div style="color:var(--text-muted);font-size:11px">Model Size</div><div style="color:var(--color-primary-light);font-size:20px;font-weight:bold">' + params.sizeMB.toFixed(2) + ' MB</div></div>',
+        '<div style="flex:1;min-width:140px"><div style="color:var(--text-muted);font-size:11px">Branch Params</div><div style="color:var(--color-success);font-size:20px;font-weight:bold">' + params.totalBranch.toLocaleString() + '</div></div>',
+        '<div style="flex:1;min-width:140px"><div style="color:var(--text-muted);font-size:11px">Fusion Params</div><div style="color:var(--color-warning);font-size:20px;font-weight:bold">' + params.fusionP.toLocaleString() + '</div></div>',
+        '<div style="flex:1;min-width:140px"><div style="color:var(--text-muted);font-size:11px">Classifier Params</div><div style="color:var(--color-error);font-size:20px;font-weight:bold">' + params.clsP.toLocaleString() + '</div></div>',
+        '<div style="flex:1;min-width:140px"><div style="color:var(--text-muted);font-size:11px">Feature Dim</div><div style="color:var(--text-primary);font-size:20px;font-weight:bold">' + f + '</div></div>'
       ].join('');
     }
 
@@ -433,9 +433,9 @@ ModuleEngine.register('10', {
       }
       if (found && componentInfo[found.type]) {
         const info = componentInfo[found.type];
-        detailPanel.innerHTML = '<h3 style="color:#58a6ff;margin-top:0">' + info.title + '</h3><pre style="white-space:pre-wrap;color:#c9d1d9;font-size:12px;line-height:1.5">' + info.desc + '</pre>';
+        detailPanel.innerHTML = '<h3 style="color:var(--color-primary-light);margin-top:0">' + info.title + '</h3><pre style="white-space:pre-wrap;color:var(--text-primary);font-size:12px;line-height:1.5">' + info.desc + '</pre>';
       } else {
-        detailPanel.innerHTML = '<h3 style="color:#58a6ff;margin-top:0">Component Details</h3><p style="color:#8b949e">Click any component in the diagram to see details.</p>';
+detailPanel.innerHTML = '<h3 style="color:var(--color-primary-light);margin-top:0">Component Details</h3><p style="color:var(--text-muted)">Click any component in the diagram to see details.</p>';
       }
     });
 
@@ -498,10 +498,10 @@ ModuleEngine.register('10', {
     mathSection.className = 'module-card';
     mathSection.innerHTML = '<h2>Mathematical Formulations</h2>' +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">' +
-      '<div class="theory-card" style="font-family:monospace"><h3>3D Convolution</h3><p>(f ∗ x)(t, i, j) = Σ<sub>k</sub> Σ<sub>l</sub> Σ<sub>m</sub> f(k, l, m) · x(t+k, i+l, j+m)</p><p style="font-size:11px;color:#8b949e">Output at position (t,i,j) is the weighted sum of the input volume overlapped by the 3D kernel.</p></div>' +
-      '<div class="theory-card" style="font-family:monospace"><h3>Batch Normalization</h3><p>y = (x − μ<sub>B</sub>) / √(σ²<sub>B</sub> + ε) · γ + β</p><p style="font-size:11px;color:#8b949e">γ and β are learnable scale and shift parameters. BN stabilizes training by normalizing layer inputs.</p></div>' +
+      '<div class="theory-card" style="font-family:monospace"><h3>3D Convolution</h3><p>(f ∗ x)(t, i, j) = Σ<sub>k</sub> Σ<sub>l</sub> Σ<sub>m</sub> f(k, l, m) · x(t+k, i+l, j+m)</p><p style="font-size:11px;color:var(--text-muted)">Output at position (t,i,j) is the weighted sum of the input volume overlapped by the 3D kernel.</p></div>' +
+      '<div class="theory-card" style="font-family:monospace"><h3>Batch Normalization</h3><p>y = (x − μ<sub>B</sub>) / √(σ²<sub>B</sub> + ε) · γ + β</p><p style="font-size:11px;color:var(--text-muted)">γ and β are learnable scale and shift parameters. BN stabilizes training by normalizing layer inputs.</p></div>' +
       '<div class="theory-card" style="font-family:monospace"><h3>Multi-Head Attention</h3><p>head<sub>i</sub> = Attention(QW<sup>Q</sup><sub>i</sub>, KW<sup>K</sup><sub>i</sub>, VW<sup>V</sup><sub>i</sub>)</p><p>MultiHead(Q,K,V) = Concat(head<sub>1</sub>, ..., head<sub>h</sub>)W<sup>O</sup></p></div>' +
-      '<div class="theory-card" style="font-family:monospace"><h3>Residual Block</h3><p>y = F(x, {W<sub>i</sub>}) + x</p><p>When dimensions differ: y = F(x) + W<sub>s</sub>·x</p><p style="font-size:11px;color:#8b949e">W<sub>s</sub> is a learned projection matrix for dimension matching.</p></div>' +
+      '<div class="theory-card" style="font-family:monospace"><h3>Residual Block</h3><p>y = F(x, {W<sub>i</sub>}) + x</p><p>When dimensions differ: y = F(x) + W<sub>s</sub>·x</p><p style="font-size:11px;color:var(--text-muted)">W<sub>s</sub> is a learned projection matrix for dimension matching.</p></div>' +
       '</div>';
     page.appendChild(mathSection);
 
@@ -509,11 +509,11 @@ ModuleEngine.register('10', {
     noveltySection.className = 'module-card';
     noveltySection.innerHTML = '<h2>Research Novelty</h2>' +
       '<div class="theory-card"><h3>Comparison with Existing Approaches</h3>' +
-      '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="border-bottom:2px solid #30363d"><th style="text-align:left;padding:8px;color:#58a6ff">Approach</th><th style="text-align:left;padding:8px;color:#58a6ff">Phase Info</th><th style="text-align:left;padding:8px;color:#58a6ff">Inter-phase Fusion</th><th style="text-align:left;padding:8px;color:#58a6ff">Adaptive Weighting</th><th style="text-align:left;padding:8px;color:#58a6ff">Residual</th></tr></thead><tbody>' +
-      '<tr style="border-bottom:1px solid #21262d"><td style="padding:8px">Single-phase 3D CNN</td><td style="padding:8px;color:#da3633">✗ One phase only</td><td style="padding:8px;color:#da3633">✗ N/A</td><td style="padding:8px;color:#da3633">✗</td><td style="padding:8px;color:#d29922">Optional</td></tr>' +
-      '<tr style="border-bottom:1px solid #21262d"><td style="padding:8px">Multi-phase Concatenation</td><td style="padding:8px;color:#d29922">✓ All phases</td><td style="padding:8px;color:#da3633">✗ Naive concat</td><td style="padding:8px;color:#da3633">✗</td><td style="padding:8px;color:#d29922">Optional</td></tr>' +
-      '<tr style="border-bottom:1px solid #21262d"><td style="padding:8px">Two-stream networks</td><td style="padding:8px;color:#d29922">✓ Two phases</td><td style="padding:8px;color:#d29922">✓ Limited</td><td style="padding:8px;color:#da3633">✗</td><td style="padding:8px;color:#3fb950">✓</td></tr>' +
-      '<tr style="border-bottom:1px solid #21262d"><td style="padding:8px"><strong>Our Phase-Aware CNN</strong></td><td style="padding:8px;color:#3fb950"><strong>✓ All 3 phases</strong></td><td style="padding:8px;color:#3fb950"><strong>✓ Cross-attention</strong></td><td style="padding:8px;color:#3fb950"><strong>✓ Learned weights</strong></td><td style="padding:8px;color:#3fb950"><strong>✓</strong></td></tr>' +
+      '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="border-bottom:2px solid var(--border)"><th style="text-align:left;padding:8px;color:var(--color-primary-light)">Approach</th><th style="text-align:left;padding:8px;color:var(--color-primary-light)">Phase Info</th><th style="text-align:left;padding:8px;color:var(--color-primary-light)">Inter-phase Fusion</th><th style="text-align:left;padding:8px;color:var(--color-primary-light)">Adaptive Weighting</th><th style="text-align:left;padding:8px;color:var(--color-primary-light)">Residual</th></tr></thead><tbody>' +
+      '<tr style="border-bottom:1px solid var(--color-surface)"><td style="padding:8px">Single-phase 3D CNN</td><td style="padding:8px;color:var(--color-error)">✗ One phase only</td><td style="padding:8px;color:var(--color-error)">✗ N/A</td><td style="padding:8px;color:var(--color-error)">✗</td><td style="padding:8px;color:var(--color-warning)">Optional</td></tr>' +
+      '<tr style="border-bottom:1px solid var(--color-surface)"><td style="padding:8px">Multi-phase Concatenation</td><td style="padding:8px;color:var(--color-warning)">✓ All phases</td><td style="padding:8px;color:var(--color-error)">✗ Naive concat</td><td style="padding:8px;color:var(--color-error)">✗</td><td style="padding:8px;color:var(--color-warning)">Optional</td></tr>' +
+      '<tr style="border-bottom:1px solid var(--color-surface)"><td style="padding:8px">Two-stream networks</td><td style="padding:8px;color:var(--color-warning)">✓ Two phases</td><td style="padding:8px;color:var(--color-warning)">✓ Limited</td><td style="padding:8px;color:var(--color-error)">✗</td><td style="padding:8px;color:var(--color-success)">✓</td></tr>' +
+      '<tr style="border-bottom:1px solid var(--color-surface)"><td style="padding:8px"><strong>Our Phase-Aware CNN</strong></td><td style="padding:8px;color:var(--color-success)"><strong>✓ All 3 phases</strong></td><td style="padding:8px;color:var(--color-success)"><strong>✓ Cross-attention</strong></td><td style="padding:8px;color:var(--color-success)"><strong>✓ Learned weights</strong></td><td style="padding:8px;color:var(--color-success)"><strong>✓</strong></td></tr>' +
       '</tbody></table></div></div>';
     page.appendChild(noveltySection);
 

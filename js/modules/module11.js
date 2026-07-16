@@ -1,3 +1,6 @@
+let _m11AnimFrame = null;
+let _m11Animating = false;
+
 ModuleEngine.register('11', {
   init(container) {
     container.innerHTML = '';
@@ -34,7 +37,7 @@ ModuleEngine.register('11', {
     vizSection.appendChild(vizContainer);
 
     const canvasWrap = document.createElement('div');
-    canvasWrap.style.cssText = 'flex:1;min-width:500px;';
+    canvasWrap.style.cssText = 'flex:1;min-width:280px;';
     const canvas = document.createElement('canvas');
     canvas.width = 720;
     canvas.height = 480;
@@ -398,7 +401,11 @@ ModuleEngine.register('11', {
     }
 
     function animateProgression() {
-      if (!state.animating) return;
+      if (!state.animating) {
+        _m11Animating = false;
+        return;
+      }
+      _m11Animating = true;
       state.animStep += 0.5;
       if (state.animStep > 300) {
         state.animating = false;
@@ -421,7 +428,7 @@ ModuleEngine.register('11', {
       ctx.fill();
       ctx.shadowBlur = 0;
 
-      requestAnimationFrame(animateProgression);
+      _m11AnimFrame = requestAnimationFrame(animateProgression);
     }
 
     drawViz();
@@ -573,5 +580,11 @@ for layer_name in list(visualizer.activations.keys())[:4]:
   },
 
   destroy() {
+    state.animating = false;
+    _m11Animating = false;
+    if (_m11AnimFrame) {
+      cancelAnimationFrame(_m11AnimFrame);
+      _m11AnimFrame = null;
+    }
   }
 });

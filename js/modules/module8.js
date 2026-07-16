@@ -1,3 +1,5 @@
+let _m8AnimFrame = null;
+
 ModuleEngine.register('8', {
     init(container) {
         container.innerHTML = `
@@ -177,7 +179,7 @@ ModuleEngine.register('8', {
 
                         <div class="sim-controls">
                             <div class="control-group">
-                                <label>Gray Levels:</label>
+                                <label for="glcmGrayLevels">Gray Levels:</label>
                                 <select id="glcmGrayLevels" class="form-select">
                                     <option value="4">4</option>
                                     <option value="6">6</option>
@@ -187,7 +189,7 @@ ModuleEngine.register('8', {
                                 </select>
                             </div>
                             <div class="control-group">
-                                <label>Distance (d):</label>
+                                <label for="glcmDistance">Distance (d):</label>
                                 <select id="glcmDistance" class="form-select">
                                     <option value="1" selected>1</option>
                                     <option value="2">2</option>
@@ -196,7 +198,7 @@ ModuleEngine.register('8', {
                                 </select>
                             </div>
                             <div class="control-group">
-                                <label>Angle (θ):</label>
+                                <label for="glcmAngle">Angle (θ):</label>
                                 <select id="glcmAngle" class="form-select">
                                     <option value="0" selected>0°</option>
                                     <option value="45">45°</option>
@@ -568,7 +570,7 @@ ModuleEngine.register('8', {
             }
 
             hoverT += 0.02;
-            requestAnimationFrame(render);
+            _m8AnimFrame = requestAnimationFrame(render);
         }
 
         container.querySelectorAll('[data-feature]').forEach(btn => {
@@ -1002,5 +1004,9 @@ print("First-Order Features:", fo)`;
     },
 
     destroy() {
+        if (_m8AnimFrame) {
+            cancelAnimationFrame(_m8AnimFrame);
+            _m8AnimFrame = null;
+        }
     }
 });

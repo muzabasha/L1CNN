@@ -58,17 +58,17 @@ ModuleEngine.register('14', {
           <h1>Module 14: Explainable AI — Opening the Black Box</h1>
           <p>GradCAM, attention maps, and interpretability for medical imaging AI</p>
         </div>
-        <div class="m14-tabs">
-          <button class="m14-tab active" data-tab="objectives">Objectives</button>
-          <button class="m14-tab" data-tab="animation">GradCAM</button>
-          <button class="m14-tab" data-tab="theory">Theory</button>
-          <button class="m14-tab" data-tab="simulation">Simulation</button>
-          <button class="m14-tab" data-tab="code">Code</button>
-          <button class="m14-tab" data-tab="quiz">Quiz</button>
-          <button class="m14-tab" data-tab="reflection">Reflection</button>
+        <div class="m14-tabs" role="tablist" aria-label="Module sections">
+          <button class="m14-tab active" data-tab="objectives" role="tab" aria-selected="true">Objectives</button>
+          <button class="m14-tab" data-tab="animation" role="tab" aria-selected="false">GradCAM</button>
+          <button class="m14-tab" data-tab="theory" role="tab" aria-selected="false">Theory</button>
+          <button class="m14-tab" data-tab="simulation" role="tab" aria-selected="false">Simulation</button>
+          <button class="m14-tab" data-tab="code" role="tab" aria-selected="false">Code</button>
+          <button class="m14-tab" data-tab="quiz" role="tab" aria-selected="false">Quiz</button>
+          <button class="m14-tab" data-tab="reflection" role="tab" aria-selected="false">Reflection</button>
         </div>
 
-        <div class="m14-panel active" data-panel="objectives">
+        <div class="m14-panel active" data-panel="objectives" role="tabpanel">
           <div class="m14-card">
             <h3>Learning Objectives</h3>
             <ul class="m14-obj-list">
@@ -81,7 +81,7 @@ ModuleEngine.register('14', {
           </div>
         </div>
 
-        <div class="m14-panel" data-panel="animation">
+        <div class="m14-panel" data-panel="animation" role="tabpanel" hidden>
           <div class="m14-card">
             <h3>GradCAM Visualization Pipeline</h3>
             <div style="text-align:center;margin-bottom:16px">
@@ -96,11 +96,11 @@ ModuleEngine.register('14', {
             </div>
             <div class="m14-controls">
               <div class="m14-ctrl">
-                <label>Target Layer: <span id="m14-layer-v">5</span></label>
+                <label for="m14-layer">Target Layer: <span id="m14-layer-v">5</span></label>
                 <input type="range" id="m14-layer" min="1" max="5" value="5" step="1">
               </div>
               <div class="m14-ctrl">
-                <label>Target Class</label>
+                <label for="m14-target-class">Target Class</label>
                 <select id="m14-target-class">
                   <option value="0">LR-3 (Intermediate)</option>
                   <option value="1">LR-4 (Probably HCC)</option>
@@ -108,15 +108,15 @@ ModuleEngine.register('14', {
                 </select>
               </div>
               <div class="m14-ctrl">
-                <label>Overlay Opacity: <span id="m14-opacity-v">45</span>%</label>
+                <label for="m14-opacity">Overlay Opacity: <span id="m14-opacity-v">45</span>%</label>
                 <input type="range" id="m14-opacity" min="0" max="100" value="45">
               </div>
               <div class="m14-ctrl">
-                <label>Threshold: <span id="m14-thresh-v">30</span>%</label>
+                <label for="m14-thresh">Threshold: <span id="m14-thresh-v">30</span>%</label>
                 <input type="range" id="m14-thresh" min="0" max="100" value="30">
               </div>
               <div class="m14-ctrl">
-                <label>Color Scheme</label>
+                <label for="m14-colorscheme">Color Scheme</label>
                 <select id="m14-colorscheme">
                   <option value="jet" selected>Jet</option>
                   <option value="viridis">Viridis</option>
@@ -157,7 +157,7 @@ ModuleEngine.register('14', {
           </div>
         </div>
 
-        <div class="m14-panel" data-panel="theory">
+        <div class="m14-panel" data-panel="theory" role="tabpanel" hidden>
           <div class="m14-card">
             <h3>Theoretical Foundation</h3>
             <div class="m14-grid2">
@@ -204,16 +204,16 @@ ModuleEngine.register('14', {
           </div>
         </div>
 
-        <div class="m14-panel" data-panel="simulation">
+        <div class="m14-panel" data-panel="simulation" role="tabpanel" hidden>
           <div class="m14-card">
             <h3>Interactive GradCAM Lab — Compare Explanations</h3>
             <div class="m14-controls">
               <div class="m14-ctrl">
-                <label>Opacity: <span id="m14-cmp-op-v">40</span>%</label>
+                <label for="m14-cmp-op">Opacity: <span id="m14-cmp-op-v">40</span>%</label>
                 <input type="range" id="m14-cmp-op" min="0" max="100" value="40">
               </div>
               <div class="m14-ctrl">
-                <label>Threshold: <span id="m14-cmp-th-v">25</span>%</label>
+                <label for="m14-cmp-th">Threshold: <span id="m14-cmp-th-v">25</span>%</label>
                 <input type="range" id="m14-cmp-th" min="0" max="100" value="25">
               </div>
             </div>
@@ -232,21 +232,21 @@ ModuleEngine.register('14', {
           </div>
         </div>
 
-        <div class="m14-panel" data-panel="code">
+        <div class="m14-panel" data-panel="code" role="tabpanel" hidden>
           <div class="m14-card">
             <h3>Python Implementation</h3>
             <div class="m14-code-block" id="m14-code"></div>
           </div>
         </div>
 
-        <div class="m14-panel" data-panel="quiz">
+        <div class="m14-panel" data-panel="quiz" role="tabpanel" hidden>
           <div class="m14-card">
             <h3>Knowledge Check</h3>
             <div id="m14-quiz"></div>
           </div>
         </div>
 
-        <div class="m14-panel" data-panel="reflection">
+        <div class="m14-panel" data-panel="reflection" role="tabpanel" hidden>
           <div class="m14-reflection">
             <h4>Trust and Regulatory Requirements</h4>
             <ul>
@@ -284,10 +284,18 @@ ModuleEngine.register('14', {
   _initTabs(container) {
     container.querySelectorAll('.m14-tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        container.querySelectorAll('.m14-tab').forEach(t => t.classList.remove('active'));
-        container.querySelectorAll('.m14-panel').forEach(p => p.classList.remove('active'));
+        container.querySelectorAll('.m14-tab').forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        container.querySelectorAll('.m14-panel').forEach(p => {
+          p.classList.remove('active');
+          p.setAttribute('hidden', '');
+        });
         tab.classList.add('active');
-        container.querySelector(`.m14-panel[data-panel="${tab.dataset.tab}"]`).classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        const panel = container.querySelector(`.m14-panel[data-panel="${tab.dataset.tab}"]`);
+        if (panel) { panel.classList.add('active'); panel.removeAttribute('hidden'); }
       });
     });
   },
@@ -467,22 +475,63 @@ ModuleEngine.register('14', {
     const resetBtn = document.getElementById('m14-reset-grad');
     const opacitySlider = document.getElementById('m14-opacity');
     const layerSlider = document.getElementById('m14-layer');
+    const threshSlider = document.getElementById('m14-thresh');
+    const targetSelect = document.getElementById('m14-target-class');
+    const schemeSelect = document.getElementById('m14-colorscheme');
+
+    const self = this;
+    function redrawOverlay() {
+      if (!self._lastHeatData) return;
+      const alpha = parseInt(document.getElementById('m14-opacity').value) / 100;
+      const scheme = document.getElementById('m14-colorscheme').value;
+      self._drawOverlay('m14-cv-orig', self._lastHeatData, 160, 160, alpha, scheme);
+    }
 
     if (opacitySlider) {
       opacitySlider.addEventListener('input', () => {
         document.getElementById('m14-opacity-v').textContent = opacitySlider.value;
         document.getElementById('m14-alpha-v').textContent = (opacitySlider.value / 100).toFixed(2);
-        if (this._lastHeatData) {
-          const alpha = opacitySlider.value / 100;
-          const scheme = document.getElementById('m14-colorscheme').value;
-          this._drawOverlay('m14-cv-orig', this._lastHeatData, 160, 160, alpha, scheme);
-        }
+        redrawOverlay();
       });
     }
 
     if (layerSlider) {
       layerSlider.addEventListener('input', () => {
         document.getElementById('m14-layer-v').textContent = layerSlider.value;
+        self._drawFeatureMaps();
+      });
+    }
+
+    if (threshSlider) {
+      threshSlider.addEventListener('change', () => {
+        document.getElementById('m14-thresh-v').textContent = threshSlider.value;
+        if (self._lastTarget && self._lastHeatData) {
+          const scheme = document.getElementById('m14-colorscheme').value;
+          const newData = self._generateHeatmap(160, 160, self._lastTarget.x, self._lastTarget.y, self._lastTarget.r, scheme);
+          self._lastHeatData = newData;
+          self._drawHeatmapOnCanvas('m14-cv-cam', newData, 160, 160, scheme);
+          redrawOverlay();
+        }
+      });
+    }
+
+    if (targetSelect) {
+      targetSelect.addEventListener('change', () => {
+        if (self._gradRunning) return;
+        self._gradRunning = true;
+        if (runBtn) runBtn.disabled = true;
+        self._runGradCAMAnimation();
+      });
+    }
+
+    if (schemeSelect) {
+      schemeSelect.addEventListener('change', () => {
+        if (self._lastHeatData) {
+          const alpha = parseInt(document.getElementById('m14-opacity').value) / 100;
+          const scheme = schemeSelect.value;
+          self._drawHeatmapOnCanvas('m14-cv-cam', self._lastHeatData, 160, 160, scheme);
+          self._drawOverlay('m14-cv-orig', self._lastHeatData, 160, 160, alpha, scheme);
+        }
       });
     }
 
@@ -500,6 +549,7 @@ ModuleEngine.register('14', {
         if (this._gradTimer) clearTimeout(this._gradTimer);
         this._gradRunning = false;
         this._lastHeatData = null;
+        this._lastTarget = null;
         if (runBtn) runBtn.disabled = false;
         ['m14-cv-feat', 'm14-cv-cam', 'm14-cv-over'].forEach(id => {
           const cv = document.getElementById(id);
@@ -517,6 +567,7 @@ ModuleEngine.register('14', {
     const opacity = parseInt(document.getElementById('m14-opacity').value) / 100;
     const scheme = document.getElementById('m14-colorscheme').value;
     const target = this._drawSyntheticSlice(targetClass);
+    this._lastTarget = target;
 
     const steps = document.querySelectorAll('.m14-grad-step');
     const display = document.getElementById('m14-grad-display');

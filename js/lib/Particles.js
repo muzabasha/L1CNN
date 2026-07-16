@@ -6,8 +6,10 @@ function initParticles() {
   const ctx = canvas.getContext('2d');
   let particles = [];
   let animId;
+  let _resizeHandler;
   const PARTICLE_COUNT = window.innerWidth < 768 ? 50 : 100;
   const COLORS = ['rgba(59,130,246,', 'rgba(34,211,238,', 'rgba(139,92,246,'];
+  let running = true;
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -33,6 +35,7 @@ function initParticles() {
   }
 
   function draw() {
+    if (!running) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
@@ -64,7 +67,14 @@ function initParticles() {
 
   init();
   draw();
-  window.addEventListener('resize', Utils.debounce(resize, 300));
+  _resizeHandler = Utils.debounce(resize, 300);
+  window.addEventListener('resize', _resizeHandler);
 
-  _particleEngine = { destroy() { cancelAnimationFrame(animId); } };
+  _particleEngine = {
+    destroy() {
+      running = false;
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', _resizeHandler);
+    }
+  };
 }

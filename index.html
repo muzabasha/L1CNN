@@ -11,7 +11,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" /></noscript>
 
   <link rel="stylesheet" href="css/styles.css" />
 
@@ -32,8 +33,11 @@
 </head>
 <body class="bg-dark-900 text-white font-sans overflow-x-hidden">
 
+  <!-- Skip to content -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <!-- SIDEBAR -->
-  <nav id="sidebar" class="sidebar fixed top-0 left-0 h-full z-50 flex flex-col transition-all duration-300" style="width:280px;" role="navigation" aria-label="Main navigation">
+  <nav id="sidebar" class="sidebar fixed top-0 left-0 h-full z-50 flex flex-col" role="navigation" aria-label="Main navigation">
     <div class="p-6 border-b border-white/10 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center" aria-hidden="true">
@@ -44,7 +48,7 @@
           <p class="text-xs text-gray-400">Virtual Research Lab</p>
         </div>
       </div>
-      <button id="sidebar-toggle" class="text-gray-400 hover:text-white transition-colors" title="Collapse sidebar" aria-label="Collapse sidebar">
+      <button id="sidebar-toggle" class="text-gray-400 hover:text-white transition-colors" title="Collapse sidebar" aria-label="Collapse sidebar" aria-expanded="false">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
       </button>
     </div>
@@ -82,22 +86,22 @@
         <span class="text-xs text-gray-400 font-medium">Progress</span>
         <span class="text-xs text-primary-400 font-bold" id="progress-text">0%</span>
       </div>
-      <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+      <div class="h-1.5 bg-white/5 rounded-full overflow-hidden" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Module completion progress">
         <div id="progress-fill" class="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-500" style="width:0%"></div>
       </div>
     </div>
   </nav>
 
   <!-- Sidebar spacer -->
-  <div id="sidebar-spacer" class="fixed left-0 top-0 h-full transition-all duration-300" style="width:280px;"></div>
+  <div id="sidebar-spacer" class="min-h-screen transition-all duration-300" style="width:var(--sidebar-width);"></div>
 
   <!-- Sidebar overlay (mobile) -->
   <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
 
   <!-- Main content wrapper -->
-  <div id="main-content" class="main-content transition-all duration-300">
+  <main id="main-content" class="main-content transition-all duration-300" role="main">
     <!-- Mobile menu button -->
-    <button id="mobile-menu-btn" class="fixed top-4 left-4 z-40 hidden items-center justify-center w-10 h-10 rounded-xl bg-glass border border-white/10 text-white" aria-label="Toggle menu">
+    <button id="mobile-menu-btn" class="fixed top-4 left-4 z-50 hidden items-center justify-center w-10 h-10 rounded-xl bg-glass border border-white/10 text-white" aria-label="Toggle menu" aria-expanded="false">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
     </button>
 
@@ -309,7 +313,10 @@
     <section id="module-16" class="module-section hidden" role="region" aria-label="Module 16: Comparison"></section>
     <section id="module-17" class="module-section hidden" role="region" aria-label="Module 17: Research Gap"></section>
     <section id="module-18" class="module-section hidden" role="region" aria-label="Module 18: PhD Workflow"></section>
-  </div>
+  </main>
+
+  <!-- Live region for route announcements -->
+  <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);"></div>
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -332,6 +339,7 @@
   <script src="js/lib/AnimationManager.js"></script>
   <script src="js/lib/UIManager.js"></script>
   <script src="js/lib/ModuleEngine.js"></script>
+  <script src="js/lib/SimulationManager.js"></script>
   <script src="js/lib/Particles.js"></script>
   <script src="js/lib/Hero3D.js"></script>
   <script src="js/lib/ScrollAnimations.js"></script>

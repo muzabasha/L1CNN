@@ -1,3 +1,5 @@
+let _m12AnimFrame = null;
+
 ModuleEngine.register('12', {
   init(container) {
     container.innerHTML = '';
@@ -38,7 +40,7 @@ ModuleEngine.register('12', {
     pipelineSection.appendChild(pipelineContainer);
 
     const canvasWrap = document.createElement('div');
-    canvasWrap.style.cssText = 'flex:1;min-width:600px;';
+    canvasWrap.style.cssText = 'flex:1;min-width:280px;';
     const canvas = document.createElement('canvas');
     canvas.width = 820;
     canvas.height = 420;
@@ -438,7 +440,7 @@ ModuleEngine.register('12', {
         ctx.shadowBlur = 0;
       });
 
-      requestAnimationFrame(animateFlow);
+      _m12AnimFrame = requestAnimationFrame(animateFlow);
     }
 
     drawPipeline();
@@ -651,5 +653,10 @@ def select_topk_features(X, y, k=20):
   },
 
   destroy() {
+    state.animating = false;
+    if (_m12AnimFrame) {
+      cancelAnimationFrame(_m12AnimFrame);
+      _m12AnimFrame = null;
+    }
   }
 });

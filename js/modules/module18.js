@@ -268,7 +268,7 @@ ModuleEngine.register('18', {
 
             <div class="reflection-prompt">
               <h4>Your Research Plan</h4>
-              <textarea placeholder="Based on what you've learned, outline your research plan. What will be your first step? What gaps will you address?" rows="6" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px;"></textarea>
+              <textarea placeholder="Based on what you've learned, outline your research plan. What will be your first step? What gaps will you address?" rows="6" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:4px;"></textarea>
             </div>
           </div>
         </section>

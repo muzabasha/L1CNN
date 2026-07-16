@@ -127,16 +127,16 @@ ModuleEngine.register('5', {
               <div class="control-section">
                 <h4>Liver Parameters</h4>
                 <div class="control-group">
-                  <label>Liver Condition: <span id="liver-cond-val">Normal</span></label>
+                  <label for="liver-condition">Liver Condition: <span id="liver-cond-val">Normal</span></label>
                   <input type="range" id="liver-condition" min="0" max="100" value="0" step="1">
                   <div class="slider-labels"><span>Normal</span><span>Cirrhotic</span></div>
                 </div>
                 <div class="control-group">
-                  <label>Background Noise: <span id="noise-val">20</span> HU</label>
+                  <label for="noise-level">Background Noise: <span id="noise-val">20</span> HU</label>
                   <input type="range" id="noise-level" min="0" max="50" value="20" step="1">
                 </div>
                 <div class="control-group">
-                  <label>Slice Thickness: <span id="slice-val">3</span>mm</label>
+                  <label for="slice-thickness">Slice Thickness: <span id="slice-val">3</span>mm</label>
                   <input type="range" id="slice-thickness" min="1" max="8" value="3" step="1">
                 </div>
               </div>
@@ -144,19 +144,19 @@ ModuleEngine.register('5', {
               <div class="control-section">
                 <h4>Lesion Parameters</h4>
                 <div class="control-group">
-                  <label>Number of Lesions: <span id="num-lesions-val">3</span></label>
+                  <label for="num-lesions">Number of Lesions: <span id="num-lesions-val">3</span></label>
                   <input type="range" id="num-lesions" min="1" max="10" value="3" step="1">
                 </div>
                 <div class="control-group">
-                  <label>Min Size: <span id="min-size-val">5</span>mm</label>
+                  <label for="min-size">Min Size: <span id="min-size-val">5</span>mm</label>
                   <input type="range" id="min-size" min="2" max="40" value="5" step="1">
                 </div>
                 <div class="control-group">
-                  <label>Max Size: <span id="max-size-val">30</span>mm</label>
+                  <label for="max-size">Max Size: <span id="max-size-val">30</span>mm</label>
                   <input type="range" id="max-size" min="10" max="80" value="30" step="1">
                 </div>
                 <div class="control-group">
-                  <label>Lesion Shape:</label>
+                  <label for="lesion-shape">Lesion Shape:</label>
                   <select id="lesion-shape">
                     <option value="round">Round</option>
                     <option value="irregular">Irregular</option>
@@ -164,7 +164,7 @@ ModuleEngine.register('5', {
                   </select>
                 </div>
                 <div class="control-group">
-                  <label>Enhancement Pattern:</label>
+                  <label for="enhancement-pattern">Enhancement Pattern:</label>
                   <select id="enhancement-pattern">
                     <option value="hcc">HCC (APHE + washout)</option>
                     <option value="hemangioma">Hemangioma (peripheral nodular)</option>
@@ -177,11 +177,11 @@ ModuleEngine.register('5', {
               <div class="control-section">
                 <h4>Output Parameters</h4>
                 <div class="control-group">
-                  <label>Matrix Size: <span id="matrix-val">128</span></label>
+                  <label for="matrix-size">Matrix Size: <span id="matrix-val">128</span></label>
                   <input type="range" id="matrix-size" min="64" max="512" value="128" step="64">
                 </div>
                 <div class="control-group">
-                  <label>Volume Depth: <span id="m5-depth-val">32</span>slices</label>
+                  <label for="volume-depth">Volume Depth: <span id="m5-depth-val">32</span>slices</label>
                   <input type="range" id="volume-depth" min="16" max="64" value="32" step="8">
                 </div>
               </div>
