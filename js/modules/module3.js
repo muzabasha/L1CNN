@@ -9,7 +9,15 @@
   var _simId = null;
 
   ModuleEngine.register(moduleId, {
-    init: function () {
+    init: function (container) {
+      container.innerHTML =
+        '<div id="module-3-objectives"><div class="objectives-grid"></div></div>' +
+        '<div id="module-3-animation"><div class="animation-container"></div></div>' +
+        '<div id="module-3-theory"><div class="theory-content"></div></div>' +
+        '<div id="module-3-simulation"><div class="simulation-container"></div></div>' +
+        '<div id="module-3-code"><div class="code-container"></div></div>' +
+        '<div id="module-3-quiz"><div class="quiz-container"></div></div>' +
+        '<div id="module-3-reflection"><div class="reflection-content"></div></div>';
       populateObjectives();
       initPhaseTimeline();
       populateTheory();

@@ -10,8 +10,19 @@
   var _cancel = function () { _af.forEach(function (id) { cancelAnimationFrame(id); }); _af = []; };
 
   ModuleEngine.register(M, {
-    init: function () {
+    init: function (container) {
       _cancel();
+      container.innerHTML =
+        '<div id="module-1-objectives"><div class="objectives-grid"></div></div>' +
+        '<div id="module-1-anatomy-wrap"></div>' +
+        '<div id="module-1-ctphases-wrap"></div>' +
+        '<div id="module-1-risk-wrap"></div>' +
+        '<div id="module-1-theory"><div class="theory-content"></div></div>' +
+        '<div id="module-1-simulation"><div class="simulation-container"></div></div>' +
+        '<div id="module-1-epi-wrap"></div>' +
+        '<div id="module-1-code"><div class="code-container"></div></div>' +
+        '<div id="module-1-quiz"><div class="quiz-container"></div></div>' +
+        '<div id="module-1-reflection"><div class="reflection-content"></div></div>';
       buildObjectives();
       buildAnatomy();
       buildCTPhases();
