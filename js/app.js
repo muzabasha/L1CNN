@@ -411,6 +411,8 @@ const NavigationController = {
     this._populateModuleRegistry();
     this._bindDelegatedEvents();
     this._syncFromURL();
+    // After sync, allow hashchange events
+    this._initialSyncDone = true;
   },
 
   _cacheDOM() {
@@ -593,7 +595,7 @@ const NavigationController = {
   },
 
   _onHashChange() {
-    if (this._navigating) return;
+    if (this._navigating || !this._initialSyncDone) return;
     const hash = window.location.hash.replace('#', '') || 'home';
     const moduleId = hash.startsWith('module-') ? hash.replace('module-', '') : hash;
     if (this.modules[moduleId]) {
