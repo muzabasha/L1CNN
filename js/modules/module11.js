@@ -3,7 +3,8 @@ let _m11Animating = false;
 
 ModuleEngine.register('11', {
   init(container) {
-    container.innerHTML = '';
+    var header = Components.createModuleHeader('11', 'CNN Feature Visualization');
+    container.appendChild(header);
 
     const state = {
       layerDepth: 1,
@@ -16,11 +17,6 @@ ModuleEngine.register('11', {
 
     const page = document.createElement('div');
     page.className = 'module-page';
-
-    const header = document.createElement('div');
-    header.className = 'module-header';
-    header.innerHTML = '<h1>Module 11: CNN Feature Visualization</h1><p class="subtitle">Interpreting What Deep Networks Learn from Medical Images</p>';
-    page.appendChild(header);
 
     const objectives = document.createElement('div');
     objectives.className = 'module-card objectives';

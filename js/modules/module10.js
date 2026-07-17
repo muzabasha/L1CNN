@@ -2,7 +2,8 @@ let _m10AnimFrame = null;
 
 ModuleEngine.register('10', {
   init(container) {
-    container.innerHTML = '';
+    var header = Components.createModuleHeader('10', 'Phase-aware 3D CNN');
+    container.appendChild(header);
 
     const state = {
       inputSize: 64,
@@ -21,11 +22,6 @@ ModuleEngine.register('10', {
 
     const page = document.createElement('div');
     page.className = 'module-page';
-
-    const header = document.createElement('div');
-    header.className = 'module-header';
-    header.innerHTML = '<h1>Module 10: Phase-aware 3D CNN Architecture</h1><p class="subtitle">Core Novel Contribution — Multi-Branch Deep Learning for LI-RADS Classification</p>';
-    page.appendChild(header);
 
     const objectives = document.createElement('div');
     objectives.className = 'module-card objectives';
