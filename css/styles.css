@@ -7,8 +7,8 @@
 
 /* ── CSS Variables ─────────────────────────── */
 :root {
-  --sidebar-width: 280px;
-  --sidebar-collapsed: 60px;
+  --sidebar-width: 0px;
+  --sidebar-collapsed: 0px;
   --header-height: 0px;
   --animation-speed: 1;
   --transition-fast: calc(150ms * var(--animation-speed));
@@ -136,55 +136,8 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
 
-/* ── Sidebar ───────────────────────────────── */
-.sidebar {
-  width: var(--sidebar-width);
-  background: linear-gradient(180deg, rgba(15,15,35,0.95) 0%, rgba(10,10,26,0.98) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-right: 1px solid var(--border);
-  z-index: 50;
-  overflow: hidden;
-  transition: width var(--transition-base) ease, transform var(--transition-base) ease;
-}
-
-.sidebar.collapsed { width: var(--sidebar-collapsed) !important; }
-
-.sidebar .nav-item {
-  position: relative;
-  white-space: nowrap;
-  overflow: hidden;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-}
-
-.sidebar .nav-item:hover {
-  background: rgba(255,255,255,0.04);
-}
-
-.sidebar .nav-item.active {
-  background: linear-gradient(90deg, rgba(99,102,241,0.15) 0%, transparent 100%);
-  border-right: 2px solid var(--color-primary);
-  color: var(--color-primary-light);
-}
-
-.sidebar .nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--color-primary);
-  border-radius: 0 2px 2px 0;
-}
-
-/* ── Main Content ──────────────────────────── */
-.main-content {
-  min-height: 100vh;
-  transition: margin-left var(--transition-base) ease;
-}
+/* ── Sidebar (removed) ─────────────────────── */
+/* Sidebar was removed — modules accessible from home page grid */
 
 /* ── Module Sections ───────────────────────── */
 .module-section {
@@ -213,24 +166,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Sidebar Overlay (mobile) ─────────────── */
-#sidebar-overlay {
-  transition: opacity var(--transition-base) ease;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 40;
-}
-
-#sidebar-overlay.active {
-  opacity: 1;
-  pointer-events: all;
-}
-
-body.sidebar-open {
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-}
+/* ── Sidebar Overlay (removed) ────────────── */
 
 /* ── Glassmorphism Card ────────────────────── */
 .glass-card {
@@ -1086,27 +1022,7 @@ code[class*="language-"] {
 
 /* Tablet */
 @media (max-width: 1024px) {
-  .sidebar {
-    transform: translateX(-100%);
-    width: 280px !important;
-    transition: transform var(--transition-base) ease;
-  }
-
-  .sidebar.mobile-open {
-    transform: translateX(0);
-  }
-
-  #sidebar-spacer { width: 0 !important; }
-
-  #sidebar-overlay {
-    display: block;
-  }
-
-  #mobile-menu-btn {
-    display: flex !important;
-  }
-
-  /* Dashboard grids — override Tailwind md:* breakpoints at 769-1024px range */
+  #sidebar-overlay { display: none; }
   .kpi-grid, [class*="grid-cols-4"] {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 0.75rem;
@@ -1216,7 +1132,7 @@ code[class*="language-"] {
 
 /* ── Print ─────────────────────────────────── */
 @media print {
-  .sidebar, #sidebar-overlay, #sidebar-spacer, #mobile-menu-btn, .module-nav-footer {
+  .module-nav-footer {
     display: none !important;
   }
 
@@ -1296,9 +1212,7 @@ code[class*="language-"] {
 #main-content button,
 #main-content [role="button"],
 #main-content a[href],
-#main-content .cursor-pointer,
-.sidebar-toggle,
-#sidebar-toggle {
+#main-content .cursor-pointer {
   min-height: 44px;
   min-width: 44px;
   display: inline-flex;
@@ -1314,13 +1228,7 @@ footer button {
   padding: 8px 12px;
 }
 
-/* Mobile menu button already has w-10/h-10 (40px) — bump to 44px */
-#mobile-menu-btn {
-  min-width: 44px !important;
-  min-height: 44px !important;
-  width: 44px !important;
-  height: 44px !important;
-}
+/* Mobile menu button — sidebar removed */
 
 /* ── Utility ───────────────────────────────── */
 /* Screen reader only */

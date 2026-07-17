@@ -79,7 +79,7 @@ const App = (() => {
       // Show the section
       Renderer.showSection(sectionId);
       
-      // Update sidebar highlighting
+      // Update module card active highlighting
       UIManager.updateSidebarActive(to);
       
       // Initialize module if not home (deferred to let section transition paint first)
@@ -94,7 +94,7 @@ const App = (() => {
         _currentModuleId = null;
       }
 
-      // Close mobile sidebar if open
+      // Close mobile menu if open
       if (window.innerWidth <= 1024) {
         setTimeout(() => UIManager.toggleSidebar(false), 150);
       }

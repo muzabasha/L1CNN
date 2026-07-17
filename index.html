@@ -36,74 +36,8 @@
   <!-- Skip to content -->
   <a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <!-- SIDEBAR -->
-  <nav id="sidebar" class="sidebar fixed top-0 left-0 h-full z-50 flex flex-col" role="navigation" aria-label="Main navigation">
-    <div class="p-6 border-b border-white/10 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center" aria-hidden="true">
-          <span class="font-orbitron font-bold text-sm">VR</span>
-        </div>
-        <div>
-          <h1 class="font-orbitron font-bold text-lg leading-tight">VRL</h1>
-          <p class="text-xs text-gray-400">Virtual Research Lab</p>
-        </div>
-      </div>
-      <button id="sidebar-toggle" class="text-gray-400 hover:text-white transition-colors" title="Collapse sidebar" aria-label="Collapse sidebar" aria-expanded="false">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
-      </button>
-    </div>
-
-    <div class="flex-1 overflow-y-auto py-4 scrollbar-thin" id="nav-items" role="menubar" aria-label="Module navigation">
-      <a href="#home" data-module="home" class="nav-item active flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-current="page" aria-label="Home">
-        <span class="text-lg" aria-hidden="true">&#x1F3E0;</span>
-        <span class="nav-label">Home</span>
-      </a>
-
-      <div class="px-6 py-2 mt-2 text-xs text-gray-500 uppercase tracking-wider font-semibold" aria-hidden="true">Research Modules</div>
-
-      <a href="#module-1" data-module="1" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 1: Clinical Background"><span class="text-lg" aria-hidden="true">&#x1FAC1;</span><span class="nav-label">Module 1: Clinical Background</span></a>
-      <a href="#module-2" data-module="2" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 2: CT Imaging"><span class="text-lg" aria-hidden="true">&#x1F4F7;</span><span class="nav-label">Module 2: CT Imaging</span></a>
-      <a href="#module-3" data-module="3" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 3: Multiphase CT"><span class="text-lg" aria-hidden="true">&#x1F489;</span><span class="nav-label">Module 3: Multiphase CT</span></a>
-      <a href="#module-4" data-module="4" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 4: LI-RADS"><span class="text-lg" aria-hidden="true">&#x1F4CB;</span><span class="nav-label">Module 4: LI-RADS</span></a>
-      <a href="#module-5" data-module="5" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 5: Synthetic Dataset"><span class="text-lg" aria-hidden="true">&#x1F5C4;&#xFE0F;</span><span class="nav-label">Module 5: Synthetic Dataset</span></a>
-      <a href="#module-6" data-module="6" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 6: 3D nnU-Net"><span class="text-lg" aria-hidden="true">&#x1F9E0;</span><span class="nav-label">Module 6: 3D nnU-Net</span></a>
-      <a href="#module-7" data-module="7" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 7: Segmentation"><span class="text-lg" aria-hidden="true">&#x2702;&#xFE0F;</span><span class="nav-label">Module 7: Segmentation</span></a>
-      <a href="#module-8" data-module="8" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 8: Radiomics"><span class="text-lg" aria-hidden="true">&#x1F4CA;</span><span class="nav-label">Module 8: Radiomics</span></a>
-      <a href="#module-9" data-module="9" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 9: Traditional ML"><span class="text-lg" aria-hidden="true">&#x1F916;</span><span class="nav-label">Module 9: Traditional ML</span></a>
-      <a href="#module-10" data-module="10" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 10: 3D CNN"><span class="text-lg" aria-hidden="true">&#x1F52E;</span><span class="nav-label">Module 10: 3D CNN</span></a>
-      <a href="#module-11" data-module="11" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 11: CNN Visualization"><span class="text-lg" aria-hidden="true">&#x1F441;&#xFE0F;</span><span class="nav-label">Module 11: CNN Visualization</span></a>
-      <a href="#module-12" data-module="12" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 12: Fusion"><span class="text-lg" aria-hidden="true">&#x1F517;</span><span class="nav-label">Module 12: Fusion</span></a>
-      <a href="#module-13" data-module="13" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 13: Classification"><span class="text-lg" aria-hidden="true">&#x1F3AF;</span><span class="nav-label">Module 13: Classification</span></a>
-      <a href="#module-14" data-module="14" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 14: Explainable AI"><span class="text-lg" aria-hidden="true">&#x1F4A1;</span><span class="nav-label">Module 14: Explainable AI</span></a>
-      <a href="#module-15" data-module="15" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 15: Performance Metrics"><span class="text-lg" aria-hidden="true">&#x1F4C8;</span><span class="nav-label">Module 15: Performance Metrics</span></a>
-      <a href="#module-16" data-module="16" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 16: Comparison"><span class="text-lg" aria-hidden="true">&#x2696;&#xFE0F;</span><span class="nav-label">Module 16: Comparison</span></a>
-      <a href="#module-17" data-module="17" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 17: Research Gap"><span class="text-lg" aria-hidden="true">&#x1F52C;</span><span class="nav-label">Module 17: Research Gap</span></a>
-      <a href="#module-18" data-module="18" class="nav-item flex items-center gap-3 px-6 py-3 text-sm transition-colors cursor-pointer" role="menuitem" tabindex="0" aria-label="Module 18: PhD Workflow"><span class="text-lg" aria-hidden="true">&#x1F393;</span><span class="nav-label">Module 18: PhD Workflow</span></a>
-    </div>
-
-    <div class="p-4 border-t border-white/10">
-      <div class="flex items-center justify-between mb-2">
-        <span class="text-xs text-gray-400 font-medium">Progress</span>
-        <span class="text-xs text-primary-400 font-bold" id="progress-text">0%</span>
-      </div>
-      <div class="h-1.5 bg-white/5 rounded-full overflow-hidden" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Module completion progress">
-        <div id="progress-fill" class="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-500" style="width:0%"></div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Sidebar spacer -->
-  <div id="sidebar-spacer" class="min-h-screen transition-all duration-300" style="width:var(--sidebar-width);"></div>
-
-  <!-- Sidebar overlay (mobile) -->
-  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
-
   <!-- Main content wrapper -->
-  <main id="main-content" class="main-content transition-all duration-300" role="main">
-    <!-- Mobile menu button -->
-    <button id="mobile-menu-btn" class="fixed top-4 left-4 z-50 hidden items-center justify-center w-10 h-10 rounded-xl bg-glass border border-white/10 text-white" aria-label="Toggle menu" aria-expanded="false">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-    </button>
+  <main id="main-content" class="main-content" role="main">
 
     <!-- ==================== HOME SECTION ==================== -->
     <section id="home" class="module-section active" role="region" aria-label="Home">
@@ -227,6 +161,106 @@
             <h3 class="font-orbitron text-lg font-bold mb-2 group-hover:text-primary-400 transition-colors">Complete PhD Workflow</h3>
             <p class="text-gray-400 text-sm mb-4">Synthesize all modules into a complete research workflow and publication pipeline.</p>
             <span class="text-primary-400 text-sm font-semibold">Explore Module 18 <span aria-hidden="true">&#x2192;</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- All 18 Modules -->
+      <div class="max-w-6xl mx-auto px-4 py-16" id="all-modules">
+        <div class="text-center mb-12">
+          <h2 class="font-orbitron text-3xl font-bold mb-4">All 18 Modules</h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">Browse the complete research workflow — click any module to dive in</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div data-navigate="1" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 1: Clinical Background">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1FAC1;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 1</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Clinical Background</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Liver anatomy, CT phases, risk factors, and tumour growth simulation</div>
+          </div>
+          <div data-navigate="2" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 2: CT Imaging">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F4F7;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 2</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">CT Imaging</div>
+            <div class="text-xs text-gray-400 leading-relaxed">CT physics, Hounsfield units, and image reconstruction methods</div>
+          </div>
+          <div data-navigate="3" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 3: Multiphase CT">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F489;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 3</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Multiphase CT</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Contrast-enhanced phases, enhancement patterns, and DCE curves</div>
+          </div>
+          <div data-navigate="4" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 4: LI-RADS">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F4CB;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 4</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">LI-RADS</div>
+            <div class="text-xs text-gray-400 leading-relaxed">LI-RADS v2018 scoring system for liver lesion classification</div>
+          </div>
+          <div data-navigate="5" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 5: Synthetic Dataset">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F5C4;&#xFE0F;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 5</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Synthetic Dataset</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Generate synthetic training data for robust deep learning models</div>
+          </div>
+          <div data-navigate="6" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 6: 3D nnU-Net">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F9E0;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 6</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">3D nnU-Net</div>
+            <div class="text-xs text-gray-400 leading-relaxed">3D nnU-Net architecture for volumetric medical image segmentation</div>
+          </div>
+          <div data-navigate="7" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 7: Segmentation">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x2702;&#xFE0F;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 7</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Segmentation</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Interactive liver tumour segmentation with AI-powered tools</div>
+          </div>
+          <div data-navigate="8" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 8: Radiomics">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F4CA;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 8</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Radiomics</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Extract and analyze quantitative radiomic features from CT</div>
+          </div>
+          <div data-navigate="9" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 9: Traditional ML">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F916;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 9</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Traditional ML</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Train classifiers on radiomics data for lesion classification</div>
+          </div>
+          <div data-navigate="10" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 10: 3D CNN">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F52E;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 10</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">3D CNN</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Design phase-aware 3D CNNs for volumetric CT analysis</div>
+          </div>
+          <div data-navigate="11" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 11: CNN Visualization">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F441;&#xFE0F;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 11</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">CNN Visualization</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Visualize CNN feature maps and understand deep learning</div>
+          </div>
+          <div data-navigate="12" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 12: Fusion">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F517;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 12</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Fusion</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Fuse CNN features with radiomics for superior classification</div>
+          </div>
+          <div data-navigate="13" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 13: Classification">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F3AF;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 13</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Classification</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Build an end-to-end classification pipeline with real CT data</div>
+          </div>
+          <div data-navigate="14" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 14: Explainable AI">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F4A1;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 14</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Explainable AI</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Explain predictions with Grad-CAM, SHAP, and attention maps</div>
+          </div>
+          <div data-navigate="15" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 15: Performance Metrics">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F4C8;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 15</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Performance Metrics</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Evaluate model performance with comprehensive metrics</div>
+          </div>
+          <div data-navigate="16" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 16: Comparison">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x2696;&#xFE0F;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 16</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Comparison</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Compare architectures and feature fusion strategies</div>
+          </div>
+          <div data-navigate="17" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 17: Research Gap">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F52C;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 17</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">Research Gap</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Identify research gaps and design novel experiments</div>
+          </div>
+          <div data-navigate="18" class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]" tabindex="0" role="button" aria-label="Module 18: PhD Workflow">
+            <div class="text-2xl mb-2" aria-hidden="true">&#x1F393;</div><div class="text-xs text-primary-400 font-semibold mb-0.5">Module 18</div>
+            <div class="text-sm font-semibold text-white mb-1 leading-tight">PhD Workflow</div>
+            <div class="text-xs text-gray-400 leading-relaxed">Synthesize everything into a complete research workflow</div>
           </div>
         </div>
       </div>
