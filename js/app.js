@@ -82,12 +82,14 @@ const App = (() => {
       // Update sidebar highlighting
       UIManager.updateSidebarActive(to);
       
-      // Initialize module if not home
+      // Initialize module if not home (deferred to let section transition paint first)
       if (to !== 'home') {
-        console.log('[App] Initializing module:', to);
-        ModuleEngine.init(to);
-        _injectModuleNav(to);
-        _currentModuleId = to;
+        console.log('[App] Scheduling module init:', to);
+        requestAnimationFrame(() => {
+          ModuleEngine.init(to);
+          _injectModuleNav(to);
+          _currentModuleId = to;
+        });
       } else {
         _currentModuleId = null;
       }
