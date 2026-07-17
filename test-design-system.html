@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design System Test</title>
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: var(--space-8);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            margin-bottom: var(--space-12);
+            padding: var(--space-6);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .test-section h2 {
+            color: var(--color-primary-400);
+            margin-bottom: var(--space-6);
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+        }
+
+        .component-row {
+            display: flex;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-4);
+        }
+    </style>
+</head>
+
+<body>
+    <h1
+        style="font-family: var(--font-display); font-size: var(--text-4xl); margin-bottom: var(--space-8); color: var(--color-primary-400);">
+        Design System Test Page
+    </h1>
+
+    <!-- Buttons -->
+    <div class="test-section">
+        <h2>Buttons</h2>
+
+        <h3 style="color: var(--text-secondary); font-size: var(--text-lg); margin-bottom: var(--space-4);">Variants
+        </h3>
+        <div class="component-row">
+            <button class="btn btn-primary">Primary</button>
+            <button class="btn btn-secondary">Secondary</button>
+            <button class="btn btn-accent">Accent</button>
+            <button class="btn btn-success">Success</button>
+            <button class="btn btn-warning">Warning</button>
+            <button class="btn btn-error">Error</button>
+            <button class="btn btn-ghost">Ghost</button>
+            <button class="btn btn-outline">Outline</button>
+        </div>
+
+        <h3 style="color: var(--text-secondary); font-size: var(--text-lg); margin: var(--space-6) 0 var(--space-4);">
+            Sizes</h3>
+        <div class="component-row">
+            <button class="btn btn-primary btn-sm">Small</button>
+            <button class="btn btn-primary">Base</button>
+            <button class="btn btn-primary btn-lg">Large</button>
+            <button class="btn btn-primary btn-xl">Extra Large</button>
+        </div>
+
+        <h3 style="color: var(--text-secondary); font-size: var(--text-lg); margin: var(--space-6) 0 var(--space-4);">
+            States</h3>
+        <div class="component-row">
+            <button class="btn btn-primary">Normal</button>
+            <button class="btn btn-primary" disabled>Disabled</button>
+        </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="test-section">
+        <h2>Cards</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-4);">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Basic Card</h3>
+                    <p class="card-subtitle">With header and body</p>
+                </div>
+                <div class="card-body">
+                    This is a basic card with header and body content.
+                </div>
+            </div>
+
+            <div class="card card-elevated">
+                <div class="card-header">
+                    <h3 class="card-title">Elevated Card</h3>
+                </div>
+                <div class="card-body">
+                    This card has elevated shadow for emphasis.
+                </div>
+            </div>
+
+            <div class="card card-gradient">
+                <div class="card-header">
+                    <h3 class="card-title">Gradient Card</h3>
+                </div>
+                <div class="card-body">
+                    This card has a gradient background.
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary btn-sm">Action</button>
+                    <button class="btn btn-ghost btn-sm">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="test-section">
+        <h2>Badges</h2>
+        <div class="component-row">
+            <span class="badge badge-primary">Primary</span>
+            <span class="badge badge-accent">Accent</span>
+            <span class="badge badge-success">Success</span>
+            <span class="badge badge-warning">Warning</span>
+            <span class="badge badge-error">Error</span>
+            <span class="badge badge-gray">Gray</span>
+        </div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="test-section">
+        <h2>Alerts</h2>
+        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+            <div class="alert alert-info">ℹ️ This is an informational alert message.</div>
+            <div class="alert alert-success">✅ Operation completed successfully!</div>
+            <div class="alert alert-warning">⚠️ Please review this warning carefully.</div>
+            <div class="alert alert-error">❌ An error occurred during processing.</div>
+        </div>
+    </div>
+
+    <!-- Inputs -->
+    <div class="test-section">
+        <h2>Inputs</h2>
+        <div style="display: flex; flex-direction: column; gap: var(--space-4); max-width: 500px;">
+            <input type="text" class="input" placeholder="Base input">
+            <input type="text" class="input input-sm" placeholder="Small input">
+            <input type="text" class="input input-lg" placeholder="Large input">
+            <textarea class="input textarea" placeholder="Textarea"></textarea>
+            <select class="input select">
+                <option>Select option</option>
+                <option>Option 1</option>
+                <option>Option 2</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Progress Bars -->
+    <div class="test-section">
+        <h2>Progress Bars</h2>
+        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+            <div>
+                <p style="margin-bottom: var(--space-2); color: var(--text-secondary);">Normal Progress</p>
+                <div class="progress">
+                    <div class="progress-bar" style="width: 65%"></div>
+                </div>
+            </div>
+            <div>
+                <p style="margin-bottom: var(--space-2); color: var(--text-secondary);">Striped Progress</p>
+                <div class="progress progress-striped">
+                    <div class="progress-bar" style="width: 40%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading States -->
+    <div class="test-section">
+        <h2>Loading States</h2>
+        <h3 style="color: var(--text-secondary); font-size: var(--text-lg); margin-bottom: var(--space-4);">Skeletons
+        </h3>
+        <div style="max-width: 500px;">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text" style="width: 80%;"></div>
+        </div>
+
+        <h3 style="color: var(--text-secondary); font-size: var(--text-lg); margin: var(--space-6) 0 var(--space-4);">
+            Spinners</h3>
+        <div class="component-row">
+            <div class="spinner"></div>
+            <div class="spinner spinner-lg"></div>
+        </div>
+    </div>
+
+    <!-- Toast Test -->
+    <div class="test-section">
+        <h2>Toast Notifications</h2>
+        <div class="component-row">
+            <button class="btn btn-success" onclick="testToast('success')">Success Toast</button>
+            <button class="btn btn-error" onclick="testToast('error')">Error Toast</button>
+            <button class="btn btn-warning" onclick="testToast('warning')">Warning Toast</button>
+            <button class="btn btn-primary" onclick="testToast('info')">Info Toast</button>
+        </div>
+    </div>
+
+    <!-- Components.js Test -->
+    <div class="test-section">
+        <h2>Components.js Builder Test</h2>
+        <div id="components-test"></div>
+    </div>
+
+    <script src="js/lib/ToastManager.js"></script>
+    <script src="js/lib/Components.js"></script>
+    <script>
+        function testToast(type) {
+            const messages = {
+                success: 'Operation completed successfully!',
+                error: 'An error occurred during processing.',
+                warning: 'Please review this carefully.',
+                info: 'This is an informational message.'
+            };
+            ToastManager[type](messages[type], {
+                title: type.charAt(0).toUpperCase() + type.slice(1)
+            });
+        }
+
+        // Test Components.js
+        const testContainer = document.getElementById('components-test');
+
+        // Test button creation
+        const testBtn = Components.createButton({
+            text: 'Test Button',
+            variant: 'primary',
+            onClick: () => ToastManager.success('Button clicked!')
+        });
+        testContainer.appendChild(testBtn);
+        testContainer.appendChild(document.createElement('br'));
+        testContainer.appendChild(document.createElement('br'));
+
+        // Test card creation
+        const testCard = Components.createCard({
+            title: 'Generated Card',
+            subtitle: 'Created with Components.createCard()',
+            body: 'This card was dynamically created using the Components.js helper library.',
+            footer: [
+                Components.createButton({ text: 'Action', variant: 'primary', size: 'sm' }),
+                Components.createButton({ text: 'Cancel', variant: 'ghost', size: 'sm' })
+            ]
+        });
+        testContainer.appendChild(testCard);
+    </script>
+</body>
+
+</html>

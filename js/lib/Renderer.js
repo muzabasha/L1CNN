@@ -13,18 +13,29 @@ const Renderer = (() => {
         _mainContent = document.querySelector('.main-content') || document.body;
       }
       
-      // Register the home section
+      // Register and activate home section by default
       const homeSection = document.getElementById('home');
       if (homeSection) {
         this.registerSection('home', homeSection);
-        console.log('[Renderer] Home section registered');
+        homeSection.classList.remove('hidden');
+        homeSection.classList.add('active');
+        homeSection.style.display = 'block';
+        homeSection.style.opacity = '1';
+        homeSection.style.transform = 'translateY(0)';
+        _activeSectionId = 'home';
+        console.log('[Renderer] Home section registered and activated');
+      } else {
+        console.error('[Renderer] Home section not found in DOM!');
       }
       
-      // Register all existing module sections
+      // Register all existing module sections (start hidden)
       document.querySelectorAll('.module-section').forEach(section => {
-        if (section.id) {
+        if (section.id && section.id !== 'home') {
           this.registerSection(section.id, section);
-          console.log('[Renderer] Registered existing section:', section.id);
+          section.classList.add('hidden');
+          section.classList.remove('active');
+          section.style.display = 'none';
+          console.log('[Renderer] Registered section:', section.id);
         }
       });
       
@@ -50,6 +61,13 @@ const Renderer = (() => {
       const target = _sections.get(id);
       if (!target) {
         console.error('[Renderer] Section not found:', id);
+        // Try to find in DOM and auto-register
+        const domSection = document.getElementById(id);
+        if (domSection) {
+          console.log('[Renderer] Auto-registering section found in DOM:', id);
+          this.registerSection(id, domSection);
+          return this.showSection(id, animate); // Retry
+        }
         return false;
       }
 
@@ -69,21 +87,21 @@ const Renderer = (() => {
             setTimeout(() => {
               current.classList.add('hidden');
               current.classList.remove('active');
-              current.style.display = 'none';
+              current.style.display = 'none'; // Explicitly hide
             }, _transitionDuration);
           } else {
             current.classList.add('hidden');
             current.classList.remove('active');
             current.style.opacity = '0';
             current.style.transform = 'translateY(10px)';
-            current.style.display = 'none';
+            current.style.display = 'none'; // Explicitly hide
           }
         }
       }
 
       // Show target section
       target.classList.remove('hidden');
-      target.style.display = 'block';
+      target.style.display = 'block'; // Explicitly show
 
       if (animate) {
         target.style.opacity = '0';
@@ -102,7 +120,7 @@ const Renderer = (() => {
       }
 
       _activeSectionId = id;
-      console.log('[Renderer] Section now active:', id);
+      console.log('[Renderer] Section now active and visible:', id);
       return true;
     },
 
@@ -113,7 +131,7 @@ const Renderer = (() => {
     createModuleContainer(moduleId) {
       const sectionId = 'module-' + moduleId;
       
-      // Check if already exists
+      // Check if already exists in DOM
       let section = document.getElementById(sectionId);
       if (section) {
         console.log('[Renderer] Module container already exists:', sectionId);
@@ -130,7 +148,7 @@ const Renderer = (() => {
       section.className = 'module-section hidden';
       section.setAttribute('role', 'region');
       section.setAttribute('aria-label', 'Module ' + moduleId);
-      section.style.display = 'none';
+      section.style.display = 'none'; // Start hidden
       
       if (_mainContent) {
         _mainContent.appendChild(section);
@@ -140,6 +158,7 @@ const Renderer = (() => {
       }
       
       this.registerSection(sectionId, section);
+      console.log('[Renderer] Module container created and registered:', sectionId);
       return section;
     },
 

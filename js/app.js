@@ -61,54 +61,92 @@ const App = (() => {
     EventManager.on('route:changed', ({ from, to }) => {
       console.log('[App] Route changed from', from, 'to', to);
       
-      // Destroy previous module
-      if (from && from !== 'home' && from !== to) {
-        console.log('[App] Destroying previous module:', from);
-        ModuleEngine.destroy(from);
-      }
+      try {
+        // Destroy previous module
+        if (from && from !== 'home' && from !== to) {
+          console.log('[App] Destroying previous module:', from);
+          try {
+            ModuleEngine.destroy(from);
+          } catch (e) {
+            console.error('[App] Error destroying module:', from, e);
+          }
+        }
 
-      // Determine section ID
-      const sectionId = to === 'home' ? 'home' : 'module-' + to;
-      
-      // Create container if module doesn't exist
-      if (to !== 'home' && !Renderer.getSection(sectionId)) {
-        console.log('[App] Creating container for module:', to);
-        Renderer.createModuleContainer(to);
-      }
+        // Determine section ID
+        const sectionId = to === 'home' ? 'home' : 'module-' + to;
+        console.log('[App] Target section:', sectionId);
+        
+        // Ensure section exists and is registered
+        let section = Renderer.getSection(sectionId);
+        if (!section) {
+          section = document.getElementById(sectionId);
+          if (section) {
+            console.log('[App] Found unregistered section in DOM, registering:', sectionId);
+            Renderer.registerSection(sectionId, section);
+          } else if (to !== 'home') {
+            console.log('[App] Creating new container for module:', to);
+            section = Renderer.createModuleContainer(to);
+          }
+        }
 
-      // Show the section
-      Renderer.showSection(sectionId);
-      
-      // Update module card active highlighting
-      UIManager.updateSidebarActive(to);
-      
-      // Initialize module if not home (deferred to let section transition paint first)
-      if (to !== 'home') {
-        console.log('[App] Scheduling module init:', to);
+        // Show the section
+        const shown = Renderer.showSection(sectionId);
+        if (!shown) {
+          console.error('[App] Failed to show section:', sectionId);
+          throw new Error('Failed to show section: ' + sectionId);
+        }
+        
+        // Update sidebar highlighting
+        UIManager.updateSidebarActive(to);
+        
+        // Initialize module if not home (deferred for paint)
+        if (to !== 'home') {
+          console.log('[App] Scheduling module init:', to);
+          requestAnimationFrame(() => {
+            try {
+              const initialized = ModuleEngine.init(to);
+              if (initialized) {
+                console.log('[App] Module initialized:', to);
+                _injectModuleNav(to);
+                _currentModuleId = to;
+              } else {
+                console.warn('[App] Module already initialized or failed:', to);
+              }
+            } catch (e) {
+              console.error('[App] Error initializing module:', to, e);
+            }
+          });
+        } else {
+          _currentModuleId = null;
+        }
+
+        // Close mobile menu if open
+        if (window.innerWidth <= 1024) {
+          setTimeout(() => UIManager.toggleSidebar(false), 150);
+        }
+
+        // Scroll to top
         requestAnimationFrame(() => {
-          ModuleEngine.init(to);
-          _injectModuleNav(to);
-          _currentModuleId = to;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-      } else {
-        _currentModuleId = null;
-      }
 
-      // Close mobile menu if open
-      if (window.innerWidth <= 1024) {
-        setTimeout(() => UIManager.toggleSidebar(false), 150);
-      }
-
-      // Scroll to top
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-
-      // Announce to screen readers
-      const announcer = document.getElementById('sr-announcer');
-      if (announcer) {
-        const label = to === 'home' ? 'Home' : 'Module ' + to;
-        announcer.textContent = 'Now viewing ' + label;
+        // Announce to screen readers
+        const announcer = document.getElementById('sr-announcer');
+        if (announcer) {
+          const label = to === 'home' ? 'Home' : 'Module ' + to;
+          announcer.textContent = 'Now viewing ' + label;
+        }
+        
+        console.log('[App] Route change complete:', to);
+        
+      } catch (error) {
+        console.error('[App] Critical error in route:changed handler:', error);
+        console.error('[App] Stack:', error.stack);
+        // Attempt recovery by going to home
+        if (to !== 'home') {
+          console.log('[App] Attempting recovery - navigating to home');
+          setTimeout(() => Router.navigateTo('home', { force: true }), 100);
+        }
       }
     });
 
@@ -233,6 +271,16 @@ const App = (() => {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('[DOM] DOMContentLoaded - Initializing app');
   App.init();
+  
+  // Show welcome toast after initialization
+  setTimeout(() => {
+    if (window.ToastManager) {
+      ToastManager.success('Application initialized successfully!', {
+        title: 'Welcome',
+        duration: 3000
+      });
+    }
+  }, 500);
 });
 
 window.vrlApp = {

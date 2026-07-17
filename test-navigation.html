@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Test Suite - VRL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0a0e1a;
+            color: #e2e8f0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #60a5fa;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        h2 {
+            color: #93c5fd;
+            margin: 2rem 0 1rem;
+            font-size: 1.5rem;
+        }
+
+        .test-section {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .test-item {
+            padding: 1rem;
+            border-left: 3px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+            margin-bottom: 0.75rem;
+            border-radius: 6px;
+        }
+
+        .test-item.pass {
+            border-left-color: #22c55e;
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .test-item.fail {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .test-item h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #e2e8f0;
+        }
+
+        .test-item p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .status.pending {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .status.pass {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .status.fail {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(100, 116, 139, 0.2);
+            color: #cbd5e1;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(100, 116, 139, 0.3);
+        }
+
+        .console-log {
+            background: #000;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .console-log div {
+            margin-bottom: 4px;
+            color: #94a3b8;
+        }
+
+        .console-log .info {
+            color: #60a5fa;
+        }
+
+        .console-log .success {
+            color: #4ade80;
+        }
+
+        .console-log .error {
+            color: #f87171;
+        }
+
+        .console-log .warn {
+            color: #fbbf24;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #818cf8, #2dd4bf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+
+        a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🧪 Navigation Test Suite</h1>
+        <p style="color: #94a3b8; margin-bottom: 2rem;">Comprehensive testing for the Interactive Virtual Research
+            Laboratory navigation system.</p>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="total-tests">0</div>
+                <div class="stat-label">Total Tests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="passed-tests">0</div>
+                <div class="stat-label">Passed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="failed-tests">0</div>
+                <div class="stat-label">Failed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pending-tests">9</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Quick Actions</h2>
+            <button class="btn btn-primary" onclick="runAllTests()">▶ Run All Tests</button>
+            <button class="btn btn-secondary" onclick="clearResults()">Clear Results</button>
+            <button class="btn btn-secondary" onclick="window.open('index.html', '_blank')">Open Main App</button>
+        </div>
+
+        <h2>Test Results</h2>
+
+        <div class="test-section">
+            <h3>1. Sidebar Navigation</h3>
+            <div class="test-item" id="test-sidebar">
+                <h3><span class="status pending">PENDING</span> Sidebar items are clickable</h3>
+                <p><strong>Test:</strong> Click sidebar navigation items and verify routing occurs</p>
+                <p><strong>Expected:</strong> Navigation to target module, URL updates, sidebar highlights</p>
+                <button class="btn btn-primary" onclick="testSidebar()">Run Test</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Active Highlighting</h3>
+            <div class="test-item" id="test-highlighting">
+                <h3><span class="status pending">PENDING</span> Active menu highlighting is consistent</h3>
+                <p><strong>Test:</strong> Navigate between modules and verify correct sidebar highlighting</p>
+                <p><strong>Expected:</strong> Active item always highlighted, previous item un-highlighted</p>
+                <button class="btn btn-primary" onclick="testHighlighting()">Run Test</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Browser Navigation</h3>
+            <div class="test-item" id="test-back-forward">
+                <h3><span class="status pending">PENDING</span> Browser back/forward buttons work</h3>
+                <p><strong>Test:</strong> Navigate, then use browser back/forward buttons</p>
+                <p><strong>Expected:</strong> Proper navigation history, URL sync, content updates</p>
+                <button class="btn btn-primary" onclick="testBackForward()">Run Test</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. Deep Linking</h3>
+            <div class="test-item" id="test-deep-link">
+                <h3><span class="status pending">PENDING</span> Deep linking is supported</h3>
+                <p><strong>Test:</strong> Load URLs with hash fragments (e.g., #5, #10)</p>
+                <p><strong>Expected:</strong> Correct module loads, URL preserved, no home redirect</p>
+                <button class="btn btn-primary" onclick="testDeepLink()">Run Test</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. Page Refresh</h3>
+            <div class="test-item" id="test-refresh">
+                <h3><span class="status pending">PENDING</span> Module state persists on refresh</h3>
+                <p><strong>Test:</strong> Navigate to module, refresh page</p>
+                <p><strong>Expected:</strong> Same module loads after refresh, no reset to home</p>
+                <p><strong>Note:</strong> Manual test - navigate to a module and press F5</p>
+                <button class="btn btn-secondary" onclick="manualTest('refresh')">Mark as Tested</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>6. Router State</h3>
+            <div class="test-item" id="test-router-state">
+                <h3><span class="status pending">PENDING</span> Router state is maintained</h3>
+                <p><strong>Test:</strong> Rapid navigation, check state consistency</p>
+                <p><strong>Expected:</strong> No lost state, proper queuing, correct final route</p>
+                <button class="btn btn-primary" onclick="testRouterState()">Run Test</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>7. Module Lifecycle</h3>
+            <div class="test-item" id="test-lifecycle">
+                <h3><span class="status pending">PENDING</span> Modules mount/unmount cleanly</h3>
+                <p><strong>Test:</strong> Navigate between modules, check DOM cleanup</p>
+                <p><strong>Expected:</strong> Previous module destroyed, new module initialized</p>
+                <button class="btn btn-primary" onclick="testLifecycle()">Run Test</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>8. Event Listeners</h3>
+            <div class="test-item" id="test-listeners">
+                <h3><span class="status pending">PENDING</span> No duplicate event listeners</h3>
+                <p><strong>Test:</strong> Multiple navigations, check listener count</p>
+                <p><strong>Expected:</strong> Single listener per element, no memory leaks</p>
+                <button class="btn btn-primary" onclick="testListeners()">Run Test</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>9. SPA Configuration</h3>
+            <div class="test-item" id="test-spa">
+                <h3><span class="status pending">PENDING</span> SPA fallback configured</h3>
+                <p><strong>Test:</strong> Verify vercel.json has proper rewrite rules</p>
+                <p><strong>Expected:</strong> All routes serve index.html, client routing works</p>
+                <button class="btn btn-primary" onclick="testSPAConfig()">Run Test</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>Console Output</h3>
+            <div class="console-log" id="console-output">
+                <div class="info">[Test Suite] Ready to run tests...</div>
+                <div class="info">[Test Suite] Open browser console (F12) for detailed logs</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>Manual Testing Checklist</h3>
+            <ul style="color: #94a3b8; line-height: 2;">
+                <li>✓ Navigate through all 18 modules via sidebar</li>
+                <li>✓ Use module next/prev buttons</li>
+                <li>✓ Test keyboard navigation (Tab + Enter)</li>
+                <li>✓ Test mobile menu (resize window &lt; 1024px)</li>
+                <li>✓ Test on multiple browsers (Chrome, Firefox, Safari, Edge)</li>
+                <li>✓ Test on mobile devices</li>
+                <li>✓ Verify no console errors</li>
+                <li>✓ Check browser history (back/forward)</li>
+                <li>✓ Test page refresh on different modules</li>
+                <li>✓ Test direct URL access (deep links)</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script>
+        let testResults = { total: 9, passed: 0, failed: 0, pending: 9 };
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('console-output');
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+
+        function updateStats() {
+            document.getElementById('total-tests').textContent = testResults.total;
+            document.getElementById('passed-tests').textContent = testResults.passed;
+            document.getElementById('failed-tests').textContent = testResults.failed;
+            document.getElementById('pending-tests').textContent = testResults.pending;
+        }
+
+        function markTest(testId, passed, message) {
+            const test = document.getElementById(testId);
+            const status = test.querySelector('.status');
+
+            if (status.classList.contains('pending')) {
+                testResults.pending--;
+            } else if (status.classList.contains('pass')) {
+                testResults.passed--;
+            } else if (status.classList.contains('fail')) {
+                testResults.failed--;
+            }
+
+            status.classList.remove('pending', 'pass', 'fail');
+            test.classList.remove('pass', 'fail');
+
+            if (passed) {
+                status.classList.add('pass');
+                status.textContent = 'PASS';
+                test.classList.add('pass');
+                testResults.passed++;
+                log(message || 'Test passed', 'success');
+            } else {
+                status.classList.add('fail');
+                status.textContent = 'FAIL';
+                test.classList.add('fail');
+                testResults.failed++;
+                log(message || 'Test failed', 'error');
+            }
+
+            updateStats();
+        }
+
+        function testSidebar() {
+            log('Testing sidebar navigation...', 'info');
+            const mainWindow = window.open('index.html', '_blank');
+
+            setTimeout(() => {
+                log('Manual verification required: Click sidebar items in the opened window', 'warn');
+                log('Expected: Navigation occurs, URL updates, sidebar highlights', 'info');
+                const result = confirm('Did sidebar navigation work correctly?');
+                markTest('test-sidebar', result, result ? 'Sidebar navigation works' : 'Sidebar navigation failed');
+            }, 2000);
+        }
+
+        function testHighlighting() {
+            log('Testing active highlighting...', 'info');
+            log('Manual verification required: Navigate and check highlighting', 'warn');
+            const result = confirm('Is active highlighting consistent across navigation?');
+            markTest('test-highlighting', result, result ? 'Highlighting consistent' : 'Highlighting inconsistent');
+        }
+
+        function testBackForward() {
+            log('Testing browser navigation buttons...', 'info');
+            log('Manual verification required: Use browser back/forward buttons', 'warn');
+            const result = confirm('Do browser back/forward buttons work correctly?');
+            markTest('test-back-forward', result, result ? 'Browser navigation works' : 'Browser navigation failed');
+        }
+
+        function testDeepLink() {
+            log('Testing deep linking...', 'info');
+            const urls = ['index.html#5', 'index.html#10', 'index.html#15'];
+            urls.forEach((url, i) => {
+                setTimeout(() => {
+                    window.open(url, `_deeplink${i}`);
+                    log(`Opened: ${url}`, 'info');
+                }, i * 1000);
+            });
+
+            setTimeout(() => {
+                const result = confirm('Did all deep links load the correct modules?');
+                markTest('test-deep-link', result, result ? 'Deep linking works' : 'Deep linking failed');
+            }, urls.length * 1000 + 1000);
+        }
+
+        function testRouterState() {
+            log('Testing router state management...', 'info');
+            log('Manual verification required: Rapidly click navigation items', 'warn');
+            const result = confirm('Does router state remain consistent during rapid navigation?');
+            markTest('test-router-state', result, result ? 'Router state maintained' : 'Router state lost');
+        }
+
+        function testLifecycle() {
+            log('Testing module lifecycle...', 'info');
+            log('Manual verification required: Navigate and check console for init/destroy logs', 'warn');
+            const result = confirm('Do modules mount and unmount cleanly (check console)?');
+            markTest('test-lifecycle', result, result ? 'Module lifecycle clean' : 'Module lifecycle issues');
+        }
+
+        function testListeners() {
+            log('Testing event listeners...', 'info');
+            log('Manual verification required: Navigate multiple times, check DevTools listeners', 'warn');
+            const result = confirm('Are there no duplicate event listeners (check DevTools)?');
+            markTest('test-listeners', result, result ? 'No duplicate listeners' : 'Duplicate listeners found');
+        }
+
+        function testSPAConfig() {
+            log('Checking SPA configuration...', 'info');
+            fetch('vercel.json')
+                .then(r => r.json())
+                .then(config => {
+                    const hasRewrite = config.routes && config.routes.some(r => r.dest === '/index.html');
+                    markTest('test-spa', hasRewrite, hasRewrite ? 'SPA config correct' : 'SPA config missing');
+                })
+                .catch(e => {
+                    log('Error reading vercel.json: ' + e.message, 'error');
+                    markTest('test-spa', false, 'Could not verify SPA config');
+                });
+        }
+
+        function manualTest(testId) {
+            const result = confirm('Have you manually tested this feature?');
+            markTest(`test-${testId}`, result, result ? 'Manual test passed' : 'Manual test failed');
+        }
+
+        function runAllTests() {
+            log('Starting full test suite...', 'info');
+            setTimeout(() => testSPAConfig(), 500);
+            log('Other tests require manual verification - please run them individually', 'warn');
+        }
+
+        function clearResults() {
+            testResults = { total: 9, passed: 0, failed: 0, pending: 9 };
+            updateStats();
+            document.querySelectorAll('.test-item').forEach(item => {
+                const status = item.querySelector('.status');
+                status.classList.remove('pass', 'fail');
+                status.classList.add('pending');
+                status.textContent = 'PENDING';
+                item.classList.remove('pass', 'fail');
+            });
+            document.getElementById('console-output').innerHTML = '<div class="info">[Test Suite] Results cleared</div>';
+            log('Test suite ready', 'info');
+        }
+
+        // Initialize
+        updateStats();
+        log('Test suite initialized', 'success');
+        log('Click "Run All Tests" or test individually', 'info');
+    </script>
+</body>
+
+</html>
