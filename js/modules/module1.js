@@ -12,11 +12,13 @@
   ModuleEngine.register(M, {
     init: function (container) {
       _cancel();
-      container.innerHTML =
-        '<div style="padding:1.5rem 1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">' +
-          '<h2 class="font-orbitron text-2xl font-bold gradient-text" style="margin:0;">Module 1: Clinical Background</h2>' +
-          '<button data-navigate="home" class="px-4 py-2 rounded-lg border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:40px;" aria-label="Back to Home">&#x2190; Home</button>' +
-        '</div>' +
+      
+      // Create module header using design system
+      var header = Components.createModuleHeader('1', 'Clinical Background');
+      container.appendChild(header);
+      
+      // Create content sections
+      container.innerHTML += 
         '<div id="module-1-objectives"><div class="objectives-grid"></div></div>' +
         '<div id="module-1-anatomy-wrap"></div>' +
         '<div id="module-1-ctphases-wrap"></div>' +
@@ -27,9 +29,17 @@
         '<div id="module-1-code"><div class="code-container"></div></div>' +
         '<div id="module-1-quiz"><div class="quiz-container"></div></div>' +
         '<div id="module-1-reflection"><div class="reflection-content"></div></div>' +
-        '<div style="padding:1rem 1.5rem 2rem;display:flex;justify-content:center;">' +
-          '<button data-navigate="home" class="px-6 py-3 rounded-xl border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:44px;">&#x2190; Back to Home</button>' +
-        '</div>';
+        '<div style="padding:var(--space-6);display:flex;justify-content:center;"></div>';
+      
+      // Add footer button using design system
+      var footerBtn = Components.createButton({
+        text: 'Home',
+        icon: '←',
+        variant: 'secondary',
+        navigate: 'home',
+        ariaLabel: 'Back to Home'
+      });
+      container.querySelector('div[style*="justify-content:center"]').appendChild(footerBtn);
       buildObjectives();
       buildAnatomy();
       buildCTPhases();
@@ -52,24 +62,21 @@
      1. Learning Objectives
      ═══════════════════════════════════════════ */
   function buildObjectives() {
-    var g = q('#module-1-objectives .objectives-grid');
-    if (!g) return;
-    var items = [
+    var container = q('#module-1-objectives');
+    if (!container) return;
+    
+    var objectives = [
       'Understand the gross and microscopic anatomy of the liver, including lobes, vasculature, and Couinaud segments.',
       'Learn about hepatocellular carcinoma (HCC) — pathophysiology, staging, and why it is the most common primary liver malignancy.',
       'Identify major risk factors: chronic hepatitis B/C, cirrhosis, aflatoxin exposure, alcohol, and NAFLD.',
       'Understand the radiology workflow for liver lesion detection, from screening ultrasound to confirmatory multiphase CT/MRI.',
       'Learn why automated LI-RADS classification is needed: inter-observer variability, workload, and the promise of AI-assisted diagnosis.'
     ];
-    items.forEach(function (t, i) {
-      var d = document.createElement('div');
-      d.className = 'objective-item';
-      d.style.opacity = '0';
-      d.style.transform = 'translateY(12px)';
-      d.innerHTML = '<div class="objective-number">' + (i + 1) + '</div><div class="objective-text">' + t + '</div>';
-      g.appendChild(d);
-      setTimeout(function () { d.style.transition = 'opacity .5s ease, transform .5s ease'; d.style.opacity = '1'; d.style.transform = 'translateY(0)'; }, 80 * i);
-    });
+    
+    // Use design system component
+    var grid = Components.createObjectivesGrid(objectives);
+    container.innerHTML = '';
+    container.appendChild(grid);
   }
 
   /* ═══════════════════════════════════════════
@@ -115,11 +122,11 @@
     /* controls */
     var ctrl = document.getElementById('m1-anatomy-ctrls');
     if (ctrl) {
-      mkSlider(ctrl, 'Opacity', 20, 100, 88, function (v) { opacity = v / 100; });
-      mkSlider(ctrl, 'Rotation', 0, 50, 8, function (v) { rotSpeed = v / 5000; });
-      mkToggle(ctrl, 'Vessels', true, function (v) { showVessels = v; });
-      mkToggle(ctrl, 'Tumour', true, function (v) { showTumor = v; });
-      mkToggle(ctrl, 'Labels', true, function (v) { showLabels = v; });
+      Components.createSlider(ctrl, {label: 'Opacity', min: 20, max: 100, value: 88, unit: '%', onChange: function (v) { opacity = v / 100; }});
+      Components.createSlider(ctrl, {label: 'Rotation Speed', min: 0, max: 50, value: 8, onChange: function (v) { rotSpeed = v / 5000; }});
+      Components.createToggle(ctrl, {label: 'Show Vessels', checked: true, onChange: function (v) { showVessels = v; }});
+      Components.createToggle(ctrl, {label: 'Show Tumour', checked: true, onChange: function (v) { showTumor = v; }});
+      Components.createToggle(ctrl, {label: 'Show Labels', checked: true, onChange: function (v) { showLabels = v; }});
     }
 
     /* legend */
@@ -668,9 +675,9 @@
     var tumorSize = 10, elapsed = 6, aggressiveness = 1;
     var ctrl = document.getElementById('m1-sim-ctrls');
     if (ctrl) {
-      mkSlider(ctrl, 'Tumour Size (mm)', 1, 50, 10, function (v) { tumorSize = v; });
-      mkSlider(ctrl, 'Months Elapsed', 0, 24, 6, function (v) { elapsed = v; });
-      mkSlider(ctrl, 'Aggressiveness', 1, 3, 1, function (v) { aggressiveness = v; });
+      Components.createSlider(ctrl, {label: 'Tumour Size', min: 1, max: 50, value: 10, unit: 'mm', onChange: function (v) { tumorSize = v; }});
+      Components.createSlider(ctrl, {label: 'Months Elapsed', min: 0, max: 24, value: 6, unit: ' months', onChange: function (v) { elapsed = v; }});
+      Components.createSlider(ctrl, {label: 'Aggressiveness', min: 1, max: 3, value: 1, onChange: function (v) { aggressiveness = v; }});
     }
 
     var cv = document.getElementById('m1-sim-cv');
