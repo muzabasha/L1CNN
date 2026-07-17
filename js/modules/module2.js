@@ -10,11 +10,12 @@
 
   ModuleEngine.register(moduleId, {
     init: function (container) {
-      container.innerHTML =
-        '<div style="padding:1.5rem 1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">' +
-          '<h2 class="font-orbitron text-2xl font-bold gradient-text" style="margin:0;">Module 2: CT Imaging</h2>' +
-          '<button data-navigate="home" class="px-4 py-2 rounded-lg border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:40px;" aria-label="Back to Home">&#x2190; Home</button>' +
-        '</div>' +
+      // Create module header
+      var header = Components.createModuleHeader('2', 'CT Imaging');
+      container.appendChild(header);
+      
+      // Create content sections
+      container.innerHTML += 
         '<div id="module-2-objectives"><div class="objectives-grid"></div></div>' +
         '<div id="module-2-animation"><div class="animation-container"></div></div>' +
         '<div id="module-2-theory"><div class="theory-content"></div></div>' +
@@ -22,9 +23,17 @@
         '<div id="module-2-code"><div class="code-container"></div></div>' +
         '<div id="module-2-quiz"><div class="quiz-container"></div></div>' +
         '<div id="module-2-reflection"><div class="reflection-content"></div></div>' +
-        '<div style="padding:1rem 1.5rem 2rem;display:flex;justify-content:center;">' +
-          '<button data-navigate="home" class="px-6 py-3 rounded-xl border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:44px;">&#x2190; Back to Home</button>' +
-        '</div>';
+        '<div style="padding:var(--space-6);display:flex;justify-content:center;"></div>';
+      
+      // Add footer button
+      var footerBtn = Components.createButton({
+        text: 'Home',
+        icon: '←',
+        variant: 'secondary',
+        navigate: 'home',
+        ariaLabel: 'Back to Home'
+      });
+      container.querySelector('div[style*="justify-content:center"]').appendChild(footerBtn);
       populateObjectives();
       initCTScannerAnimation();
       populateTheory();
