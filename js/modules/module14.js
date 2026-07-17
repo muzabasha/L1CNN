@@ -1,6 +1,6 @@
 ModuleEngine.register('14', {
   init(container) {
-    container.innerHTML = `
+    container.innerHTML = '<div style="padding:1.5rem 1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;"><h2 class="font-orbitron text-2xl font-bold gradient-text" style="margin:0;">Module 14: Explainable AI</h2><button data-navigate="home" class="px-4 py-2 rounded-lg border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:40px;" aria-label="Back to Home">&#x2190; Home</button></div>' + `
       <style>
         .m14-root{font-family:'Segoe UI',system-ui,sans-serif;color:#e2e8f0;background:#0a0f1a;padding:0}
         .m14-hero{text-align:center;padding:40px 20px 20px;background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);border-bottom:1px solid rgba(129,140,248,0.1)}
@@ -267,7 +267,7 @@ ModuleEngine.register('14', {
           </div>
         </div>
       </div>
-    `;
+    ` + '<div style="padding:1rem 1.5rem 2rem;display:flex;justify-content:center;"><button data-navigate="home" class="px-6 py-3 rounded-xl border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:44px;">&#x2190; Back to Home</button></div>';
 
     this._initTabs(container);
     this._initGradAnim(container);

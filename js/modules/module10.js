@@ -624,7 +624,18 @@ print(f"Attention weights: {attn}")
       '<div class="theory-card"><h3>Future Directions</h3><ul><li>Investigate temporal attention across phases</li><li>Explore contrast-enhanced MRI as alternative modality</li><li>Investigate self-supervised pre-training on multiphase CT</li><li>Clinical validation with external cohorts</li></ul></div>';
     page.appendChild(reflectionSection);
 
+
+    const navHeader = document.createElement('div');
+    navHeader.style.cssText = 'padding:1.5rem 1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;';
+    navHeader.innerHTML = '<h2 class="font-orbitron text-2xl font-bold gradient-text" style="margin:0;">Module 10: 3D CNN</h2><button data-navigate="home" class="px-4 py-2 rounded-lg border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:40px;" aria-label="Back to Home">&#x2190; Home</button>';
+    container.insertBefore(navHeader, container.firstChild);
+
     container.appendChild(page);
+    const navFooter = document.createElement('div');
+    navFooter.style.cssText = 'padding:1rem 1.5rem 2rem;display:flex;justify-content:center;';
+    navFooter.innerHTML = '<button data-navigate="home" class="px-6 py-3 rounded-xl border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:44px;">&#x2190; Back to Home</button>';
+    container.appendChild(navFooter);
+
   },
 
   destroy() {

@@ -2,7 +2,7 @@ let _m8AnimFrame = null;
 
 ModuleEngine.register('8', {
     init(container) {
-        container.innerHTML = `
+        container.innerHTML = '<div style="padding:1.5rem 1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;"><h2 class="font-orbitron text-2xl font-bold gradient-text" style="margin:0;">Module 8: Radiomics</h2><button data-navigate="home" class="px-4 py-2 rounded-lg border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:40px;" aria-label="Back to Home">&#x2190; Home</button></div>' + `
         <div class="module-container">
             <div class="module-header">
                 <h2>Module 8: Radiomics — Extracting Texture Features</h2>
@@ -321,7 +321,7 @@ ModuleEngine.register('8', {
                     <p>Modern approaches combine radiomics features as inputs to deep learning networks, or use radiomics-guided loss functions. This hybrid approach leverages both the interpretability of hand-crafted features and the representation power of learned features.</p>
                 </div>
             </div>
-        </div>`;
+        </div>` + '<div style="padding:1rem 1.5rem 2rem;display:flex;justify-content:center;"><button data-navigate="home" class="px-6 py-3 rounded-xl border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:44px;">&#x2190; Back to Home</button></div>';
 
         this.setupAnimation(container);
         this.setupGLCMSimulation(container);
