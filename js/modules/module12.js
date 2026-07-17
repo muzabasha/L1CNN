@@ -2,7 +2,8 @@ let _m12AnimFrame = null;
 
 ModuleEngine.register('12', {
   init(container) {
-    container.innerHTML = '';
+    var header = Components.createModuleHeader('12', 'CNN + Radiomics Fusion');
+    container.appendChild(header);
 
     const state = {
       fusionMethod: 'concatenation',
@@ -19,11 +20,6 @@ ModuleEngine.register('12', {
 
     const page = document.createElement('div');
     page.className = 'module-page';
-
-    const header = document.createElement('div');
-    header.className = 'module-header';
-    header.innerHTML = '<h1>Module 12: CNN + Radiomics Fusion</h1><p class="subtitle">Combining Deep Learning and Hand-Crafted Features for Enhanced Classification</p>';
-    page.appendChild(header);
 
     const objectives = document.createElement('div');
     objectives.className = 'module-card objectives';

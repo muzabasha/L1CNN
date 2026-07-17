@@ -1,7 +1,9 @@
 ModuleEngine.register('15', {
   init(container) {
     this._intervals = [];
-    container.innerHTML = '<div style="padding:1.5rem 1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;"><h2 class="font-orbitron text-2xl font-bold gradient-text" style="margin:0;">Module 15: Performance Metrics</h2><button data-navigate="home" class="px-4 py-2 rounded-lg border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:40px;" aria-label="Back to Home">&#x2190; Home</button></div>' + `
+    var header = Components.createModuleHeader('15', 'Performance Metrics');
+    container.appendChild(header);
+    container.innerHTML += `
       <style>
         .m15-root{font-family:'Segoe UI',system-ui,sans-serif;color:#e2e8f0;background:#0a0f1a}
         .m15-hero{text-align:center;padding:40px 20px 20px;background:linear-gradient(135deg,#0f172a 0%,#042f2e 50%,#0f172a 100%);border-bottom:1px solid rgba(52,211,153,0.1)}

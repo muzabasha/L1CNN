@@ -1,6 +1,8 @@
 ModuleEngine.register('17', {
   init(container) {
-    container.innerHTML = '<div style="padding:1.5rem 1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;"><h2 class="font-orbitron text-2xl font-bold gradient-text" style="margin:0;">Module 17: Research Gap</h2><button data-navigate="home" class="px-4 py-2 rounded-lg border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:40px;" aria-label="Back to Home">&#x2190; Home</button></div>' + `
+    var header = Components.createModuleHeader('17', 'Research Gap');
+    container.appendChild(header);
+    container.innerHTML += `
       <div class="module-header">
         <h2>Module 17: Research Gap Explorer</h2>
         <p class="module-subtitle">Identifying research gaps and positioning contributions in the literature</p>
