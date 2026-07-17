@@ -1,53 +1,108 @@
 const App = (() => {
   let _initialized = false;
+  let _currentModuleId = null;
 
   return {
     async init() {
-      if (_initialized) return;
+      if (_initialized) {
+        console.warn('[App] Already initialized');
+        return;
+      }
+      
+      console.log('[App] Initializing application...');
       _initialized = true;
 
+      // Load state from storage
       StateManager.loadFromStorage();
+      
+      // Initialize theme
       ThemeManager.init();
+      
+      // Register all routes
       _registerRoutes();
+      
+      // Initialize core systems
       Router.init();
       UIManager.init();
       Renderer.init();
+      
+      // Register modules from DOM
       _registerModulesFromDOM();
+      
+      // Bind global events
       _bindGlobalEvents();
+      
+      // Sync from URL (handle deep linking and page refresh)
       Router.syncFromURL();
-
+      
+      // Initialize visual effects
       initParticles();
       initHero3D();
       setTimeout(initScrollAnimations, 100);
 
       EventManager.emit('app:init');
+      console.log('[App] Initialization complete');
     }
   };
 
   function _registerRoutes() {
+    console.log('[App] Registering routes...');
     Router.register('home', { title: 'Home', moduleId: 'home' });
     for (let i = 1; i <= 18; i++) {
       Router.register(String(i), { title: 'Module ' + i, moduleId: String(i) });
     }
+    console.log('[App] Routes registered');
   }
 
   function _bindGlobalEvents() {
+    console.log('[App] Binding global events...');
+    
+    // Handle route changes
     EventManager.on('route:changed', ({ from, to }) => {
-      if (from && from !== 'home') ModuleEngine.destroy(from);
+      console.log('[App] Route changed from', from, 'to', to);
+      
+      // Destroy previous module
+      if (from && from !== 'home' && from !== to) {
+        console.log('[App] Destroying previous module:', from);
+        ModuleEngine.destroy(from);
+      }
+
+      // Determine section ID
       const sectionId = to === 'home' ? 'home' : 'module-' + to;
+      
+      // Create container if module doesn't exist
       if (to !== 'home' && !Renderer.getSection(sectionId)) {
+        console.log('[App] Creating container for module:', to);
         Renderer.createModuleContainer(to);
       }
+
+      // Show the section
       Renderer.showSection(sectionId);
+      
+      // Update sidebar highlighting
       UIManager.updateSidebarActive(to);
+      
+      // Initialize module if not home
       if (to !== 'home') {
+        console.log('[App] Initializing module:', to);
         ModuleEngine.init(to);
         _injectModuleNav(to);
+        _currentModuleId = to;
       } else {
-        ModuleEngine.destroy(to);
+        _currentModuleId = null;
       }
-      if (window.innerWidth <= 1024) UIManager.toggleSidebar(false);
-      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+      // Close mobile sidebar if open
+      if (window.innerWidth <= 1024) {
+        setTimeout(() => UIManager.toggleSidebar(false), 150);
+      }
+
+      // Scroll to top
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // Announce to screen readers
       const announcer = document.getElementById('sr-announcer');
       if (announcer) {
         const label = to === 'home' ? 'Home' : 'Module ' + to;
@@ -55,39 +110,69 @@ const App = (() => {
       }
     });
 
+    // Global click handler for data-navigate attributes
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-navigate]');
       if (btn) {
         e.preventDefault();
-        Router.navigateTo(btn.dataset.navigate);
+        const target = btn.dataset.navigate;
+        console.log('[App] Navigate button clicked:', target);
+        Router.navigateTo(target);
       }
     });
 
+    // Global keyboard handler for navigation buttons
     document.addEventListener('keydown', (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT' || e.target.closest('.simulation-panel') || e.target.closest('[role="tab"]')) return;
+      // Skip if user is typing in an input
+      if (e.target.tagName === 'INPUT' || 
+          e.target.tagName === 'TEXTAREA' || 
+          e.target.tagName === 'SELECT' || 
+          e.target.closest('.simulation-panel') || 
+          e.target.closest('[role="tab"]')) {
+        return;
+      }
+
+      // Handle Enter/Space on data-navigate buttons
       const btn = e.target.closest('[data-navigate]');
       if (btn && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
-        Router.navigateTo(btn.dataset.navigate);
+        const target = btn.dataset.navigate;
+        Router.navigateTo(target);
+        return;
       }
+
+      // Arrow key navigation between modules
       if (e.key === 'ArrowRight') {
         const routes = Router.getAllRoutes();
         const idx = routes.indexOf(Router.getCurrentRoute());
-        if (idx > -1 && idx < routes.length - 1) Router.navigateTo(routes[idx + 1]);
+        if (idx > -1 && idx < routes.length - 1) {
+          e.preventDefault();
+          Router.navigateTo(routes[idx + 1]);
+        }
       } else if (e.key === 'ArrowLeft') {
         const routes = Router.getAllRoutes();
         const idx = routes.indexOf(Router.getCurrentRoute());
-        if (idx > 1) Router.navigateTo(routes[idx - 1]);
+        if (idx > 0) {
+          e.preventDefault();
+          Router.navigateTo(routes[idx - 1]);
+        }
       }
     });
 
-    window.addEventListener('resize', Utils.debounce(() => UIManager.onResize(), 200));
+    // Debounced resize handler
+    window.addEventListener('resize', Utils.debounce(() => {
+      UIManager.onResize();
+    }, 200));
+    
+    console.log('[App] Global events bound');
   }
 
   function _registerModulesFromDOM() {
+    console.log('[App] Registering modules from DOM...');
     const sections = document.querySelectorAll('.module-section');
     sections.forEach(sec => {
       Renderer.registerSection(sec.id, sec);
+      console.log('[App] Registered section:', sec.id);
     });
   }
 
@@ -109,12 +194,10 @@ const App = (() => {
 
     const prevBtn = document.createElement('button');
     prevBtn.className = 'module-nav-btn module-nav-prev';
+    prevBtn.setAttribute('data-navigate', prevId);
     prevBtn.setAttribute('aria-label', n === 1 ? 'Go to Home' : 'Go to previous module');
     prevBtn.style.cssText = btnStyle;
     prevBtn.innerHTML = n === 1 ? '\u2190 Home' : ('\u2190 Module ' + (n - 1));
-    prevBtn.addEventListener('click', () => Router.navigateTo(prevId));
-    prevBtn.addEventListener('mouseover', () => { prevBtn.style.background = 'rgba(59,130,246,0.2)'; prevBtn.style.borderColor = '#93c5fd'; });
-    prevBtn.addEventListener('mouseout', () => { prevBtn.style.background = 'rgba(59,130,246,0.08)'; prevBtn.style.borderColor = 'rgba(59,130,246,0.3)'; });
 
     const counter = document.createElement('span');
     counter.style.cssText = 'font-size:12px;color:#64748b;white-space:nowrap';
@@ -126,20 +209,18 @@ const App = (() => {
     if (nextId) {
       const nextBtn = document.createElement('button');
       nextBtn.className = 'module-nav-btn module-nav-next';
+      nextBtn.setAttribute('data-navigate', nextId);
       nextBtn.setAttribute('aria-label', 'Go to next module');
       nextBtn.style.cssText = btnStyle;
       nextBtn.innerHTML = 'Module ' + (n + 1) + ' \u2192';
-      nextBtn.addEventListener('click', () => Router.navigateTo(nextId));
-      nextBtn.addEventListener('mouseover', () => { nextBtn.style.background = 'rgba(59,130,246,0.2)'; nextBtn.style.borderColor = '#93c5fd'; });
-      nextBtn.addEventListener('mouseout', () => { nextBtn.style.background = 'rgba(59,130,246,0.08)'; nextBtn.style.borderColor = 'rgba(59,130,246,0.3)'; });
       nav.appendChild(nextBtn);
     } else {
       const homeBtn = document.createElement('button');
       homeBtn.className = 'module-nav-btn module-nav-home';
+      homeBtn.setAttribute('data-navigate', 'home');
       homeBtn.setAttribute('aria-label', 'Return to Home');
       homeBtn.style.cssText = btnStyle.replace('08)', '12)').replace('#93c5fd', '#34d399');
       homeBtn.innerHTML = '\u{1F3E0} Back to Home';
-      homeBtn.addEventListener('click', () => Router.navigateTo('home'));
       nav.appendChild(homeBtn);
     }
 
@@ -147,11 +228,15 @@ const App = (() => {
   }
 })();
 
-document.addEventListener('DOMContentLoaded', () => App.init());
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('[DOM] DOMContentLoaded - Initializing app');
+  App.init();
+});
 
 window.vrlApp = {
   navigateTo: (id) => Router.navigateTo(id),
   toggleSidebar: (force) => UIManager.toggleSidebar(force),
   getState: () => StateManager.getAll(),
-  resetProgress: () => StateManager.reset()
+  resetProgress: () => StateManager.reset(),
+  getCurrentRoute: () => Router.getCurrentRoute()
 };

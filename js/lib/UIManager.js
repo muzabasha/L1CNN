@@ -24,15 +24,34 @@ const UIManager = (() => {
     },
 
     updateSidebarActive(moduleId) {
+      console.log('[UIManager] Updating sidebar active state for:', moduleId);
+      
       document.querySelectorAll('.nav-item').forEach(item => {
-        const raw = item.dataset.module || (item.getAttribute('href') || '').replace(/.*#/, '') || '';
-        const itemNorm = String(raw).replace(/^module-?/, '');
-        const normId = String(moduleId).replace(/^module-?/, '');
+        // Get the module ID from multiple possible sources
+        const itemModule = item.dataset.module || 
+                          item.getAttribute('data-navigate') ||
+                          (item.getAttribute('href') || '').replace(/.*#/, '').replace('module-', '');
+        
+        // Normalize both IDs for comparison
+        const itemNorm = String(itemModule).trim().replace(/^module-?/, '');
+        const normId = String(moduleId).trim().replace(/^module-?/, '');
+        
         const isActive = itemNorm === normId;
+        
+        // Update visual state
         item.classList.toggle('active', isActive);
-        if (isActive) { item.setAttribute('aria-current', 'page'); } else { item.removeAttribute('aria-current'); }
-        item.setAttribute('tabindex', isActive ? '-1' : '0');
+        
+        // Update ARIA attributes
+        if (isActive) {
+          item.setAttribute('aria-current', 'page');
+          item.setAttribute('tabindex', '0');
+        } else {
+          item.removeAttribute('aria-current');
+          item.setAttribute('tabindex', '0');
+        }
       });
+      
+      console.log('[UIManager] Sidebar active state updated');
     },
 
     toggleSidebar(force) {
@@ -171,16 +190,50 @@ const UIManager = (() => {
   function _bindNavItems() {
     const navItems = document.getElementById('nav-items');
     if (navItems) {
+      // Use event delegation for better performance
       navItems.addEventListener('click', (e) => {
         const item = e.target.closest('.nav-item');
         if (!item) return;
+        
         e.preventDefault();
-        let target = item.dataset.module || (item.getAttribute('href') || '').replace(/.*#/, '');
+        e.stopPropagation();
+        
+        // Extract target route from multiple possible sources
+        let target = item.dataset.module || 
+                     item.getAttribute('data-navigate') ||
+                     (item.getAttribute('href') || '').replace(/.*#/, '').replace('module-', '');
+        
+        // Normalize
+        target = String(target).trim();
         if (target.startsWith('module-')) target = target.replace('module-', '');
+        if (!target || target === '') target = 'home';
+        
+        console.log('[UIManager] Nav item clicked:', target);
+        
         if (target) {
           Router.navigateTo(target);
+          
+          // Close mobile sidebar after navigation
+          if (window.innerWidth <= 1024) {
+            setTimeout(() => UIManager.toggleSidebar(false), 100);
+          }
         }
       });
+      
+      // Also handle keyboard navigation
+      navItems.addEventListener('keydown', (e) => {
+        const item = e.target.closest('.nav-item');
+        if (!item) return;
+        
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          item.click();
+        }
+      });
+      
+      console.log('[UIManager] Nav items bound successfully');
+    } else {
+      console.warn('[UIManager] Nav items container not found');
     }
   }
 })();

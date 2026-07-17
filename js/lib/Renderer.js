@@ -7,14 +7,37 @@ const Renderer = (() => {
 
   return {
     init() {
+      console.log('[Renderer] Initializing...');
       _mainContent = document.getElementById('main-content');
       if (!_mainContent) {
         _mainContent = document.querySelector('.main-content') || document.body;
       }
+      
+      // Register the home section
+      const homeSection = document.getElementById('home');
+      if (homeSection) {
+        this.registerSection('home', homeSection);
+        console.log('[Renderer] Home section registered');
+      }
+      
+      // Register all existing module sections
+      document.querySelectorAll('.module-section').forEach(section => {
+        if (section.id) {
+          this.registerSection(section.id, section);
+          console.log('[Renderer] Registered existing section:', section.id);
+        }
+      });
+      
+      console.log('[Renderer] Initialized with', _sections.size, 'sections');
     },
 
     registerSection(id, element) {
+      if (!element) {
+        console.warn('[Renderer] Attempted to register null section:', id);
+        return;
+      }
       _sections.set(id, element);
+      console.log('[Renderer] Section registered:', id);
     },
 
     getSection(id) {
@@ -22,31 +45,45 @@ const Renderer = (() => {
     },
 
     showSection(id, animate = true) {
+      console.log('[Renderer] Showing section:', id, 'animate:', animate);
+      
       const target = _sections.get(id);
-      if (!target) return;
+      if (!target) {
+        console.error('[Renderer] Section not found:', id);
+        return false;
+      }
 
-      if (_activeSectionId === id) return;
+      if (_activeSectionId === id) {
+        console.log('[Renderer] Section already active:', id);
+        return true;
+      }
 
+      // Hide current section
       if (_activeSectionId) {
         const current = _sections.get(_activeSectionId);
         if (current) {
+          console.log('[Renderer] Hiding current section:', _activeSectionId);
           if (animate) {
             current.style.opacity = '0';
             current.style.transform = 'translateY(10px)';
             setTimeout(() => {
               current.classList.add('hidden');
               current.classList.remove('active');
+              current.style.display = 'none';
             }, _transitionDuration);
           } else {
             current.classList.add('hidden');
             current.classList.remove('active');
             current.style.opacity = '0';
             current.style.transform = 'translateY(10px)';
+            current.style.display = 'none';
           }
         }
       }
 
+      // Show target section
       target.classList.remove('hidden');
+      target.style.display = 'block';
 
       if (animate) {
         target.style.opacity = '0';
@@ -65,6 +102,8 @@ const Renderer = (() => {
       }
 
       _activeSectionId = id;
+      console.log('[Renderer] Section now active:', id);
+      return true;
     },
 
     getActiveSectionId() {
@@ -72,18 +111,41 @@ const Renderer = (() => {
     },
 
     createModuleContainer(moduleId) {
-      const section = document.createElement('section');
-      section.id = 'module-' + moduleId;
+      const sectionId = 'module-' + moduleId;
+      
+      // Check if already exists
+      let section = document.getElementById(sectionId);
+      if (section) {
+        console.log('[Renderer] Module container already exists:', sectionId);
+        if (!_sections.has(sectionId)) {
+          this.registerSection(sectionId, section);
+        }
+        return section;
+      }
+
+      console.log('[Renderer] Creating new module container:', sectionId);
+      
+      section = document.createElement('section');
+      section.id = sectionId;
       section.className = 'module-section hidden';
       section.setAttribute('role', 'region');
       section.setAttribute('aria-label', 'Module ' + moduleId);
-      if (_mainContent) _mainContent.appendChild(section);
-      this.registerSection('module-' + moduleId, section);
+      section.style.display = 'none';
+      
+      if (_mainContent) {
+        _mainContent.appendChild(section);
+      } else {
+        console.error('[Renderer] Main content container not found!');
+        return null;
+      }
+      
+      this.registerSection(sectionId, section);
       return section;
     },
 
     clearContent(container) {
       if (container) {
+        console.log('[Renderer] Clearing content from container');
         container.innerHTML = '';
       }
     }
