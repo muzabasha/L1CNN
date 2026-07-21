@@ -231,6 +231,20 @@ ModuleEngine.register('4', {
     this._initQuiz();
     this._initVariabilityChart();
     this._initEventListeners();
+
+    // Motion entrance animations
+    requestAnimationFrame(() => {
+      const header = container.querySelector('[style*="justify-content:space-between"]');
+      if (header) Motion.fadeIn(header, { duration: 300 });
+      const sections = container.querySelectorAll(':scope > div:not([style*="padding"])');
+      sections.forEach((el, i) => {
+        if (el === header) return;
+        Motion.fadeUp(el, { duration: 400, delay: i * 60, distance: 16 });
+      });
+      container.querySelectorAll('[data-navigate="home"]').forEach(btn => {
+        btn.addEventListener('click', (e) => Motion.ripple(e));
+      });
+    });
   },
 
   _initDecisionTree() {

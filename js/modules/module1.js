@@ -50,6 +50,25 @@
       buildCode();
       buildQuiz();
       buildReflection();
+
+      // Animate entrance with Motion system
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const childEls = container.querySelectorAll(':scope > div:not([style*="padding"])');
+          childEls.forEach((el, i) => {
+            if (!el.id && !el.querySelector) return;
+            Motion.fadeUp(el, { duration: 400, delay: i * 70, distance: 16 });
+          });
+          // Animate the header bar (first child) immediately
+          const header = container.querySelector('[style*="justify-content:space-between"]');
+          if (header) Motion.fadeUp(header, { duration: 300, delay: 0, distance: 0 });
+        });
+      });
+
+      // Ripple on Back to Home buttons
+      container.querySelectorAll('[data-navigate="home"]').forEach(btn => {
+        btn.addEventListener('click', (e) => Motion.ripple(e));
+      });
     },
     destroy: function () {
       _cancel();

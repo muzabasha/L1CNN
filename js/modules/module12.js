@@ -657,6 +657,20 @@ def select_topk_features(X, y, k=20):
     navFooter.innerHTML = '<button data-navigate="home" class="px-6 py-3 rounded-xl border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:44px;">&#x2190; Back to Home</button>';
     container.appendChild(navFooter);
 
+    // Motion entrance animations
+    requestAnimationFrame(() => {
+      const header = container.querySelector('[style*="justify-content:space-between"]');
+      if (header) Motion.fadeIn(header, { duration: 300 });
+      const sections = container.querySelectorAll(':scope > div:not([style*="padding"])');
+      sections.forEach((el, i) => {
+        if (el === header) return;
+        Motion.fadeUp(el, { duration: 400, delay: i * 60, distance: 16 });
+      });
+      container.querySelectorAll('[data-navigate="home"]').forEach(btn => {
+        btn.addEventListener('click', (e) => Motion.ripple(e));
+      });
+    });
+
   },
 
   destroy() {
