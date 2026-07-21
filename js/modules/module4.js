@@ -1,8 +1,7 @@
 ModuleEngine.register('4', {
   init(container) {
-    var header = Components.createModuleHeader('4', 'LI-RADS');
-    container.appendChild(header);
-    container.innerHTML += `
+    container.innerHTML = '';
+    container.innerHTML = `
       <div class="module-content" id="module4-content">
         <h2 class="module-title">Module 4: LI-RADS - The Classification System</h2>
         <p class="module-subtitle">Liver Imaging Reporting and Data System v2018</p>
@@ -234,13 +233,13 @@ ModuleEngine.register('4', {
 
     // Motion entrance animations
     requestAnimationFrame(() => {
-      const header = container.querySelector('[style*="justify-content:space-between"]');
-      if (header) Motion.fadeIn(header, { duration: 300 });
-      const sections = container.querySelectorAll(':scope > div:not([style*="padding"])');
-      sections.forEach((el, i) => {
-        if (el === header) return;
-        Motion.fadeUp(el, { duration: 400, delay: i * 60, distance: 16 });
-      });
+      const content = container.querySelector('#module4-content');
+      if (content) {
+        const children = content.children;
+        for (var i = 0; i < children.length; i++) {
+          Motion.fadeUp(children[i], { duration: 400, delay: i * 60, distance: 16 });
+        }
+      }
       container.querySelectorAll('[data-navigate="home"]').forEach(btn => {
         btn.addEventListener('click', (e) => Motion.ripple(e));
       });
