@@ -3,9 +3,6 @@ let _m11Animating = false;
 
 ModuleEngine.register('11', {
   init(container) {
-    var header = Components.createModuleHeader('11', 'CNN Feature Visualization');
-    container.appendChild(header);
-
     const state = {
       layerDepth: 1,
       animating: false,
@@ -601,7 +598,6 @@ for layer_name in list(visualizer.activations.keys())[:4]:
   },
 
   destroy() {
-    state.animating = false;
     _m11Animating = false;
     if (_m11AnimFrame) {
       cancelAnimationFrame(_m11AnimFrame);

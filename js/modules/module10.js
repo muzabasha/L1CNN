@@ -2,8 +2,6 @@ let _m10AnimFrame = null;
 
 ModuleEngine.register('10', {
   init(container) {
-    var header = Components.createModuleHeader('10', 'Phase-aware 3D CNN');
-    container.appendChild(header);
 
     const state = {
       inputSize: 64,

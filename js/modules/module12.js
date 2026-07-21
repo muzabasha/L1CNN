@@ -2,8 +2,6 @@ let _m12AnimFrame = null;
 
 ModuleEngine.register('12', {
   init(container) {
-    var header = Components.createModuleHeader('12', 'CNN + Radiomics Fusion');
-    container.appendChild(header);
 
     const state = {
       fusionMethod: 'concatenation',
@@ -674,7 +672,6 @@ def select_topk_features(X, y, k=20):
   },
 
   destroy() {
-    state.animating = false;
     if (_m12AnimFrame) {
       cancelAnimationFrame(_m12AnimFrame);
       _m12AnimFrame = null;
