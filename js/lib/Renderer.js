@@ -20,8 +20,6 @@ const Renderer = (() => {
         homeSection.classList.remove('hidden');
         homeSection.classList.add('active');
         homeSection.style.display = 'block';
-        homeSection.style.opacity = '1';
-        homeSection.style.transform = 'translateY(0)';
         _activeSectionId = 'home';
         console.log('[Renderer] Home section registered and activated');
       } else {
@@ -61,12 +59,11 @@ const Renderer = (() => {
       const target = _sections.get(id);
       if (!target) {
         console.error('[Renderer] Section not found:', id);
-        // Try to find in DOM and auto-register
         const domSection = document.getElementById(id);
         if (domSection) {
           console.log('[Renderer] Auto-registering section found in DOM:', id);
           this.registerSection(id, domSection);
-          return this.showSection(id, animate); // Retry
+          return this.showSection(id, animate);
         }
         return false;
       }
@@ -81,43 +78,18 @@ const Renderer = (() => {
         const current = _sections.get(_activeSectionId);
         if (current) {
           console.log('[Renderer] Hiding current section:', _activeSectionId);
-          if (animate) {
-            current.style.opacity = '0';
-            current.style.transform = 'translateY(10px)';
-            setTimeout(() => {
-              current.classList.add('hidden');
-              current.classList.remove('active');
-              current.style.display = 'none'; // Explicitly hide
-            }, _transitionDuration);
-          } else {
-            current.classList.add('hidden');
-            current.classList.remove('active');
-            current.style.opacity = '0';
-            current.style.transform = 'translateY(10px)';
-            current.style.display = 'none'; // Explicitly hide
-          }
+          current.classList.add('hidden');
+          current.classList.remove('active');
+          current.style.display = 'none';
         }
       }
 
       // Show target section
       target.classList.remove('hidden');
-      target.style.display = 'block'; // Explicitly show
+      target.style.display = 'block';
 
-      if (animate) {
-        target.style.opacity = '0';
-        target.style.transform = 'translateY(10px)';
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            target.classList.add('active');
-            target.style.opacity = '1';
-            target.style.transform = 'translateY(0)';
-          });
-        });
-      } else {
-        target.classList.add('active');
-        target.style.opacity = '1';
-        target.style.transform = 'translateY(0)';
-      }
+      // Let Motion controller handle the entrance animation
+      target.classList.add('active');
 
       _activeSectionId = id;
       console.log('[Renderer] Section now active and visible:', id);

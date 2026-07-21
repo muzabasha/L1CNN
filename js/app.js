@@ -95,9 +95,14 @@ const App = (() => {
           }
         }
 
-        // Remove hidden class so section is visible for animation
+        // Remove hidden class and show section
         if (section) {
           section.classList.remove('hidden');
+          Renderer.showSection(sectionId, false);
+          // Cinematic page entrance for home only (modules handle their own entrance)
+          if (to === 'home') {
+            requestAnimationFrame(() => Motion.pageIn(section, { duration: 500 }));
+          }
         }
 
         // Update sidebar highlighting
@@ -113,10 +118,6 @@ const App = (() => {
                 console.log('[App] Module initialized:', to);
                 _injectModuleNav(to);
                 _currentModuleId = to;
-                // Stagger children after init
-                requestAnimationFrame(() => {
-                  if (section) Motion.stagger(section, { duration: 400, stagger: 60 });
-                });
               } else {
                 console.warn('[App] Module already initialized or failed:', to);
               }
