@@ -694,9 +694,9 @@
     var tumorSize = 10, elapsed = 6, aggressiveness = 1;
     var ctrl = document.getElementById('m1-sim-ctrls');
     if (ctrl) {
-      Components.createSlider(ctrl, {label: 'Tumour Size', min: 1, max: 50, value: 10, unit: 'mm', onChange: function (v) { tumorSize = v; }});
+      Components.createSlider(ctrl, {label: 'Tumour Size (initial)', min: 1, max: 50, value: 10, unit: 'mm', onChange: function (v) { tumorSize = v; rebuildHistory(); }});
       Components.createSlider(ctrl, {label: 'Months Elapsed', min: 0, max: 24, value: 6, unit: ' months', onChange: function (v) { elapsed = v; }});
-      Components.createSlider(ctrl, {label: 'Aggressiveness', min: 1, max: 3, value: 1, onChange: function (v) { aggressiveness = v; }});
+      Components.createSlider(ctrl, {label: 'Aggressiveness', min: 1, max: 3, value: 1, onChange: function (v) { aggressiveness = v; rebuildHistory(); }});
     }
 
     var cv = document.getElementById('m1-sim-cv');
@@ -716,8 +716,27 @@
     }
     resizeSim();
 
-    /* growth curve history */
+    /* growth curve — model full time-series */
     var history = [];
+
+    function rebuildHistory() {
+      history = [];
+      var steps = Math.min(60, Math.max(12, elapsed * 2.5));
+      for (var i = 0; i <= steps; i++) {
+        var m = (i / steps) * 24;
+        var s = computeSize(m);
+        history.push({ month: m, size: s });
+      }
+    }
+
+    function computeSize(m) {
+      var ag = aggressiveness === 1 ? 1 : aggressiveness === 2 ? 1.6 : 2.4;
+      var r0 = tumorSize;
+      var gr = ag * 0.06 + 0.02;
+      return r0 * Math.exp(gr * m);
+    }
+
+    rebuildHistory();
 
     function drawSim() {
       var w = cv.width / dpr, h = cv.height / dpr;
@@ -740,7 +759,7 @@
       ctx.restore();
 
       /* tumour */
-      var effSize = tumorSize * (1 + (aggressiveness - 1) * 0.3) * (1 + elapsed * 0.05);
+      var effSize = computeSize(elapsed);
       var rPx = Math.min(effSize * 2.5, 90);
       var tX = cx + 25, tY = cy - 12;
 
@@ -789,8 +808,6 @@
       }
 
       /* growth curve */
-      history.push({ month: elapsed, size: effSize });
-      if (history.length > 60) history.shift();
       drawGrowthCurve();
 
       _raf(requestAnimationFrame(drawSim));
@@ -809,7 +826,7 @@
       /* labels */
       cCtx.font = '10px Inter, sans-serif'; cCtx.fillStyle = '#64748b'; cCtx.textAlign = 'center';
       cCtx.fillText('Time (months)', w / 2, h - 5);
-      cCtx.save(); cCtx.translate(12, h / 2); cCtx.rotate(-Math.PI / 2); cCtx.fillText('Size (mm)', 0, 0); cCtx.restore();
+      cCtx.save(); cCtx.translate(14, h / 2); cCtx.rotate(-Math.PI / 2); cCtx.fillText('Size (mm)', 0, 0); cCtx.restore();
 
       /* title */
       cCtx.font = 'bold 11px Inter, sans-serif'; cCtx.fillStyle = '#94a3b8'; cCtx.textAlign = 'left';
@@ -818,6 +835,24 @@
       if (history.length < 2) return;
       var maxS = 0; history.forEach(function (p) { if (p.size > maxS) maxS = p.size; });
       maxS = Math.max(maxS, 30);
+
+      /* Y-axis ticks */
+      cCtx.font = '9px Inter, sans-serif'; cCtx.fillStyle = '#475569'; cCtx.textAlign = 'right';
+      [0, 0.25, 0.5, 0.75, 1].forEach(function (frac) {
+        var y = h - pad.b - frac * ph;
+        var val = Math.round(frac * maxS);
+        cCtx.fillText(val, pad.l - 6, y + 3);
+        cCtx.strokeStyle = 'rgba(148,163,184,0.04)';
+        cCtx.beginPath(); cCtx.moveTo(pad.l, y); cCtx.lineTo(w - pad.r, y); cCtx.stroke();
+      });
+
+      /* X-axis ticks (every 6 months) */
+      cCtx.textAlign = 'center';
+      for (var mi = 0; mi <= 24; mi += 6) {
+        var x = pad.l + (mi / 24) * pw;
+        cCtx.fillStyle = '#475569';
+        cCtx.fillText(mi, x, h - pad.b + 14);
+      }
 
       /* fill under curve */
       cCtx.save();
@@ -831,19 +866,37 @@
       cCtx.lineTo(pad.l + (history[0].month / 24) * pw, h - pad.b);
       cCtx.closePath();
       var fg = cCtx.createLinearGradient(0, pad.t, 0, h - pad.b);
-      fg.addColorStop(0, 'rgba(251,191,36,0.2)'); fg.addColorStop(1, 'rgba(251,191,36,0)');
+      fg.addColorStop(0, 'rgba(251,191,36,0.15)'); fg.addColorStop(1, 'rgba(251,191,36,0)');
       cCtx.fillStyle = fg; cCtx.fill();
       cCtx.restore();
 
-      /* line */
+      /* line — smooth cubic interpolation */
       cCtx.beginPath();
       cCtx.strokeStyle = '#fbbf24'; cCtx.lineWidth = 2;
       history.forEach(function (p, i) {
         var x = pad.l + (p.month / 24) * pw;
         var y = h - pad.b - (p.size / maxS) * ph;
-        if (i === 0) cCtx.moveTo(x, y); else cCtx.lineTo(x, y);
+        if (i === 0) cCtx.moveTo(x, y);
+        else {
+          var px = pad.l + (history[i - 1].month / 24) * pw;
+          var py = h - pad.b - (history[i - 1].size / maxS) * ph;
+          var cpx = (px + x) / 2;
+          cCtx.bezierCurveTo(cpx, py, cpx, y, x, y);
+        }
       });
       cCtx.stroke();
+
+      /* current position marker */
+      var curX = pad.l + (elapsed / 24) * pw;
+      var curY = h - pad.b - (computeSize(elapsed) / maxS) * ph;
+      cCtx.beginPath(); cCtx.arc(curX, curY, 5, 0, Math.PI * 2);
+      cCtx.fillStyle = '#fbbf24'; cCtx.fill();
+      cCtx.strokeStyle = '#fff'; cCtx.lineWidth = 2; cCtx.stroke();
+
+      /* tooltip label at marker */
+      cCtx.font = 'bold 10px Inter, sans-serif'; cCtx.fillStyle = '#fbbf24'; cCtx.textAlign = 'center';
+      var label = computeSize(elapsed).toFixed(1) + 'mm @ ' + elapsed + 'mo';
+      cCtx.fillText(label, curX, curY - 12);
 
       /* threshold lines */
       [{ thr: 10, label: 'LR-3→4', color: '#f97316' }, { thr: 20, label: 'LR-4→5', color: '#ef4444' }].forEach(function (th) {
