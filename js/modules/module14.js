@@ -1,8 +1,6 @@
 ModuleEngine.register('14', {
   init(container) {
-    var header = Components.createModuleHeader('14', 'Explainable AI');
-    container.appendChild(header);
-    container.innerHTML += `
+    container.innerHTML = `
       <style>
         .m14-root{font-family:'Segoe UI',system-ui,sans-serif;color:#e2e8f0;background:#0a0f1a;padding:0}
         .m14-hero{text-align:center;padding:40px 20px 20px;background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);border-bottom:1px solid rgba(129,140,248,0.1)}

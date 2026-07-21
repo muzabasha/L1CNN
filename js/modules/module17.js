@@ -1,8 +1,6 @@
 ModuleEngine.register('17', {
   init(container) {
-    var header = Components.createModuleHeader('17', 'Research Gap');
-    container.appendChild(header);
-    container.innerHTML += `
+    container.innerHTML = `
       <div class="module-header">
         <h2>Module 17: Research Gap Explorer</h2>
         <p class="module-subtitle">Identifying research gaps and positioning contributions in the literature</p>

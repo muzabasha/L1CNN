@@ -1,8 +1,6 @@
 ModuleEngine.register('13', {
   init(container) {
-    var header = Components.createModuleHeader('13', 'Classification');
-    container.appendChild(header);
-    container.innerHTML += `
+    container.innerHTML = `
       <style>
         .m13-root{font-family:'Segoe UI',system-ui,sans-serif;color:#e2e8f0;background:#0a0f1a;padding:0}
         .m13-hero{text-align:center;padding:40px 20px 20px;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);border-bottom:1px solid rgba(100,200,255,0.1)}

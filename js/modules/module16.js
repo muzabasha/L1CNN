@@ -1,8 +1,6 @@
 ModuleEngine.register('16', {
   init(container) {
-    var header = Components.createModuleHeader('16', 'Comparison');
-    container.appendChild(header);
-    container.innerHTML += `
+    container.innerHTML = `
       <div class="module-header">
         <h2>Module 16: Traditional vs Proposed Methods</h2>
         <p class="module-subtitle">Systematic comparison of all methods and incremental improvement analysis</p>

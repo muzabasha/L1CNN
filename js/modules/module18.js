@@ -1,8 +1,6 @@
 ModuleEngine.register('18', {
   init(container) {
-    var header = Components.createModuleHeader('18', 'PhD Workflow');
-    container.appendChild(header);
-    container.innerHTML += `
+    container.innerHTML = `
       <div class="module-header">
         <h2>Module 18: Complete PhD Workflow</h2>
         <p class="module-subtitle">Capstone: Execute the end-to-end research pipeline from data generation to clinical validation</p>

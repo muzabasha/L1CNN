@@ -10,12 +10,9 @@
 
   ModuleEngine.register(moduleId, {
     init: function (container) {
-      // Create module header
-      var header = Components.createModuleHeader('2', 'CT Imaging');
-      container.appendChild(header);
-      
-      // Create content sections
-      container.innerHTML += 
+      // Create content sections with integrated header
+      container.innerHTML = 
+        '<div style="padding:var(--space-4);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:var(--space-4);" role="banner"><div><h1 style="font-size:1.5rem;font-weight:700;color:var(--text-primary);margin:0;">CT Imaging</h1><p style="margin:0;font-size:0.85rem;color:var(--text-secondary);">Module 2</p></div><button data-navigate="home" class="px-3 py-1.5 rounded-lg border border-white/10 text-xs text-gray-400 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:36px;" aria-label="Back to Home">&#x2190; Home</button></div>' +
         '<div id="module-2-objectives"><div class="objectives-grid"></div></div>' +
         '<div id="module-2-animation"><div class="animation-container"></div></div>' +
         '<div id="module-2-theory"><div class="theory-content"></div></div>' +
@@ -23,17 +20,8 @@
         '<div id="module-2-code"><div class="code-container"></div></div>' +
         '<div id="module-2-quiz"><div class="quiz-container"></div></div>' +
         '<div id="module-2-reflection"><div class="reflection-content"></div></div>' +
-        '<div style="padding:var(--space-6);display:flex;justify-content:center;"></div>';
+        '<div style="padding:var(--space-6);display:flex;justify-content:center;"><button data-navigate="home" class="px-6 py-3 rounded-xl border border-white/20 text-sm text-gray-300 hover:text-white hover:border-primary-400/50 transition-all cursor-pointer" style="background:rgba(255,255,255,0.04);min-height:44px;">&#x2190; Back to Home</button></div>';
       
-      // Add footer button
-      var footerBtn = Components.createButton({
-        text: 'Home',
-        icon: '←',
-        variant: 'secondary',
-        navigate: 'home',
-        ariaLabel: 'Back to Home'
-      });
-      container.querySelector('div[style*="justify-content:center"]').appendChild(footerBtn);
       populateObjectives();
       initCTScannerAnimation();
       populateTheory();

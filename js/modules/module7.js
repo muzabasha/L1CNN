@@ -2,9 +2,7 @@ let _m7AnimFrame = null;
 
 ModuleEngine.register('7', {
     init(container) {
-        var header = Components.createModuleHeader('7', 'Segmentation');
-        container.appendChild(header);
-        container.innerHTML += `
+        container.innerHTML = `
         <div class="module-container">
             <div class="module-header">
                 <h2>Module 7: Hands-on Segmentation</h2>

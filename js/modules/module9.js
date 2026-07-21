@@ -1,8 +1,6 @@
 ModuleEngine.register('9', {
     init(container) {
-        var header = Components.createModuleHeader('9', 'Traditional ML');
-        container.appendChild(header);
-        container.innerHTML += `
+        container.innerHTML = `
         <div class="module-container">
             <div class="module-header">
                 <h2>Module 9: Traditional Machine Learning for Classification</h2>

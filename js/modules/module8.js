@@ -2,9 +2,7 @@ let _m8AnimFrame = null;
 
 ModuleEngine.register('8', {
     init(container) {
-        var header = Components.createModuleHeader('8', 'Radiomics');
-        container.appendChild(header);
-        container.innerHTML += `
+        container.innerHTML = `
         <div class="module-container">
             <div class="module-header">
                 <h2>Module 8: Radiomics — Extracting Texture Features</h2>

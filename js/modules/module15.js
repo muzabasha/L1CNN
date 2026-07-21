@@ -1,9 +1,7 @@
 ModuleEngine.register('15', {
   init(container) {
     this._intervals = [];
-    var header = Components.createModuleHeader('15', 'Performance Metrics');
-    container.appendChild(header);
-    container.innerHTML += `
+    container.innerHTML = `
       <style>
         .m15-root{font-family:'Segoe UI',system-ui,sans-serif;color:#e2e8f0;background:#0a0f1a}
         .m15-hero{text-align:center;padding:40px 20px 20px;background:linear-gradient(135deg,#0f172a 0%,#042f2e 50%,#0f172a 100%);border-bottom:1px solid rgba(52,211,153,0.1)}
