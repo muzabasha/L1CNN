@@ -174,166 +174,114 @@
           <p class="text-gray-400 max-w-2xl mx-auto">Browse the complete research workflow — click any module to dive in
           </p>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div data-navigate="1"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 1: Clinical Background">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1FAC1;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 1</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Clinical Background</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Liver anatomy, CT phases, risk factors, and tumour growth
-              simulation</div>
+        <div class="module-grid">
+          <div data-navigate="1" class="module-card" tabindex="0" role="button" aria-label="Module 1: Clinical Background">
+            <div class="module-emoji" aria-hidden="true">&#x1FAC1;</div>
+            <div class="module-badge">Module 1</div>
+            <div class="module-title">Clinical Background</div>
+            <div class="module-desc">Liver anatomy, CT phases, risk factors, and tumour growth simulation</div>
           </div>
-          <div data-navigate="2"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 2: CT Imaging">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F4F7;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 2</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">CT Imaging</div>
-            <div class="text-xs text-gray-400 leading-relaxed">CT physics, Hounsfield units, and image reconstruction
-              methods</div>
+          <div data-navigate="2" class="module-card" tabindex="0" role="button" aria-label="Module 2: CT Imaging">
+            <div class="module-emoji" aria-hidden="true">&#x1F4F7;</div>
+            <div class="module-badge">Module 2</div>
+            <div class="module-title">CT Imaging</div>
+            <div class="module-desc">CT physics, Hounsfield units, and image reconstruction methods</div>
           </div>
-          <div data-navigate="3"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 3: Multiphase CT">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F489;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 3</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Multiphase CT</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Contrast-enhanced phases, enhancement patterns, and DCE
-              curves</div>
+          <div data-navigate="3" class="module-card" tabindex="0" role="button" aria-label="Module 3: Multiphase CT">
+            <div class="module-emoji" aria-hidden="true">&#x1F489;</div>
+            <div class="module-badge">Module 3</div>
+            <div class="module-title">Multiphase CT</div>
+            <div class="module-desc">Contrast-enhanced phases, enhancement patterns, and DCE curves</div>
           </div>
-          <div data-navigate="4"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 4: LI-RADS">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F4CB;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 4</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">LI-RADS</div>
-            <div class="text-xs text-gray-400 leading-relaxed">LI-RADS v2018 scoring system for liver lesion
-              classification</div>
+          <div data-navigate="4" class="module-card" tabindex="0" role="button" aria-label="Module 4: LI-RADS">
+            <div class="module-emoji" aria-hidden="true">&#x1F4CB;</div>
+            <div class="module-badge">Module 4</div>
+            <div class="module-title">LI-RADS</div>
+            <div class="module-desc">LI-RADS v2018 scoring system for liver lesion classification</div>
           </div>
-          <div data-navigate="5"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 5: Synthetic Dataset">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F5C4;&#xFE0F;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 5</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Synthetic Dataset</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Generate synthetic training data for robust deep learning
-              models</div>
+          <div data-navigate="5" class="module-card" tabindex="0" role="button" aria-label="Module 5: Synthetic Dataset">
+            <div class="module-emoji" aria-hidden="true">&#x1F5C4;&#xFE0F;</div>
+            <div class="module-badge">Module 5</div>
+            <div class="module-title">Synthetic Dataset</div>
+            <div class="module-desc">Generate synthetic training data for robust deep learning models</div>
           </div>
-          <div data-navigate="6"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 6: 3D nnU-Net">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F9E0;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 6</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">3D nnU-Net</div>
-            <div class="text-xs text-gray-400 leading-relaxed">3D nnU-Net architecture for volumetric medical image
-              segmentation</div>
+          <div data-navigate="6" class="module-card" tabindex="0" role="button" aria-label="Module 6: 3D nnU-Net">
+            <div class="module-emoji" aria-hidden="true">&#x1F9E0;</div>
+            <div class="module-badge">Module 6</div>
+            <div class="module-title">3D nnU-Net</div>
+            <div class="module-desc">3D nnU-Net architecture for volumetric medical image segmentation</div>
           </div>
-          <div data-navigate="7"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 7: Segmentation">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x2702;&#xFE0F;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 7</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Segmentation</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Interactive liver tumour segmentation with AI-powered
-              tools</div>
+          <div data-navigate="7" class="module-card" tabindex="0" role="button" aria-label="Module 7: Segmentation">
+            <div class="module-emoji" aria-hidden="true">&#x2702;&#xFE0F;</div>
+            <div class="module-badge">Module 7</div>
+            <div class="module-title">Segmentation</div>
+            <div class="module-desc">Interactive liver tumour segmentation with AI-powered tools</div>
           </div>
-          <div data-navigate="8"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 8: Radiomics">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F4CA;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 8</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Radiomics</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Extract and analyze quantitative radiomic features from
-              CT</div>
+          <div data-navigate="8" class="module-card" tabindex="0" role="button" aria-label="Module 8: Radiomics">
+            <div class="module-emoji" aria-hidden="true">&#x1F4CA;</div>
+            <div class="module-badge">Module 8</div>
+            <div class="module-title">Radiomics</div>
+            <div class="module-desc">Extract and analyze quantitative radiomic features from CT</div>
           </div>
-          <div data-navigate="9"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 9: Traditional ML">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F916;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 9</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Traditional ML</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Train classifiers on radiomics data for lesion
-              classification</div>
+          <div data-navigate="9" class="module-card" tabindex="0" role="button" aria-label="Module 9: Traditional ML">
+            <div class="module-emoji" aria-hidden="true">&#x1F916;</div>
+            <div class="module-badge">Module 9</div>
+            <div class="module-title">Traditional ML</div>
+            <div class="module-desc">Train classifiers on radiomics data for lesion classification</div>
           </div>
-          <div data-navigate="10"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 10: 3D CNN">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F52E;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 10</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">3D CNN</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Design phase-aware 3D CNNs for volumetric CT analysis
-            </div>
+          <div data-navigate="10" class="module-card" tabindex="0" role="button" aria-label="Module 10: 3D CNN">
+            <div class="module-emoji" aria-hidden="true">&#x1F52E;</div>
+            <div class="module-badge">Module 10</div>
+            <div class="module-title">3D CNN</div>
+            <div class="module-desc">Design phase-aware 3D CNNs for volumetric CT analysis</div>
           </div>
-          <div data-navigate="11"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 11: CNN Visualization">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F441;&#xFE0F;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 11</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">CNN Visualization</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Visualize CNN feature maps and understand deep learning
-            </div>
+          <div data-navigate="11" class="module-card" tabindex="0" role="button" aria-label="Module 11: CNN Visualization">
+            <div class="module-emoji" aria-hidden="true">&#x1F441;&#xFE0F;</div>
+            <div class="module-badge">Module 11</div>
+            <div class="module-title">CNN Visualization</div>
+            <div class="module-desc">Visualize CNN feature maps and understand deep learning</div>
           </div>
-          <div data-navigate="12"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 12: Fusion">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F517;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 12</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Fusion</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Fuse CNN features with radiomics for superior
-              classification</div>
+          <div data-navigate="12" class="module-card" tabindex="0" role="button" aria-label="Module 12: Fusion">
+            <div class="module-emoji" aria-hidden="true">&#x1F517;</div>
+            <div class="module-badge">Module 12</div>
+            <div class="module-title">Fusion</div>
+            <div class="module-desc">Fuse CNN features with radiomics for superior classification</div>
           </div>
-          <div data-navigate="13"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 13: Classification">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F3AF;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 13</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Classification</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Build an end-to-end classification pipeline with real CT
-              data</div>
+          <div data-navigate="13" class="module-card" tabindex="0" role="button" aria-label="Module 13: Classification">
+            <div class="module-emoji" aria-hidden="true">&#x1F3AF;</div>
+            <div class="module-badge">Module 13</div>
+            <div class="module-title">Classification</div>
+            <div class="module-desc">Build an end-to-end classification pipeline with real CT data</div>
           </div>
-          <div data-navigate="14"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 14: Explainable AI">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F4A1;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 14</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Explainable AI</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Explain predictions with Grad-CAM, SHAP, and attention
-              maps</div>
+          <div data-navigate="14" class="module-card" tabindex="0" role="button" aria-label="Module 14: Explainable AI">
+            <div class="module-emoji" aria-hidden="true">&#x1F4A1;</div>
+            <div class="module-badge">Module 14</div>
+            <div class="module-title">Explainable AI</div>
+            <div class="module-desc">Explain predictions with Grad-CAM, SHAP, and attention maps</div>
           </div>
-          <div data-navigate="15"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 15: Performance Metrics">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F4C8;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 15</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Performance Metrics</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Evaluate model performance with comprehensive metrics
-            </div>
+          <div data-navigate="15" class="module-card" tabindex="0" role="button" aria-label="Module 15: Performance Metrics">
+            <div class="module-emoji" aria-hidden="true">&#x1F4C8;</div>
+            <div class="module-badge">Module 15</div>
+            <div class="module-title">Performance Metrics</div>
+            <div class="module-desc">Evaluate model performance with comprehensive metrics</div>
           </div>
-          <div data-navigate="16"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 16: Comparison">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x2696;&#xFE0F;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 16</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Comparison</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Compare architectures and feature fusion strategies</div>
+          <div data-navigate="16" class="module-card" tabindex="0" role="button" aria-label="Module 16: Comparison">
+            <div class="module-emoji" aria-hidden="true">&#x2696;&#xFE0F;</div>
+            <div class="module-badge">Module 16</div>
+            <div class="module-title">Comparison</div>
+            <div class="module-desc">Compare architectures and feature fusion strategies</div>
           </div>
-          <div data-navigate="17"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 17: Research Gap">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F52C;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 17</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">Research Gap</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Identify research gaps and design novel experiments</div>
+          <div data-navigate="17" class="module-card" tabindex="0" role="button" aria-label="Module 17: Research Gap">
+            <div class="module-emoji" aria-hidden="true">&#x1F52C;</div>
+            <div class="module-badge">Module 17</div>
+            <div class="module-title">Research Gap</div>
+            <div class="module-desc">Identify research gaps and design novel experiments</div>
           </div>
-          <div data-navigate="18"
-            class="module-card p-4 rounded-xl bg-glass border border-white/5 hover:border-primary-500/40 hover:bg-white/[0.03] cursor-pointer transition-all duration-200 active:scale-[0.98]"
-            tabindex="0" role="button" aria-label="Module 18: PhD Workflow">
-            <div class="text-2xl mb-2" aria-hidden="true">&#x1F393;</div>
-            <div class="text-xs text-primary-400 font-semibold mb-0.5">Module 18</div>
-            <div class="text-sm font-semibold text-white mb-1 leading-tight">PhD Workflow</div>
-            <div class="text-xs text-gray-400 leading-relaxed">Synthesize everything into a complete research workflow
-            </div>
+          <div data-navigate="18" class="module-card" tabindex="0" role="button" aria-label="Module 18: PhD Workflow">
+            <div class="module-emoji" aria-hidden="true">&#x1F393;</div>
+            <div class="module-badge">Module 18</div>
+            <div class="module-title">PhD Workflow</div>
+            <div class="module-desc">Synthesize everything into a complete research workflow</div>
           </div>
         </div>
       </div>
