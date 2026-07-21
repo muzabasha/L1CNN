@@ -573,6 +573,21 @@ canvas.chart-canvas {
   transition: border-color var(--transition-base) ease, box-shadow var(--transition-base) ease, transform var(--transition-base) ease;
 }
 
+/* Grid cards on home page — override module-page card styles for compact layout */
+#all-modules .module-card {
+  margin-bottom: 0;
+  padding: 1rem;
+  background: var(--glass-bg, rgba(255,255,255,0.03));
+  border-color: rgba(255,255,255,0.05);
+  box-shadow: none;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+#all-modules .module-card:hover {
+  background: rgba(255,255,255,0.06);
+}
+
 .module-card:hover {
   border-color: var(--border-hover);
   box-shadow: var(--shadow-lg);
@@ -1171,6 +1186,10 @@ code[class*="language-"] {
     padding: 1rem;
   }
 
+  #all-modules .module-card {
+    padding: 0.75rem;
+  }
+
   .sim-controls {
     flex-direction: column;
     gap: 0.75rem;
@@ -1179,6 +1198,26 @@ code[class*="language-"] {
   .control-group select,
   .control-group input[type="range"] {
     min-width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  #all-modules .module-card {
+    padding: 0.5rem;
+  }
+  #all-modules .module-card .text-2xl {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+  }
+  #all-modules .module-card .text-xs.text-primary-400 {
+    font-size: 0.65rem;
+  }
+  #all-modules .module-card .text-sm.font-semibold {
+    font-size: 0.75rem;
+  }
+  #all-modules .module-card .text-xs.text-gray-400 {
+    font-size: 0.6rem;
+    line-height: 1.3;
   }
 }
 
