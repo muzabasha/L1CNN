@@ -58,10 +58,20 @@ const App = (() => {
     console.log('[App] Binding global events...');
     
     // Handle route changes
-    EventManager.on('route:changed', ({ from, to }) => {
+    EventManager.on('route:changed', async ({ from, to }) => {
       console.log('[App] Route changed from', from, 'to', to);
       
       try {
+        // Determine section IDs
+        const sectionId = to === 'home' ? 'home' : 'module-' + to;
+        const prevSectionId = from && from !== 'home' ? 'module-' + from : from === 'home' ? 'home' : null;
+        
+        // Animate out previous section
+        let prevSection = prevSectionId ? Renderer.getSection(prevSectionId) || document.getElementById(prevSectionId) : null;
+        if (prevSection && !prevSection.classList.contains('hidden')) {
+          await Motion.pageOut(prevSection, { duration: 350 });
+        }
+        
         // Destroy previous module
         if (from && from !== 'home' && from !== to) {
           console.log('[App] Destroying previous module:', from);
@@ -72,10 +82,6 @@ const App = (() => {
           }
         }
 
-        // Determine section ID
-        const sectionId = to === 'home' ? 'home' : 'module-' + to;
-        console.log('[App] Target section:', sectionId);
-        
         // Ensure section exists and is registered
         let section = Renderer.getSection(sectionId);
         if (!section) {
@@ -89,13 +95,11 @@ const App = (() => {
           }
         }
 
-        // Show the section
-        const shown = Renderer.showSection(sectionId);
-        if (!shown) {
-          console.error('[App] Failed to show section:', sectionId);
-          throw new Error('Failed to show section: ' + sectionId);
+        // Remove hidden class so section is visible for animation
+        if (section) {
+          section.classList.remove('hidden');
         }
-        
+
         // Update sidebar highlighting
         UIManager.updateSidebarActive(to);
         
@@ -109,6 +113,10 @@ const App = (() => {
                 console.log('[App] Module initialized:', to);
                 _injectModuleNav(to);
                 _currentModuleId = to;
+                // Stagger children after init
+                requestAnimationFrame(() => {
+                  if (section) Motion.stagger(section, { duration: 400, stagger: 60 });
+                });
               } else {
                 console.warn('[App] Module already initialized or failed:', to);
               }

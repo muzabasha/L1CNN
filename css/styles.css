@@ -139,6 +139,77 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 /* ── Sidebar (removed) ─────────────────────── */
 /* Sidebar was removed — modules accessible from home page grid */
 
+/* ═══════════════════════════════════════════
+   Cinematic Motion Tokens (Phase 2)
+   ═══════════════════════════════════════════ */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.015); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px var(--color-primary); }
+  50% { box-shadow: 0 0 24px var(--color-primary); }
+}
+
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes data-stream {
+  0% { stroke-dashoffset: 1000; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Motion-enabled elements */
+.motion-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.motion-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.motion-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* GPU-friendly base */
+.motion-gpu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ── Module Sections ───────────────────────── */
 .module-section {
   display: block;
