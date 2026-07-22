@@ -4,73 +4,175 @@ function initHero3D() {
   const container = document.getElementById('hero-3d');
   if (!container || !window.THREE) return;
 
+  if (_heroEngine && _heroEngine.destroy) {
+    _heroEngine.destroy();
+  }
+
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
-  camera.position.z = 5;
+  const camera = new THREE.PerspectiveCamera(55, container.clientWidth / container.clientHeight, 0.1, 1000);
+  camera.position.set(0, 0, 5.2);
 
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   container.appendChild(renderer.domElement);
 
-  const group = new THREE.Group();
+  const heroGroup = new THREE.Group();
 
-  const mainMat = new THREE.MeshPhongMaterial({ color: 0x2563eb, transparent: true, opacity: 0.55, shininess: 80, side: THREE.DoubleSide });
-  const mainGeo = new THREE.SphereGeometry(1.2, 32, 32);
-  mainGeo.scale(1.3, 0.9, 1.1);
-  const mainMesh = new THREE.Mesh(mainGeo, mainMat);
-  group.add(mainMesh);
+  // 1. Organic Liver Mesh
+  const liverMat = new THREE.MeshPhongMaterial({
+    color: 0x2563eb,
+    transparent: true,
+    opacity: 0.5,
+    shininess: 90,
+    side: THREE.DoubleSide,
+    wireframe: false
+  });
 
-  const wireMat = new THREE.MeshBasicMaterial({ color: 0x60a5fa, wireframe: true, transparent: true, opacity: 0.25 });
-  const wireMesh = new THREE.Mesh(mainGeo.clone(), wireMat);
-  wireMesh.scale.set(1.02, 1.02, 1.02);
-  group.add(wireMesh);
+  const liverGeo = new THREE.SphereGeometry(1.35, 48, 48);
+  // Sculpt into organic liver lobe shape
+  const posAttr = liverGeo.attributes.position;
+  for (let i = 0; i < posAttr.count; i++) {
+    let x = posAttr.getX(i);
+    let y = posAttr.getY(i);
+    let z = posAttr.getZ(i);
 
-  const lobeGeo = new THREE.SphereGeometry(0.6, 24, 24);
-  const lobeR = new THREE.Mesh(lobeGeo, mainMat.clone());
-  lobeR.position.set(0.8, 0.3, 0.2);
-  lobeR.material.opacity = 0.45;
-  group.add(lobeR);
-
-  const lobeL = new THREE.Mesh(lobeGeo.clone(), mainMat.clone());
-  lobeL.position.set(-0.85, 0.2, 0.15);
-  lobeL.scale.set(0.85, 0.85, 0.85);
-  lobeL.material.opacity = 0.4;
-  group.add(lobeL);
-
-  scene.add(group);
-
-  const ambientLight = new THREE.AmbientLight(0x4c1d95, 0.6);
-  scene.add(ambientLight);
-  const dirLight = new THREE.DirectionalLight(0x7c3aed, 1.2);
-  dirLight.position.set(3, 4, 5);
-  scene.add(dirLight);
-  const backLight = new THREE.DirectionalLight(0x06b6d4, 0.5);
-  backLight.position.set(-3, -2, -4);
-  scene.add(backLight);
-
-  const particleCount = 60;
-  const pGeo = new THREE.BufferGeometry();
-  const positions = new Float32Array(particleCount * 3);
-  for (let i = 0; i < particleCount * 3; i++) {
-    positions[i] = Utils.randomBetween(-3, 3);
+    // Asymmetric right & left lobes
+    if (x > 0) {
+      x *= 1.45;
+      y *= 0.85;
+    } else {
+      x *= 0.95;
+      y *= 0.75;
+      z *= 0.85;
+    }
+    // Inferior notch
+    if (y < -0.2 && x < 0.2 && x > -0.2) {
+      z *= 0.6;
+    }
+    posAttr.setXYZ(i, x, y, z);
   }
-  pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const pMat = new THREE.PointsMaterial({ color: 0x60a5fa, size: 0.04, transparent: true, opacity: 0.7 });
-  const threeParticles = new THREE.Points(pGeo, pMat);
-  scene.add(threeParticles);
+  liverGeo.computeVertexNormals();
 
+  const liverMesh = new THREE.Mesh(liverGeo, liverMat);
+  heroGroup.add(liverMesh);
+
+  // 2. Hologram Wireframe Overlay
+  const wireMat = new THREE.MeshBasicMaterial({
+    color: 0x38bdf8,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.22
+  });
+  const wireMesh = new THREE.Mesh(liverGeo.clone(), wireMat);
+  wireMesh.scale.set(1.02, 1.02, 1.02);
+  heroGroup.add(wireMesh);
+
+  // 3. Portal Vein & Hepatic Vascular Tree
+  const veinMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4, wireframe: false });
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-0.2, -1.2, -0.1),
+    new THREE.Vector3(-0.1, -0.4, 0.1),
+    new THREE.Vector3(0.3, 0.1, 0.2),
+    new THREE.Vector3(0.8, 0.4, 0.1),
+    new THREE.Vector3(1.1, 0.6, -0.1)
+  ]);
+  const veinGeo = new THREE.TubeGeometry(curve, 32, 0.06, 8, false);
+  const veinMesh = new THREE.Mesh(veinGeo, veinMat);
+  heroGroup.add(veinMesh);
+
+  // Left branch
+  const leftBranchCurve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-0.1, -0.4, 0.1),
+    new THREE.Vector3(-0.4, 0.1, 0.1),
+    new THREE.Vector3(-0.8, 0.3, -0.1)
+  ]);
+  const leftBranchGeo = new THREE.TubeGeometry(leftBranchCurve, 24, 0.045, 8, false);
+  const leftBranchMesh = new THREE.Mesh(leftBranchGeo, veinMat);
+  heroGroup.add(leftBranchMesh);
+
+  // 4. Tumor Lesion Holographic Highlight (HCC / LR-5 Marker)
+  const tumorGeo = new THREE.SphereGeometry(0.32, 24, 24);
+  const tumorMat = new THREE.MeshStandardMaterial({
+    color: 0xf43f5e,
+    emissive: 0xe11d48,
+    emissiveIntensity: 0.8,
+    roughness: 0.3,
+    transparent: true,
+    opacity: 0.85
+  });
+  const tumorMesh = new THREE.Mesh(tumorGeo, tumorMat);
+  tumorMesh.position.set(0.65, 0.2, 0.35);
+  heroGroup.add(tumorMesh);
+
+  // Tumor outer glow ring
+  const ringGeo = new THREE.RingGeometry(0.38, 0.44, 32);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0xf43f5e, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+  const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+  ringMesh.position.copy(tumorMesh.position);
+  ringMesh.rotation.x = Math.PI / 3;
+  heroGroup.add(ringMesh);
+
+  scene.add(heroGroup);
+
+  // 5. Lighting Setup
+  const ambientLight = new THREE.AmbientLight(0x1e1b4b, 0.8);
+  scene.add(ambientLight);
+
+  const keyLight = new THREE.DirectionalLight(0x38bdf8, 1.4);
+  keyLight.position.set(4, 5, 4);
+  scene.add(keyLight);
+
+  const rimLight = new THREE.DirectionalLight(0x2dd4bf, 0.8);
+  rimLight.position.set(-4, -3, -4);
+  scene.add(rimLight);
+
+  // 6. Blood Flow Particles
+  const bloodParticleCount = 45;
+  const bloodGeo = new THREE.BufferGeometry();
+  const bloodPos = new Float32Array(bloodParticleCount * 3);
+  for (let i = 0; i < bloodParticleCount; i++) {
+    const t = Math.random();
+    const pt = curve.getPoint(t);
+    bloodPos[i * 3] = pt.x;
+    bloodPos[i * 3 + 1] = pt.y;
+    bloodPos[i * 3 + 2] = pt.z;
+  }
+  bloodGeo.setAttribute('position', new THREE.BufferAttribute(bloodPos, 3));
+  const bloodMat = new THREE.PointsMaterial({ color: 0x38bdf8, size: 0.05, transparent: true, opacity: 0.9 });
+  const bloodParticles = new THREE.Points(bloodGeo, bloodMat);
+  heroGroup.add(bloodParticles);
+
+  // Interaction variables
+  let targetRotX = 0, targetRotY = 0;
   let animId;
   let running = true;
   let _resizeHandler;
 
+  function onMouseMove(e) {
+    const rect = container.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    targetRotY = x * 0.8;
+    targetRotX = y * 0.4;
+  }
+
+  window.addEventListener('mousemove', onMouseMove, { passive: true });
+
   function animate() {
     if (!running) return;
     animId = requestAnimationFrame(animate);
-    group.rotation.y += 0.004;
-    group.rotation.x = Math.sin(Date.now() * 0.0005) * 0.1;
-    threeParticles.rotation.y += 0.001;
-    threeParticles.rotation.x += 0.0005;
+
+    // Smooth rotation lerp
+    heroGroup.rotation.y += 0.005 + (targetRotY - heroGroup.rotation.y) * 0.05;
+    heroGroup.rotation.x += (targetRotX - heroGroup.rotation.x) * 0.05;
+    heroGroup.position.y = Math.sin(Date.now() * 0.0015) * 0.08;
+
+    // Pulsing tumor marker
+    const pulse = 1 + Math.sin(Date.now() * 0.004) * 0.12;
+    tumorMesh.scale.set(pulse, pulse, pulse);
+    ringMesh.scale.set(pulse * 1.1, pulse * 1.1, pulse * 1.1);
+
     renderer.render(scene, camera);
   }
   animate();
@@ -87,6 +189,7 @@ function initHero3D() {
     destroy() {
       running = false;
       cancelAnimationFrame(animId);
+      window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('resize', _resizeHandler);
       renderer.dispose();
       if (renderer.domElement && renderer.domElement.parentNode) {

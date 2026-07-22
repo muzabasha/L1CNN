@@ -1,22 +1,54 @@
 const UIManager = (() => {
   let _progressFill = null;
   let _progressText = null;
+  let _sidebarCollapsed = false;
 
   return {
     init() {
       _progressFill = document.getElementById('progress-fill');
       _progressText = document.getElementById('progress-text');
+
+      // Bind sidebar collapse toggle
+      const collapseBtn = document.getElementById('sidebar-toggle-btn');
+      if (collapseBtn) {
+        collapseBtn.addEventListener('click', () => {
+          this.toggleSidebar();
+          Motion.sound.playClick();
+        });
+      }
+
+      // Bind mobile menu toggle
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      if (mobileBtn) {
+        mobileBtn.addEventListener('click', () => {
+          const sidebar = document.getElementById('living-sidebar');
+          if (sidebar) {
+            sidebar.classList.toggle('mobile-open');
+          }
+          Motion.sound.playClick();
+        });
+      }
+
+      // Bind sound toggle button
+      const soundBtn = document.getElementById('sound-toggle-btn');
+      if (soundBtn) {
+        soundBtn.addEventListener('click', () => {
+          Motion.sound.toggleMute();
+        });
+      }
     },
 
     updateSidebarActive(moduleId) {
-      document.querySelectorAll('.nav-item').forEach(item => {
+      const items = document.querySelectorAll('.sidebar-item, .nav-item');
+      items.forEach(item => {
         const itemModule = item.dataset.module || 
                           item.getAttribute('data-navigate') ||
                           (item.getAttribute('href') || '').replace(/.*#/, '').replace('module-', '');
         const itemNorm = String(itemModule).trim().replace(/^module-?/, '');
         const normId = String(moduleId).trim().replace(/^module-?/, '');
-        item.classList.toggle('active', itemNorm === normId);
-        if (itemNorm === normId) {
+        const isActive = itemNorm === normId;
+        item.classList.toggle('active', isActive);
+        if (isActive) {
           item.setAttribute('aria-current', 'page');
         } else {
           item.removeAttribute('aria-current');
@@ -24,7 +56,26 @@ const UIManager = (() => {
       });
     },
 
-    toggleSidebar() {},
+    toggleSidebar(force) {
+      const sidebar = document.getElementById('living-sidebar');
+      const body = document.body;
+      if (!sidebar) return;
+
+      if (typeof force === 'boolean') {
+        _sidebarCollapsed = force;
+      } else {
+        _sidebarCollapsed = !_sidebarCollapsed;
+      }
+
+      sidebar.classList.toggle('collapsed', _sidebarCollapsed);
+      body.classList.toggle('sidebar-collapsed', _sidebarCollapsed);
+
+      const toggleBtn = document.getElementById('sidebar-toggle-btn');
+      if (toggleBtn) {
+        toggleBtn.textContent = _sidebarCollapsed ? '▶' : '◀';
+        toggleBtn.setAttribute('aria-label', _sidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar');
+      }
+    },
 
     updateProgress() {
       const pct = StorageManager.getProgress();

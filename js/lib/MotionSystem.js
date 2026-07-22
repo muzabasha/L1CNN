@@ -1,26 +1,22 @@
 /**
- * Motion Design System v1.0
- * Shared easing, durations, animation tokens, and the global AnimationController.
- * Inspired by Apple HIG, Material Motion, and cinematic storytelling.
- *
- * All module animations must register with this controller.
+ * Motion Design System v2.0 - Scientific Cinematic Motion Engine
+ * Inspired by Apple Vision Pro, Material Motion, and Pixar-level spatial design.
+ * Features centralized lifecycle management, Web Audio API sound synthesis, 
+ * GSAP choreography helpers, magnetic interaction, card 3D tilt, and reduced-motion fallback.
  */
 const Motion = (() => {
   /* ── Easing Curves ─────────────────────────── */
   const Ease = {
-    // Apple-inspired smooth curves
     appleIn:     'cubic-bezier(0.36, 0.0, 0.66, -0.56)',
     appleOut:    'cubic-bezier(0.34, 1.56, 0.64, 1.0)',
     appleInOut:  'cubic-bezier(0.65, 0.0, 0.35, 1.0)',
-    // Material-inspired
+    spring:      'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
     standard:    'cubic-bezier(0.4, 0.0, 0.2, 1.0)',
     decelerate:  'cubic-bezier(0.0, 0.0, 0.2, 1.0)',
     accelerate:  'cubic-bezier(0.4, 0.0, 1.0, 1.0)',
-    // Cinematic
     cinIn:       'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
     cinOut:      'cubic-bezier(0.215, 0.61, 0.355, 1.0)',
     cinInOut:    'cubic-bezier(0.645, 0.045, 0.355, 1.0)',
-    // Scientific (linear for data accuracy)
     linear:      'linear',
   };
 
@@ -44,17 +40,17 @@ const Motion = (() => {
 
   /* ── Transform Presets ─────────────────────── */
   const Preset = {
-    pageOut:  { opacity: 0, scale: 0.98, filter: 'blur(4px)', willChange: 'transform, opacity' },
-    pageIn:   { opacity: 0, scale: 0.96, filter: 'blur(8px)', willChange: 'transform, opacity' },
-    cardIdle: { y: 0, boxShadow: 'var(--shadow)' },
-    cardHover:{ y: -4, boxShadow: 'var(--shadow-lg)' },
-    lift:     { y: -8 },
-    drop:     { y: 4 },
-    fadeUp:   { opacity: 0, y: 20 },
-    fadeDown: { opacity: 0, y: -20 },
-    fadeIn:   { opacity: 0 },
-    scaleIn:  { opacity: 0, scale: 0.92 },
-    blurIn:   { filter: 'blur(12px)', opacity: 0 },
+    pageOut:   { opacity: 0, scale: 0.98, filter: 'blur(4px)', y: -10, willChange: 'transform, opacity, filter' },
+    pageIn:    { opacity: 0, scale: 0.96, filter: 'blur(8px)', y: 15, willChange: 'transform, opacity, filter' },
+    cardIdle:  { y: 0, scale: 1, boxShadow: 'var(--shadow)' },
+    cardHover: { y: -6, scale: 1.01, boxShadow: 'var(--shadow-lg)' },
+    lift:      { y: -8 },
+    drop:      { y: 4 },
+    fadeUp:    { opacity: 0, y: 20 },
+    fadeDown:  { opacity: 0, y: -20 },
+    fadeIn:    { opacity: 0 },
+    scaleIn:   { opacity: 0, scale: 0.92 },
+    blurIn:    { filter: 'blur(12px)', opacity: 0 },
   };
 
   /* ── Reduced Motion ────────────────────────── */
@@ -65,25 +61,142 @@ const Motion = (() => {
   _checkReducedMotion();
   window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', _checkReducedMotion);
 
-  /* ── GSAP-safe wrapper ─────────────────────── */
-  const gsapSafe = window.gsap && typeof window.gsap.to === 'function';
+  /* ── Web Audio API Sound Synthesizer ───────── */
+  let _audioCtx = null;
+  let _isMuted = localStorage.getItem('vrl_muted') === 'true';
 
-  /* ── AnimationController ───────────────────── */
-  const _active = new Map();     // id -> { tl, type, els }
+  function _getAudioContext() {
+    if (!_audioCtx && typeof window.AudioContext !== 'undefined') {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      _audioCtx = new AudioContextClass();
+    }
+    if (_audioCtx && _audioCtx.state === 'suspended') {
+      _audioCtx.resume().catch(() => {});
+    }
+    return _audioCtx;
+  }
+
+  const SoundEngine = {
+    isMuted: () => _isMuted,
+    toggleMute: () => {
+      _isMuted = !_isMuted;
+      localStorage.setItem('vrl_muted', _isMuted ? 'true' : 'false');
+      const btn = document.getElementById('sound-toggle-btn');
+      if (btn) {
+        btn.innerHTML = _isMuted ? '🔇 <span class="sr-only">Muted</span>' : '🔊 <span class="sr-only">Sound On</span>';
+        btn.setAttribute('aria-label', _isMuted ? 'Unmute Sound' : 'Mute Sound');
+      }
+      return _isMuted;
+    },
+    playClick: () => {
+      if (_isMuted) return;
+      try {
+        const ctx = _getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      } catch (e) {}
+    },
+    playHover: () => {
+      if (_isMuted) return;
+      try {
+        const ctx = _getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(520, ctx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.02, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
+      } catch (e) {}
+    },
+    playTransition: () => {
+      if (_isMuted) return;
+      try {
+        const ctx = _getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(300, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.2);
+      } catch (e) {}
+    },
+    playScan: () => {
+      if (_isMuted) return;
+      try {
+        const ctx = _getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(900, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(1400, ctx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.03, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+      } catch (e) {}
+    },
+    playSuccess: () => {
+      if (_isMuted) return;
+      try {
+        const ctx = _getAudioContext();
+        if (!ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const startTime = ctx.currentTime + idx * 0.08;
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, startTime);
+          gain.gain.setValueAtTime(0.06, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(startTime);
+          osc.stop(startTime + 0.2);
+        });
+      } catch (e) {}
+    }
+  };
+
+  /* ── Animation Controller ──────────────────── */
+  const _active = new Map();
   let _counter = 0;
 
   return {
-    Ease, Duration, Preset,
+    Ease, Duration, Preset, sound: SoundEngine,
 
     get reducedMotion() { return _reducedMotion; },
 
-    /** Register an animation for lifecycle management */
     register(id, config) {
       _active.set(id, { ...config, id });
       return id;
     },
 
-    /** Unregister and kill */
     unregister(id) {
       const entry = _active.get(id);
       if (!entry) return;
@@ -96,12 +209,10 @@ const Motion = (() => {
       _active.forEach((v, k) => this.unregister(k));
     },
 
-    /** Generate unique animation ID */
     uid(prefix = 'm') { return prefix + (++_counter); },
 
     /* ── Core Animation Methods ──────────────── */
 
-    /** Fade in an element */
     fadeIn(el, opts = {}) {
       if (!el) return;
       const d = opts.duration || Duration.fade;
@@ -114,7 +225,6 @@ const Motion = (() => {
       setTimeout(() => { el.style.opacity = '1'; el.style.willChange = ''; }, d + delay);
     },
 
-    /** Fade up (in + slide up) */
     fadeUp(el, opts = {}) {
       if (!el) return;
       const d = opts.duration || Duration.slide;
@@ -132,13 +242,12 @@ const Motion = (() => {
       setTimeout(() => { el.style.opacity = '1'; el.style.transform = ''; el.style.willChange = ''; }, d + delay);
     },
 
-    /** Stagger children */
     stagger(container, opts = {}) {
       const children = container?.children;
       if (!children) return;
       const d = opts.duration || Duration.slide;
       const e = opts.ease || Ease.appleOut;
-      const staggerDelay = opts.stagger || 80;
+      const staggerDelay = opts.stagger || 70;
       const dist = opts.distance || 16;
       Array.from(children).forEach((child, i) => {
         child.style.opacity = '0';
@@ -153,7 +262,6 @@ const Motion = (() => {
       });
     },
 
-    /** Scale in */
     scaleIn(el, opts = {}) {
       if (!el) return;
       const d = opts.duration || Duration.slide;
@@ -170,7 +278,6 @@ const Motion = (() => {
       setTimeout(() => { el.style.opacity = '1'; el.style.transform = ''; el.style.willChange = ''; }, d + delay);
     },
 
-    /** Page transition: outgoing */
     pageOut(section, opts = {}) {
       if (!section) return Promise.resolve();
       return new Promise(resolve => {
@@ -179,8 +286,8 @@ const Motion = (() => {
         if (_reducedMotion) { resolve(); return; }
         section.style.willChange = 'transform, opacity, filter';
         section.animate([
-          { opacity: 1, transform: 'scale(1)', filter: 'blur(0)' },
-          { opacity: 0, transform: 'scale(0.98)', filter: 'blur(4px)' }
+          { opacity: 1, transform: 'scale(1) translateY(0)', filter: 'blur(0)' },
+          { opacity: 0, transform: 'scale(0.98) translateY(-10px)', filter: 'blur(4px)' }
         ], { duration: d, easing: e, fill: 'forwards' }).onfinish = () => {
           section.style.willChange = '';
           resolve();
@@ -189,7 +296,6 @@ const Motion = (() => {
       });
     },
 
-    /** Page transition: incoming */
     pageIn(section, opts = {}) {
       if (!section) return Promise.resolve();
       return new Promise(resolve => {
@@ -197,12 +303,12 @@ const Motion = (() => {
         const e = opts.ease || Ease.cinOut;
         if (_reducedMotion) { section.style.opacity = '1'; section.style.transform = ''; resolve(); return; }
         section.style.opacity = '0';
-        section.style.transform = 'scale(0.96)';
+        section.style.transform = 'scale(0.96) translateY(15px)';
         section.style.filter = 'blur(8px)';
         section.style.willChange = 'transform, opacity, filter';
         section.animate([
-          { opacity: 0, transform: 'scale(0.96)', filter: 'blur(8px)' },
-          { opacity: 1, transform: 'scale(1)', filter: 'blur(0)' }
+          { opacity: 0, transform: 'scale(0.96) translateY(15px)', filter: 'blur(8px)' },
+          { opacity: 1, transform: 'scale(1) translateY(0)', filter: 'blur(0)' }
         ], { duration: d, easing: e, fill: 'forwards' }).onfinish = () => {
           section.style.opacity = '1';
           section.style.transform = '';
@@ -214,7 +320,6 @@ const Motion = (() => {
       });
     },
 
-    /** Count-up animation for KPI numbers */
     countUp(el, target, opts = {}) {
       if (!el) return;
       const d = opts.duration || 1200;
@@ -233,17 +338,17 @@ const Motion = (() => {
       requestAnimationFrame(step);
     },
 
-    /** Ripple effect on click */
     ripple(e, opts = {}) {
       const el = e.currentTarget;
       if (!el) return;
+      SoundEngine.playClick();
       const color = opts.color || 'rgba(255,255,255,0.2)';
       const size = opts.size || Math.max(el.offsetWidth, el.offsetHeight);
       const rect = el.getBoundingClientRect();
       const x = (e.clientX || e.touches?.[0]?.clientX || rect.left + rect.width / 2) - rect.left;
       const y = (e.clientY || e.touches?.[0]?.clientY || rect.top + rect.height / 2) - rect.top;
       const ripple = document.createElement('span');
-      ripple.style.cssText = `position:absolute;left:${x - size/2}px;top:${y - size/2}px;width:${size}px;height:${size}px;border-radius:50%;background:${color};transform:scale(0);opacity:1;pointer-events:none;`;
+      ripple.style.cssText = `position:absolute;left:${x - size/2}px;top:${y - size/2}px;width:${size}px;height:${size}px;border-radius:50%;background:${color};transform:scale(0);opacity:1;pointer-events:none;z-index:99;`;
       el.style.position = 'relative';
       el.style.overflow = 'hidden';
       el.appendChild(ripple);
@@ -254,7 +359,6 @@ const Motion = (() => {
       ], { duration: 600, easing: Ease.standard, fill: 'forwards' }).onfinish = () => ripple.remove();
     },
 
-    /** Magnetic attraction: element subtly follows cursor */
     magnetic(el, opts = {}) {
       if (!el || _reducedMotion) return;
       const strength = opts.strength || 6;
@@ -264,7 +368,28 @@ const Motion = (() => {
         const cy = rect.top + rect.height / 2;
         const dx = (e.clientX - cx) / rect.width * strength;
         const dy = (e.clientY - cy) / rect.height * strength;
-        el.style.transform = `translate(${dx}px, ${dy}px)`;
+        el.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+      };
+      const onLeave = () => {
+        el.style.transform = '';
+      };
+      el.addEventListener('mousemove', onMove);
+      el.addEventListener('mouseleave', onLeave);
+      return () => { el.removeEventListener('mousemove', onMove); el.removeEventListener('mouseleave', onLeave); };
+    },
+
+    tilt(el, opts = {}) {
+      if (!el || _reducedMotion) return;
+      const maxTilt = opts.maxTilt || 8;
+      const onMove = (e) => {
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+        const rotateX = ((cy - y) / cy) * maxTilt;
+        const rotateY = ((x - cx) / cx) * maxTilt;
+        el.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateZ(6px)`;
       };
       const onLeave = () => {
         el.style.transform = '';

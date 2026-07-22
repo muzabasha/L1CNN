@@ -35,15 +35,91 @@ const App = (() => {
       // Sync from URL (handle deep linking and page refresh)
       Router.syncFromURL();
       
-      // Initialize visual effects
+      // Initialize visual effects & background particle engines
       initParticles();
       initHero3D();
       setTimeout(initScrollAnimations, 100);
+
+      // Run Cinematic Initialization Loader Sequence (3-5s)
+      _runCinematicLoaderSequence();
+
+      // Bind 3D Card Tilt effects on interactive elements
+      _bindCardTilts();
 
       EventManager.emit('app:init');
       console.log('[App] Initialization complete');
     }
   };
+
+  function _runCinematicLoaderSequence() {
+    const loader = document.getElementById('cinematic-loader');
+    if (!loader) return;
+
+    // Check prefers-reduced-motion
+    if (Motion.reducedMotion) {
+      loader.classList.add('loader-finish');
+      setTimeout(() => loader.remove(), 800);
+      return;
+    }
+
+    const circle = document.getElementById('loader-ring-circle');
+    const pctEl = document.getElementById('loader-pct');
+    const statusEl = document.getElementById('loader-status-text');
+
+    const circumference = 414; // 2 * Math.PI * 66
+    const duration = 3200; // 3.2s
+    const startTime = performance.now();
+
+    const phrases = [
+      "Initializing AI Neural Network Architecture...",
+      "Loading Multiphase CT Datasets & DICOM Metadata...",
+      "Calibrating 3D nnU-Net Segmentation Engines...",
+      "Synthesizing Multimodal Radiomics-CNN Feature Space...",
+      "Laboratory Ready. Welcome to VRL."
+    ];
+
+    function updateLoader(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      
+      const currentPct = Math.round(easedProgress * 100);
+      if (pctEl) pctEl.textContent = currentPct + '%';
+
+      if (circle) {
+        const offset = circumference - (easedProgress * circumference);
+        circle.style.strokeDashoffset = offset;
+      }
+
+      // Update status phrases sequentially
+      const phraseIdx = Math.min(phrases.length - 1, Math.floor(easedProgress * phrases.length));
+      if (statusEl && statusEl.textContent !== phrases[phraseIdx]) {
+        statusEl.textContent = phrases[phraseIdx];
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(updateLoader);
+      } else {
+        // Completion
+        Motion.sound.playSuccess();
+        setTimeout(() => {
+          loader.classList.add('loader-finish');
+          setTimeout(() => {
+            if (loader.parentNode) loader.parentNode.removeChild(loader);
+          }, 850);
+        }, 300);
+      }
+    }
+
+    requestAnimationFrame(updateLoader);
+  }
+
+  function _bindCardTilts() {
+    document.querySelectorAll('.module-card, .card, .simulation-panel').forEach(card => {
+      Motion.tilt(card, { maxTilt: 6 });
+      card.addEventListener('mouseenter', () => Motion.sound.playHover());
+    });
+  }
 
   function _registerRoutes() {
     console.log('[App] Registering routes...');
@@ -60,6 +136,7 @@ const App = (() => {
     // Handle route changes
     EventManager.on('route:changed', async ({ from, to }) => {
       console.log('[App] Route changed from', from, 'to', to);
+      Motion.sound.playTransition();
       
       try {
         // Determine section IDs
@@ -118,6 +195,8 @@ const App = (() => {
                 console.log('[App] Module initialized:', to);
                 _injectModuleNav(to);
                 _currentModuleId = to;
+                // Re-bind tilts on new module elements
+                setTimeout(_bindCardTilts, 150);
               } else {
                 console.warn('[App] Module already initialized or failed:', to);
               }
@@ -166,13 +245,13 @@ const App = (() => {
         e.preventDefault();
         const target = btn.dataset.navigate;
         console.log('[App] Navigate button clicked:', target);
+        Motion.ripple(e);
         Router.navigateTo(target);
       }
     });
 
     // Global keyboard handler for navigation buttons
     document.addEventListener('keydown', (e) => {
-      // Skip if user is typing in an input
       if (e.target.tagName === 'INPUT' || 
           e.target.tagName === 'TEXTAREA' || 
           e.target.tagName === 'SELECT' || 
@@ -181,7 +260,6 @@ const App = (() => {
         return;
       }
 
-      // Handle Enter/Space on data-navigate buttons
       const btn = e.target.closest('[data-navigate]');
       if (btn && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
@@ -190,7 +268,6 @@ const App = (() => {
         return;
       }
 
-      // Arrow key navigation between modules
       if (e.key === 'ArrowRight') {
         const routes = Router.getAllRoutes();
         const idx = routes.indexOf(Router.getCurrentRoute());
@@ -208,7 +285,6 @@ const App = (() => {
       }
     });
 
-    // Debounced resize handler
     window.addEventListener('resize', Utils.debounce(() => {
       UIManager.onResize();
     }, 200));
@@ -280,16 +356,6 @@ const App = (() => {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('[DOM] DOMContentLoaded - Initializing app');
   App.init();
-  
-  // Show welcome toast after initialization
-  setTimeout(() => {
-    if (window.ToastManager) {
-      ToastManager.success('Application initialized successfully!', {
-        title: 'Welcome',
-        duration: 3000
-      });
-    }
-  }, 500);
 });
 
 window.vrlApp = {

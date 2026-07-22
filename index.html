@@ -46,7 +46,141 @@
   </script>
 </head>
 
-<body class="bg-dark-900 text-white font-sans overflow-x-hidden">
+<body class="bg-dark-900 text-white font-sans overflow-x-hidden has-sidebar">
+
+  <!-- Cinematic Research Initialization Loader -->
+  <div id="cinematic-loader" role="dialog" aria-label="Research Initialization">
+    <canvas id="loader-canvas" class="loader-canvas"></canvas>
+
+    <div class="loader-keywords-wrapper">
+      <div class="floating-keyword" style="top:20%; left:15%; animation-delay:0s;">Radiomics</div>
+      <div class="floating-keyword" style="top:70%; left:20%; animation-delay:0.8s;">Deep Learning</div>
+      <div class="floating-keyword" style="top:25%; right:15%; animation-delay:1.5s;">3D nnU-Net</div>
+      <div class="floating-keyword" style="top:75%; right:22%; animation-delay:2.2s;">Multimodal Fusion</div>
+      <div class="floating-keyword" style="top:45%; left:10%; animation-delay:2.9s;">Explainable AI</div>
+    </div>
+
+    <div class="loader-content">
+      <div class="loader-logo-ring">
+        <svg class="loader-svg-ring" viewBox="0 0 140 140">
+          <defs>
+            <linearGradient id="loaderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8" />
+              <stop offset="50%" stop-color="#2563eb" />
+              <stop offset="100%" stop-color="#2dd4bf" />
+            </linearGradient>
+          </defs>
+          <circle class="loader-ring-bg" cx="70" cy="70" r="66" fill="none"></circle>
+          <circle id="loader-ring-circle" class="loader-ring-progress" cx="70" cy="70" r="66" fill="none"></circle>
+        </svg>
+        <div class="loader-logo-icon">🔬</div>
+      </div>
+      <h2 class="loader-title">VIRTUAL RESEARCH LABORATORY</h2>
+      <p id="loader-status-text" class="loader-status">Initializing AI Neural Network Architecture...</p>
+      <div id="loader-pct" class="font-orbitron text-primary-400 font-bold text-lg mt-2">0%</div>
+    </div>
+  </div>
+
+  <!-- App Top Navigation Bar -->
+  <header class="app-topbar">
+    <a href="#" data-navigate="home" class="topbar-brand" aria-label="Virtual Research Lab Home">
+      <div class="topbar-brand-icon">🔬</div>
+      <span>VRL <span class="text-xs font-normal text-gray-400 font-sans hidden sm:inline">| Medical AI Lab</span></span>
+    </a>
+    <div class="topbar-actions">
+      <button id="sound-toggle-btn" class="sound-toggle-btn" aria-label="Toggle Sound" title="Audio Feedback Toggle">
+        🔊
+      </button>
+      <button id="mobile-menu-btn" class="lg:hidden sound-toggle-btn" aria-label="Toggle Navigation Sidebar">
+        ☰
+      </button>
+    </div>
+  </header>
+
+  <!-- Living Floating Glass Sidebar -->
+  <aside id="living-sidebar" class="living-sidebar" aria-label="Laboratory Modules Navigation">
+    <div class="sidebar-nav">
+      <a data-navigate="home" class="sidebar-item active" aria-label="Home Overview">
+        <span class="sidebar-icon">🏠</span>
+        <span>Home</span>
+      </a>
+      <a data-navigate="1" class="sidebar-item" aria-label="Module 1: Clinical Background">
+        <span class="sidebar-icon">🫀</span>
+        <span>1. Clinical Background</span>
+      </a>
+      <a data-navigate="2" class="sidebar-item" aria-label="Module 2: CT Imaging">
+        <span class="sidebar-icon">📷</span>
+        <span>2. CT Imaging Physics</span>
+      </a>
+      <a data-navigate="3" class="sidebar-item" aria-label="Module 3: Multiphase CT">
+        <span class="sidebar-icon">💉</span>
+        <span>3. Multiphase CT</span>
+      </a>
+      <a data-navigate="4" class="sidebar-item" aria-label="Module 4: LI-RADS">
+        <span class="sidebar-icon">📋</span>
+        <span>4. LI-RADS v2018</span>
+      </a>
+      <a data-navigate="5" class="sidebar-item" aria-label="Module 5: Synthetic Dataset">
+        <span class="sidebar-icon">🗄️</span>
+        <span>5. Synthetic Dataset</span>
+      </a>
+      <a data-navigate="6" class="sidebar-item" aria-label="Module 6: 3D nnU-Net">
+        <span class="sidebar-icon">🧠</span>
+        <span>6. 3D nnU-Net</span>
+      </a>
+      <a data-navigate="7" class="sidebar-item" aria-label="Module 7: AI Segmentation">
+        <span class="sidebar-icon">✂️</span>
+        <span>7. AI Segmentation</span>
+      </a>
+      <a data-navigate="8" class="sidebar-item" aria-label="Module 8: Radiomics">
+        <span class="sidebar-icon">📊</span>
+        <span>8. Radiomic Features</span>
+      </a>
+      <a data-navigate="9" class="sidebar-item" aria-label="Module 9: Traditional ML">
+        <span class="sidebar-icon">🤖</span>
+        <span>9. Traditional ML</span>
+      </a>
+      <a data-navigate="10" class="sidebar-item" aria-label="Module 10: 3D CNN">
+        <span class="sidebar-icon">🔮</span>
+        <span>10. Phase 3D CNN</span>
+      </a>
+      <a data-navigate="11" class="sidebar-item" aria-label="Module 11: CNN Viz">
+        <span class="sidebar-icon">👁️</span>
+        <span>11. CNN Feature Maps</span>
+      </a>
+      <a data-navigate="12" class="sidebar-item" aria-label="Module 12: Fusion">
+        <span class="sidebar-icon">🔗</span>
+        <span>12. Multimodal Fusion</span>
+      </a>
+      <a data-navigate="13" class="sidebar-item" aria-label="Module 13: Classification">
+        <span class="sidebar-icon">🎯</span>
+        <span>13. Classification</span>
+      </a>
+      <a data-navigate="14" class="sidebar-item" aria-label="Module 14: Explainable AI">
+        <span class="sidebar-icon">💡</span>
+        <span>14. Explainable AI</span>
+      </a>
+      <a data-navigate="15" class="sidebar-item" aria-label="Module 15: Metrics">
+        <span class="sidebar-icon">📈</span>
+        <span>15. Metrics & ROC</span>
+      </a>
+      <a data-navigate="16" class="sidebar-item" aria-label="Module 16: Comparison">
+        <span class="sidebar-icon">⚖️</span>
+        <span>16. Model Comparison</span>
+      </a>
+      <a data-navigate="17" class="sidebar-item" aria-label="Module 17: Research Gap">
+        <span class="sidebar-icon">🔬</span>
+        <span>17. Research Gap</span>
+      </a>
+      <a data-navigate="18" class="sidebar-item" aria-label="Module 18: PhD Workflow">
+        <span class="sidebar-icon">🎓</span>
+        <span>18. PhD Workflow</span>
+      </a>
+    </div>
+    <button id="sidebar-toggle-btn" class="sidebar-toggle-btn" aria-label="Collapse Sidebar">
+      ◀
+    </button>
+  </aside>
 
   <!-- Skip to content -->
   <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -57,7 +191,7 @@
     <!-- ==================== HOME SECTION ==================== -->
     <section id="home" class="module-section active" role="region" aria-label="Home">
       <!-- Hero -->
-      <div class="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
+      <div class="relative min-h-screen flex items-center justify-center overflow-hidden px-4 pt-16">
         <canvas id="particles-canvas" class="absolute inset-0 z-0"></canvas>
         <div id="hero-3d" class="absolute inset-0 z-0 pointer-events-none"></div>
         <div class="relative z-10 text-center max-w-5xl mx-auto">
