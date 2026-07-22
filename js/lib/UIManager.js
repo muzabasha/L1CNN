@@ -36,23 +36,127 @@ const UIManager = (() => {
           Motion.sound.toggleMute();
         });
       }
+
+      // Initialize Top Bar Module Switcher & Sidebar Search
+      this._initModuleSwitcher();
+      this._initSidebarSearch();
+    },
+
+    _initModuleSwitcher() {
+      const btn = document.getElementById('module-switcher-btn');
+      const dropdown = document.getElementById('module-switcher-dropdown');
+      const searchInput = document.getElementById('module-switcher-search');
+
+      if (!btn || !dropdown) return;
+
+      const toggleDropdown = (show) => {
+        const isOpen = typeof show === 'boolean' ? show : !dropdown.classList.contains('open');
+        dropdown.classList.toggle('open', isOpen);
+        btn.classList.toggle('active', isOpen);
+        btn.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen && searchInput) {
+          setTimeout(() => searchInput.focus(), 100);
+        }
+      };
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDropdown();
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase().trim();
+          const items = dropdown.querySelectorAll('.switcher-item');
+          const groups = dropdown.querySelectorAll('.switcher-group');
+
+          items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            const match = !query || text.includes(query);
+            item.style.display = match ? 'flex' : 'none';
+          });
+
+          groups.forEach(group => {
+            const visibleItems = group.querySelectorAll('.switcher-item[style*="display: flex"], .switcher-item:not([style*="display"])');
+            const hasVisible = query ? Array.from(group.querySelectorAll('.switcher-item')).some(el => el.style.display !== 'none') : true;
+            group.style.display = hasVisible ? 'block' : 'none';
+          });
+        });
+      }
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.module-switcher-container')) {
+          toggleDropdown(false);
+        }
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && dropdown.classList.contains('open')) {
+          toggleDropdown(false);
+        }
+      });
+
+      // Handle item click inside switcher
+      dropdown.addEventListener('click', (e) => {
+        const item = e.target.closest('[data-navigate]');
+        if (item) {
+          toggleDropdown(false);
+        }
+      });
+    },
+
+    _initSidebarSearch() {
+      const searchInput = document.getElementById('sidebar-search-input');
+      if (!searchInput) return;
+
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const items = document.querySelectorAll('.sidebar-item');
+        const headers = document.querySelectorAll('.sidebar-phase-header');
+
+        items.forEach(item => {
+          if (item.dataset.navigate === 'home') return;
+          const text = item.textContent.toLowerCase();
+          const match = !query || text.includes(query);
+          item.style.display = match ? 'flex' : 'none';
+        });
+
+        headers.forEach(header => {
+          header.style.display = query ? 'none' : 'block';
+        });
+      });
     },
 
     updateSidebarActive(moduleId) {
+      const normId = String(moduleId).trim().replace(/^module-?/, '');
+
+      // Update sidebar items
       const items = document.querySelectorAll('.sidebar-item, .nav-item');
       items.forEach(item => {
         const itemModule = item.dataset.module || 
                           item.getAttribute('data-navigate') ||
                           (item.getAttribute('href') || '').replace(/.*#/, '').replace('module-', '');
         const itemNorm = String(itemModule).trim().replace(/^module-?/, '');
-        const normId = String(moduleId).trim().replace(/^module-?/, '');
         const isActive = itemNorm === normId;
         item.classList.toggle('active', isActive);
         if (isActive) {
           item.setAttribute('aria-current', 'page');
+          try {
+            item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          } catch (e) {}
         } else {
           item.removeAttribute('aria-current');
         }
+      });
+
+      // Update topbar switcher active items
+      const switcherItems = document.querySelectorAll('.switcher-item');
+      switcherItems.forEach(item => {
+        const itemNav = item.getAttribute('data-navigate') || '';
+        const itemNorm = String(itemNav).trim().replace(/^module-?/, '');
+        item.classList.toggle('active', itemNorm === normId);
       });
     },
 

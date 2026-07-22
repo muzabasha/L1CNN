@@ -186,6 +186,10 @@ const App = (() => {
             try {
               const initialized = ModuleEngine.init(to);
               console.log('[App] Module init result:', to, initialized);
+              const sec = document.getElementById('module-' + to) || document.getElementById(to);
+              if (sec) {
+                _injectModuleSubNav(sec, to);
+              }
               _injectModuleNav(to);
               _currentModuleId = to;
               setTimeout(_bindCardTilts, 150);
@@ -289,10 +293,67 @@ const App = (() => {
     });
   }
 
-  function _injectModuleNav(moduleId) {
-    const sec = document.getElementById('module-' + moduleId);
+  function _injectModuleSubNav(sec, moduleId) {
     if (!sec) return;
-    if (sec.querySelector('.module-nav-footer')) return;
+    let existing = sec.querySelector('.module-subnav');
+    if (existing) existing.remove();
+
+    const sections = [];
+    const objEl = sec.querySelector('[id*="-objectives"], .objectives-panel, .objectives-grid');
+    if (objEl) sections.push({ name: '🎯 Objectives', el: objEl });
+
+    const animEl = sec.querySelector('[id*="-animation"], [id*="-anatomy-wrap"], [id*="-ctphases-wrap"], .animation-panel');
+    if (animEl) sections.push({ name: '🔬 Visuals & Animation', el: animEl });
+
+    const simEl = sec.querySelector('[id*="-simulation"], [id*="-risk-wrap"], .simulation-panel, .simulation-container');
+    if (simEl && simEl !== animEl) sections.push({ name: '⚡ Interactive Lab', el: simEl });
+
+    const theoryEl = sec.querySelector('[id*="-theory"], .theory-panel, .theory-content');
+    if (theoryEl) sections.push({ name: '📚 Theory & Concepts', el: theoryEl });
+
+    const codeEl = sec.querySelector('[id*="-code"], .code-container, .code-panel');
+    if (codeEl) sections.push({ name: '💻 Python Code', el: codeEl });
+
+    const quizEl = sec.querySelector('[id*="-quiz"], .quiz-container, .quiz-panel');
+    if (quizEl) sections.push({ name: '✏️ Quiz & Evaluation', el: quizEl });
+
+    if (sections.length < 2) return;
+
+    const subnav = document.createElement('nav');
+    subnav.className = 'module-subnav';
+    subnav.setAttribute('aria-label', 'Module Content Quick Links');
+
+    sections.forEach((s, idx) => {
+      if (!s.el.id) s.el.id = 'mod-' + moduleId + '-sec-' + idx;
+      const pill = document.createElement('button');
+      pill.className = 'subnav-pill' + (idx === 0 ? ' active' : '');
+      pill.innerHTML = s.name;
+      pill.setAttribute('aria-label', 'Jump to ' + s.name);
+      pill.addEventListener('click', (e) => {
+        e.preventDefault();
+        subnav.querySelectorAll('.subnav-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const yOffset = -75;
+        const y = s.el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      });
+      subnav.appendChild(pill);
+    });
+
+    const header = sec.querySelector('.module-header, .module-title, h1, h2');
+    if (header && header.nextSibling) {
+      sec.insertBefore(subnav, header.nextSibling);
+    } else {
+      sec.insertBefore(subnav, sec.firstChild);
+    }
+  }
+
+  function _injectModuleNav(moduleId) {
+    const sec = document.getElementById('module-' + moduleId) || document.getElementById(moduleId);
+    if (!sec) return;
+
+    let existingNav = sec.querySelector('.module-nav-footer');
+    if (existingNav) existingNav.remove();
 
     const n = parseInt(moduleId, 10);
     if (isNaN(n) || n < 1 || n > 18) return;
@@ -310,11 +371,11 @@ const App = (() => {
     prevBtn.setAttribute('data-navigate', prevId);
     prevBtn.setAttribute('aria-label', n === 1 ? 'Go to Home' : 'Go to previous module');
     prevBtn.style.cssText = btnStyle;
-    prevBtn.innerHTML = n === 1 ? '\u2190 Home' : ('\u2190 Module ' + (n - 1));
+    prevBtn.innerHTML = n === 1 ? '← Home Overview' : ('← Module ' + (n - 1));
 
     const counter = document.createElement('span');
-    counter.style.cssText = 'font-size:12px;color:#64748b;white-space:nowrap';
-    counter.textContent = 'Module ' + n + ' / 18';
+    counter.style.cssText = 'font-size:13px;font-weight:600;color:#94a3b8;white-space:nowrap;font-family:Orbitron,sans-serif';
+    counter.textContent = 'Module ' + n + ' of 18';
 
     nav.appendChild(prevBtn);
     nav.appendChild(counter);
@@ -325,15 +386,15 @@ const App = (() => {
       nextBtn.setAttribute('data-navigate', nextId);
       nextBtn.setAttribute('aria-label', 'Go to next module');
       nextBtn.style.cssText = btnStyle;
-      nextBtn.innerHTML = 'Module ' + (n + 1) + ' \u2192';
+      nextBtn.innerHTML = 'Module ' + (n + 1) + ' →';
       nav.appendChild(nextBtn);
     } else {
       const homeBtn = document.createElement('button');
       homeBtn.className = 'module-nav-btn module-nav-home';
       homeBtn.setAttribute('data-navigate', 'home');
-      homeBtn.setAttribute('aria-label', 'Return to Home');
+      homeBtn.setAttribute('aria-label', 'Return to Home Overview');
       homeBtn.style.cssText = btnStyle.replace('08)', '12)').replace('#93c5fd', '#34d399');
-      homeBtn.innerHTML = '\u{1F3E0} Back to Home';
+      homeBtn.innerHTML = '🏠 Return to Home';
       nav.appendChild(homeBtn);
     }
 

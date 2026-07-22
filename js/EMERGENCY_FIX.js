@@ -66,13 +66,6 @@
       }
     }, 100);
     
-    // Add diagnostic button to page
-    const diagnosticBtn = document.createElement('button');
-    diagnosticBtn.textContent = '🔍 Diagnose';
-    diagnosticBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:999999;padding:10px 20px;background:#ef4444;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
-    diagnosticBtn.onclick = runDiagnostics;
-    document.body.appendChild(diagnosticBtn);
-    
     console.log('[EmergencyFix] Ready');
   }
   
@@ -164,13 +157,6 @@
     console.log('Check the output above for issues.');
   }
   
-  // Make diagnostic available globally
+  // Make diagnostic available globally in dev console
   window.runDiagnostics = runDiagnostics;
-  
-  // Auto-run diagnostics after 2 seconds
-  setTimeout(() => {
-    console.log('[EmergencyFix] Auto-running diagnostics...');
-    runDiagnostics();
-  }, 2000);
-  
 })();

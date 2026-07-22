@@ -6,6 +6,23 @@ const Router = (() => {
   let _initialized = false;
   let _popstateHandler = null;
 
+  function normalizeRouteId(id) {
+    if (!id) return 'home';
+    let s = String(id).trim().toLowerCase();
+    if (s.startsWith('#')) s = s.substring(1).trim();
+    if (s === '' || s === '/' || s === 'home') return 'home';
+
+    // Matches 'module-5', 'module5', 'm5', '5', 'module_5', etc.
+    const match = s.match(/^(?:module[-_]?|m)(\d{1,2})$/i) || s.match(/^(\d{1,2})$/);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      if (num >= 1 && num <= 18) {
+        return String(num);
+      }
+    }
+    return s;
+  }
+
   return {
     register(id, config) {
       _routes.set(id, {
@@ -15,7 +32,7 @@ const Router = (() => {
       });
     },
 
-    getRoute(id) { return _routes.get(id); },
+    getRoute(id) { return _routes.get(normalizeRouteId(id)); },
 
     getAllRoutes() { return Array.from(_routes.keys()); },
 
@@ -32,16 +49,13 @@ const Router = (() => {
       
       _isNavigating = true;
 
-      // Normalize route ID
-      let normId = String(id).trim();
-      if (normId.startsWith('module-')) normId = normId.replace('module-', '');
-      if (normId.startsWith('#')) normId = normId.replace('#', '');
-      if (!normId || normId === '' || normId === '/') normId = 'home';
+      // Normalize route ID using robust helper
+      let normId = normalizeRouteId(id);
 
       const route = _routes.get(normId);
 
       if (!route) {
-        console.warn('[Router] Route not found:', normId, 'redirecting to home');
+        console.warn('[Router] Route not found:', id, '-> normalized:', normId, 'redirecting to home');
         _isNavigating = false;
         if (normId !== 'home') {
           this.navigateTo('home', { force: true });
@@ -78,16 +92,12 @@ const Router = (() => {
     syncFromURL() {
       console.log('[Router] Syncing from URL:', window.location.hash);
       
-      const hash = window.location.hash.replace('#', '').trim() || 'home';
-      let routeId = hash;
-      
-      // Normalize
-      if (routeId.startsWith('module-')) routeId = routeId.replace('module-', '');
-      if (!routeId || routeId === '/') routeId = 'home';
+      const rawHash = window.location.hash;
+      let routeId = normalizeRouteId(rawHash);
 
       // Validate route exists
       if (!_routes.has(routeId) && routeId !== 'home') {
-        console.warn('[Router] Invalid route in URL:', routeId, 'redirecting to home');
+        console.warn('[Router] Invalid route in URL:', rawHash, '-> normalized:', routeId, 'redirecting to home');
         _currentRoute = 'home';
         _updateURL('home', true);
         EventManager.emit('route:changed', { from: null, to: 'home' });

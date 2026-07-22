@@ -87,6 +87,61 @@
       <div class="topbar-brand-icon">🔬</div>
       <span>VRL <span class="text-xs font-normal text-gray-400 font-sans hidden sm:inline">| Medical AI Lab</span></span>
     </a>
+
+    <!-- Topbar Quick Module Switcher -->
+    <div class="module-switcher-container">
+      <button id="module-switcher-btn" class="module-switcher-btn" aria-expanded="false" aria-controls="module-switcher-dropdown" aria-label="Jump to Module Menu">
+        <span>🗂️ Modules</span>
+        <span class="text-xs text-primary-400">▾</span>
+      </button>
+
+      <div id="module-switcher-dropdown" class="module-switcher-dropdown" role="menu" aria-label="Module Quick Selector">
+        <div class="module-switcher-header">
+          <input type="text" id="module-switcher-search" class="module-switcher-search" placeholder="🔍 Search 18 modules (e.g. Radiomics, 3D CNN)..." aria-label="Search modules" />
+        </div>
+        <div class="module-switcher-body">
+          <div class="switcher-group">
+            <div class="switcher-group-title">Phase 1: Foundations & Physics</div>
+            <div class="switcher-grid">
+              <a data-navigate="1" class="switcher-item"><span class="switcher-num">M1</span> 🫀 Clinical Background</a>
+              <a data-navigate="2" class="switcher-item"><span class="switcher-num">M2</span> 📷 CT Imaging Physics</a>
+              <a data-navigate="3" class="switcher-item"><span class="switcher-num">M3</span> 💉 Multiphase CT</a>
+              <a data-navigate="4" class="switcher-item"><span class="switcher-num">M4</span> 📋 LI-RADS v2018</a>
+            </div>
+          </div>
+          <div class="switcher-group">
+            <div class="switcher-group-title">Phase 2: Datasets & Deep Learning</div>
+            <div class="switcher-grid">
+              <a data-navigate="5" class="switcher-item"><span class="switcher-num">M5</span> 🗄️ Synthetic Dataset</a>
+              <a data-navigate="6" class="switcher-item"><span class="switcher-num">M6</span> 🧠 3D nnU-Net Architecture</a>
+              <a data-navigate="7" class="switcher-item"><span class="switcher-num">M7</span> ✂️ AI Segmentation</a>
+            </div>
+          </div>
+          <div class="switcher-group">
+            <div class="switcher-group-title">Phase 3: Feature Space & Fusion</div>
+            <div class="switcher-grid">
+              <a data-navigate="8" class="switcher-item"><span class="switcher-num">M8</span> 📊 Radiomic Features</a>
+              <a data-navigate="9" class="switcher-item"><span class="switcher-num">M9</span> 🤖 Traditional ML</a>
+              <a data-navigate="10" class="switcher-item"><span class="switcher-num">M10</span> 🔮 Phase 3D CNN</a>
+              <a data-navigate="11" class="switcher-item"><span class="switcher-num">M11</span> 👁️ CNN Feature Maps</a>
+              <a data-navigate="12" class="switcher-item"><span class="switcher-num">M12</span> 🔗 Multimodal Fusion</a>
+            </div>
+          </div>
+          <div class="switcher-group">
+            <div class="switcher-group-title">Phase 4: Classification & PhD Synthesis</div>
+            <div class="switcher-grid">
+              <a data-navigate="13" class="switcher-item"><span class="switcher-num">M13</span> 🎯 Classification Pipeline</a>
+              <a data-navigate="14" class="switcher-item"><span class="switcher-num">M14</span> 💡 Explainable AI (XAI)</a>
+              <a data-navigate="15" class="switcher-item"><span class="switcher-num">M15</span> 📈 Metrics & ROC</a>
+              <a data-navigate="16" class="switcher-item"><span class="switcher-num">M16</span> ⚖️ Model Comparison</a>
+              <a data-navigate="17" class="switcher-item"><span class="switcher-num">M17</span> 🔬 Research Gap Analysis</a>
+              <a data-navigate="18" class="switcher-item"><span class="switcher-num">M18</span> 🎓 PhD Workflow Synthesis</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="topbar-actions">
       <button id="sound-toggle-btn" class="sound-toggle-btn" aria-label="Toggle Sound" title="Audio Feedback Toggle">
         🔊
@@ -99,11 +154,17 @@
 
   <!-- Living Floating Glass Sidebar -->
   <aside id="living-sidebar" class="living-sidebar" aria-label="Laboratory Modules Navigation">
+    <div class="sidebar-search-container">
+      <input type="text" id="sidebar-search-input" class="sidebar-search-input" placeholder="🔍 Search modules..." aria-label="Search sidebar modules" />
+    </div>
+
     <div class="sidebar-nav">
       <a data-navigate="home" class="sidebar-item active" aria-label="Home Overview">
         <span class="sidebar-icon">🏠</span>
         <span>Home</span>
       </a>
+
+      <div class="sidebar-phase-header">Phase 1: Foundations</div>
       <a data-navigate="1" class="sidebar-item" aria-label="Module 1: Clinical Background">
         <span class="sidebar-icon">🫀</span>
         <span>1. Clinical Background</span>
@@ -120,6 +181,8 @@
         <span class="sidebar-icon">📋</span>
         <span>4. LI-RADS v2018</span>
       </a>
+
+      <div class="sidebar-phase-header">Phase 2: Deep Learning</div>
       <a data-navigate="5" class="sidebar-item" aria-label="Module 5: Synthetic Dataset">
         <span class="sidebar-icon">🗄️</span>
         <span>5. Synthetic Dataset</span>
@@ -132,6 +195,8 @@
         <span class="sidebar-icon">✂️</span>
         <span>7. AI Segmentation</span>
       </a>
+
+      <div class="sidebar-phase-header">Phase 3: Radiomics & Fusion</div>
       <a data-navigate="8" class="sidebar-item" aria-label="Module 8: Radiomics">
         <span class="sidebar-icon">📊</span>
         <span>8. Radiomic Features</span>
@@ -152,6 +217,8 @@
         <span class="sidebar-icon">🔗</span>
         <span>12. Multimodal Fusion</span>
       </a>
+
+      <div class="sidebar-phase-header">Phase 4: Synthesis</div>
       <a data-navigate="13" class="sidebar-item" aria-label="Module 13: Classification">
         <span class="sidebar-icon">🎯</span>
         <span>13. Classification</span>
