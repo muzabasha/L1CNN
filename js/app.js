@@ -55,7 +55,6 @@ const App = (() => {
     const loader = document.getElementById('cinematic-loader');
     if (!loader) return;
 
-    // Check prefers-reduced-motion
     if (Motion.reducedMotion) {
       loader.classList.add('loader-finish');
       setTimeout(() => loader.remove(), 800);
@@ -66,8 +65,8 @@ const App = (() => {
     const pctEl = document.getElementById('loader-pct');
     const statusEl = document.getElementById('loader-status-text');
 
-    const circumference = 414; // 2 * Math.PI * 66
-    const duration = 3200; // 3.2s
+    const circumference = 414;
+    const duration = 3200;
     const startTime = performance.now();
 
     const phrases = [
@@ -91,7 +90,6 @@ const App = (() => {
         circle.style.strokeDashoffset = offset;
       }
 
-      // Update status phrases sequentially
       const phraseIdx = Math.min(phrases.length - 1, Math.floor(easedProgress * phrases.length));
       if (statusEl && statusEl.textContent !== phrases[phraseIdx]) {
         statusEl.textContent = phrases[phraseIdx];
@@ -100,7 +98,6 @@ const App = (() => {
       if (progress < 1) {
         requestAnimationFrame(updateLoader);
       } else {
-        // Completion
         Motion.sound.playSuccess();
         setTimeout(() => {
           loader.classList.add('loader-finish');
@@ -139,17 +136,16 @@ const App = (() => {
       Motion.sound.playTransition();
       
       try {
-        // Determine section IDs
         const sectionId = to === 'home' ? 'home' : 'module-' + to;
         const prevSectionId = from && from !== 'home' ? 'module-' + from : from === 'home' ? 'home' : null;
         
-        // Animate out previous section
+        // Animate out previous section if visible
         let prevSection = prevSectionId ? Renderer.getSection(prevSectionId) || document.getElementById(prevSectionId) : null;
         if (prevSection && !prevSection.classList.contains('hidden')) {
-          await Motion.pageOut(prevSection, { duration: 350 });
+          await Motion.pageOut(prevSection, { duration: 250 });
         }
         
-        // Destroy previous module
+        // Destroy previous module if leaving a module
         if (from && from !== 'home' && from !== to) {
           console.log('[App] Destroying previous module:', from);
           try {
@@ -172,34 +168,27 @@ const App = (() => {
           }
         }
 
-        // Remove hidden class and show section
+        // Show target section in DOM
         if (section) {
           section.classList.remove('hidden');
           Renderer.showSection(sectionId, false);
-          // Cinematic page entrance for home only (modules handle their own entrance)
-          if (to === 'home') {
-            requestAnimationFrame(() => Motion.pageIn(section, { duration: 500 }));
-          }
+          // Run pageIn animation for all target sections to reveal cleanly
+          requestAnimationFrame(() => Motion.pageIn(section, { duration: 350 }));
         }
 
         // Update sidebar highlighting
         UIManager.updateSidebarActive(to);
         
-        // Initialize module if not home (deferred for paint)
+        // Initialize module if not home
         if (to !== 'home') {
           console.log('[App] Scheduling module init:', to);
           requestAnimationFrame(() => {
             try {
               const initialized = ModuleEngine.init(to);
-              if (initialized) {
-                console.log('[App] Module initialized:', to);
-                _injectModuleNav(to);
-                _currentModuleId = to;
-                // Re-bind tilts on new module elements
-                setTimeout(_bindCardTilts, 150);
-              } else {
-                console.warn('[App] Module already initialized or failed:', to);
-              }
+              console.log('[App] Module init result:', to, initialized);
+              _injectModuleNav(to);
+              _currentModuleId = to;
+              setTimeout(_bindCardTilts, 150);
             } catch (e) {
               console.error('[App] Error initializing module:', to, e);
             }
@@ -230,7 +219,6 @@ const App = (() => {
       } catch (error) {
         console.error('[App] Critical error in route:changed handler:', error);
         console.error('[App] Stack:', error.stack);
-        // Attempt recovery by going to home
         if (to !== 'home') {
           console.log('[App] Attempting recovery - navigating to home');
           setTimeout(() => Router.navigateTo('home', { force: true }), 100);

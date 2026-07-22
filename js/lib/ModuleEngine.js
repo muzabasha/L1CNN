@@ -15,14 +15,19 @@ const ModuleEngine = (() => {
 
     init(moduleId) {
       const mod = _modules.get(moduleId);
-      if (!mod || mod.initialized) return false;
+      if (!mod) return false;
 
       const container = document.getElementById('module-' + moduleId) ||
                         document.getElementById(moduleId);
       if (!container) return false;
 
-      mod.init(container);
-      mod.initialized = true;
+      // If module is not initialized OR container is empty, force re-initialization
+      if (!mod.initialized || container.children.length === 0) {
+        container.innerHTML = ''; // Clean slate
+        mod.init(container);
+        mod.initialized = true;
+      }
+
       _activeModuleId.current = moduleId;
 
       StorageManager.addVisitedModule(moduleId);
@@ -35,7 +40,11 @@ const ModuleEngine = (() => {
       const mod = _modules.get(moduleId);
       if (!mod || !mod.initialized) return;
 
-      mod.destroy();
+      try {
+        mod.destroy();
+      } catch (e) {
+        console.warn('[ModuleEngine] Error during module destroy:', moduleId, e);
+      }
 
       const container = document.getElementById('module-' + moduleId) ||
                         document.getElementById(moduleId);

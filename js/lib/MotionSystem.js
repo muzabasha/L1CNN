@@ -218,11 +218,16 @@ const Motion = (() => {
       const d = opts.duration || Duration.fade;
       const e = opts.ease || Ease.appleOut;
       const delay = opts.delay || 0;
+      if (el.getAnimations) el.getAnimations().forEach(a => a.cancel());
       el.style.opacity = '0';
       el.style.willChange = 'opacity';
       if (_reducedMotion) { el.style.opacity = '1'; el.style.willChange = ''; return; }
-      el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: d, easing: e, delay, fill: 'forwards' });
-      setTimeout(() => { el.style.opacity = '1'; el.style.willChange = ''; }, d + delay);
+      const anim = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: d, easing: e, delay, fill: 'forwards' });
+      anim.onfinish = () => {
+        anim.cancel();
+        el.style.opacity = '1';
+        el.style.willChange = '';
+      };
     },
 
     fadeUp(el, opts = {}) {
@@ -231,15 +236,21 @@ const Motion = (() => {
       const e = opts.ease || Ease.appleOut;
       const delay = opts.delay || 0;
       const dist = opts.distance || 20;
+      if (el.getAnimations) el.getAnimations().forEach(a => a.cancel());
       el.style.opacity = '0';
       el.style.transform = `translateY(${dist}px)`;
       el.style.willChange = 'transform, opacity';
       if (_reducedMotion) { el.style.opacity = '1'; el.style.transform = ''; el.style.willChange = ''; return; }
-      el.animate([
+      const anim = el.animate([
         { opacity: 0, transform: `translateY(${dist}px)` },
         { opacity: 1, transform: 'translateY(0)' }
       ], { duration: d, easing: e, delay, fill: 'forwards' });
-      setTimeout(() => { el.style.opacity = '1'; el.style.transform = ''; el.style.willChange = ''; }, d + delay);
+      anim.onfinish = () => {
+        anim.cancel();
+        el.style.opacity = '1';
+        el.style.transform = '';
+        el.style.willChange = '';
+      };
     },
 
     stagger(container, opts = {}) {
@@ -250,15 +261,21 @@ const Motion = (() => {
       const staggerDelay = opts.stagger || 70;
       const dist = opts.distance || 16;
       Array.from(children).forEach((child, i) => {
+        if (child.getAnimations) child.getAnimations().forEach(a => a.cancel());
         child.style.opacity = '0';
         child.style.transform = `translateY(${dist}px)`;
         child.style.willChange = 'transform, opacity';
         if (_reducedMotion) { child.style.opacity = '1'; child.style.transform = ''; child.style.willChange = ''; return; }
-        child.animate([
+        const anim = child.animate([
           { opacity: 0, transform: `translateY(${dist}px)` },
           { opacity: 1, transform: 'translateY(0)' }
         ], { duration: d, easing: e, delay: i * staggerDelay, fill: 'forwards' });
-        setTimeout(() => { child.style.opacity = '1'; child.style.transform = ''; child.style.willChange = ''; }, d + i * staggerDelay);
+        anim.onfinish = () => {
+          anim.cancel();
+          child.style.opacity = '1';
+          child.style.transform = '';
+          child.style.willChange = '';
+        };
       });
     },
 
@@ -267,15 +284,21 @@ const Motion = (() => {
       const d = opts.duration || Duration.slide;
       const e = opts.ease || Ease.appleOut;
       const delay = opts.delay || 0;
+      if (el.getAnimations) el.getAnimations().forEach(a => a.cancel());
       el.style.opacity = '0';
       el.style.transform = 'scale(0.92)';
       el.style.willChange = 'transform, opacity';
       if (_reducedMotion) { el.style.opacity = '1'; el.style.transform = ''; el.style.willChange = ''; return; }
-      el.animate([
+      const anim = el.animate([
         { opacity: 0, transform: 'scale(0.92)' },
         { opacity: 1, transform: 'scale(1)' }
       ], { duration: d, easing: e, delay, fill: 'forwards' });
-      setTimeout(() => { el.style.opacity = '1'; el.style.transform = ''; el.style.willChange = ''; }, d + delay);
+      anim.onfinish = () => {
+        anim.cancel();
+        el.style.opacity = '1';
+        el.style.transform = '';
+        el.style.willChange = '';
+      };
     },
 
     pageOut(section, opts = {}) {
@@ -283,12 +306,21 @@ const Motion = (() => {
       return new Promise(resolve => {
         const d = opts.duration || Duration.pageOut;
         const e = opts.ease || Ease.cinIn;
-        if (_reducedMotion) { resolve(); return; }
+        if (section.getAnimations) {
+          section.getAnimations().forEach(a => a.cancel());
+        }
+        if (_reducedMotion) {
+          section.style.opacity = '0';
+          resolve();
+          return;
+        }
         section.style.willChange = 'transform, opacity, filter';
-        section.animate([
+        const anim = section.animate([
           { opacity: 1, transform: 'scale(1) translateY(0)', filter: 'blur(0)' },
           { opacity: 0, transform: 'scale(0.98) translateY(-10px)', filter: 'blur(4px)' }
-        ], { duration: d, easing: e, fill: 'forwards' }).onfinish = () => {
+        ], { duration: d, easing: e, fill: 'forwards' });
+        anim.onfinish = () => {
+          section.style.opacity = '0';
           section.style.willChange = '';
           resolve();
         };
@@ -301,15 +333,26 @@ const Motion = (() => {
       return new Promise(resolve => {
         const d = opts.duration || Duration.pageIn;
         const e = opts.ease || Ease.cinOut;
-        if (_reducedMotion) { section.style.opacity = '1'; section.style.transform = ''; resolve(); return; }
+        if (section.getAnimations) {
+          section.getAnimations().forEach(a => a.cancel());
+        }
+        if (_reducedMotion) {
+          section.style.opacity = '1';
+          section.style.transform = '';
+          section.style.filter = '';
+          resolve();
+          return;
+        }
         section.style.opacity = '0';
         section.style.transform = 'scale(0.96) translateY(15px)';
         section.style.filter = 'blur(8px)';
         section.style.willChange = 'transform, opacity, filter';
-        section.animate([
+        const anim = section.animate([
           { opacity: 0, transform: 'scale(0.96) translateY(15px)', filter: 'blur(8px)' },
           { opacity: 1, transform: 'scale(1) translateY(0)', filter: 'blur(0)' }
-        ], { duration: d, easing: e, fill: 'forwards' }).onfinish = () => {
+        ], { duration: d, easing: e, fill: 'forwards' });
+        anim.onfinish = () => {
+          anim.cancel(); // Cancel Web Animation so fill state doesn't lock inline styles!
           section.style.opacity = '1';
           section.style.transform = '';
           section.style.filter = '';
