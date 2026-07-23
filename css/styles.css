@@ -1385,11 +1385,11 @@ code[class*="language-"] {
 }
 
 /* ── Universal touch target sizing ─────────── */
-/* All clickable elements within main content get minimum touch target */
-#main-content button,
-#main-content [role="button"],
-#main-content a[href],
-#main-content .cursor-pointer {
+/* Clickable elements within module content only — does not affect home grid cards */
+.module-content button,
+.module-content [role="button"],
+.module-content a[href],
+.module-content .cursor-pointer {
   min-height: 44px;
   min-width: 44px;
   display: inline-flex;

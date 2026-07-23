@@ -147,7 +147,9 @@ const Router = (() => {
       window.addEventListener('hashchange', _popstateHandler);
       
       // Do NOT set _currentRoute here — let syncFromURL() handle initial navigation
-      // so it can emit route:changed for deep links and page refreshes
+      // so it can emit route:changed for deep links and page refreshes.
+      // Start with null so syncFromURL always fires the initial event.
+      _currentRoute = null;
       
       _initialized = true;
     },

@@ -35,10 +35,10 @@ const App = (() => {
       // Sync from URL (handle deep linking and page refresh)
       Router.syncFromURL();
       
-      // Initialize visual effects & background particle engines
-      initParticles();
-      initHero3D();
-      setTimeout(initScrollAnimations, 100);
+      // Initialize visual effects & background particle engines (non-critical, wrapped)
+      try { initParticles(); } catch (e) { console.warn('[App] Particles init failed:', e); }
+      try { initHero3D(); } catch (e) { console.warn('[App] Hero3D init failed:', e); }
+      setTimeout(() => { try { initScrollAnimations(); } catch (e) { console.warn('[App] ScrollAnimations init failed:', e); } }, 100);
 
       // Run Cinematic Initialization Loader Sequence (3-5s)
       _runCinematicLoaderSequence();
@@ -105,6 +105,15 @@ const App = (() => {
             if (loader.parentNode) loader.parentNode.removeChild(loader);
           }, 850);
         }, 300);
+        // Ensure home section is visible after loader completes
+        setTimeout(() => {
+          const home = document.getElementById('home');
+          if (home) {
+            home.style.opacity = '1';
+            home.style.transform = 'none';
+            home.style.filter = 'none';
+          }
+        }, 400);
       }
     }
 
