@@ -108,12 +108,10 @@ const App = (() => {
         // Ensure home section is visible after loader completes
         setTimeout(() => {
           const home = document.getElementById('home');
-          if (home) {
-            home.style.opacity = '1';
-            home.style.transform = 'none';
-            home.style.filter = 'none';
+          if (home && home.classList.contains('active')) {
+            home.style.opacity = '';
           }
-        }, 400);
+        }, 500);
       }
     }
 
@@ -143,18 +141,10 @@ const App = (() => {
     EventManager.on('route:changed', ({ from, to }) => {
       console.log('[App] Route changed from', from, 'to', to);
       Motion.sound.playTransition();
-      
+
       try {
         const sectionId = to === 'home' ? 'home' : 'module-' + to;
-        const prevSectionId = from && from !== 'home' ? 'module-' + from : from === 'home' ? 'home' : null;
-        
-        // Animate out previous section (fire-and-forget, don't await)
-        let prevSection = prevSectionId ? Renderer.getSection(prevSectionId) || document.getElementById(prevSectionId) : null;
-        if (prevSection && !prevSection.classList.contains('hidden')) {
-          Motion.pageOut(prevSection, { duration: 200 });
-        }
-        
-        // Destroy previous module if leaving a module
+
         if (from && from !== 'home' && from !== to) {
           console.log('[App] Destroying previous module:', from);
           try {
@@ -164,7 +154,25 @@ const App = (() => {
           }
         }
 
-        // Ensure section exists and is registered
+        if (to !== 'home') {
+          console.log('[App] Initializing module:', to);
+          try {
+            const initialized = ModuleEngine.init(to);
+            console.log('[App] Module init result:', to, initialized);
+            const sec = document.getElementById(sectionId) || document.getElementById(to);
+            if (sec) {
+              _injectModuleSubNav(sec, to);
+            }
+            _injectModuleNav(to);
+            _currentModuleId = to;
+            setTimeout(_bindCardTilts, 150);
+          } catch (e) {
+            console.error('[App] Error initializing module:', to, e);
+          }
+        } else {
+          _currentModuleId = null;
+        }
+
         let section = Renderer.getSection(sectionId);
         if (!section) {
           section = document.getElementById(sectionId);
@@ -177,58 +185,28 @@ const App = (() => {
           }
         }
 
-        // Show target section in DOM
         if (section) {
-          section.classList.remove('hidden');
-          Renderer.showSection(sectionId, false);
-          // Run pageIn animation for all target sections to reveal cleanly
-          requestAnimationFrame(() => Motion.pageIn(section, { duration: 350 }));
+          Renderer.showSection(sectionId);
         }
 
-        // Update sidebar highlighting
         UIManager.updateSidebarActive(to);
-        
-        // Initialize module if not home
-        if (to !== 'home') {
-          console.log('[App] Scheduling module init:', to);
-          requestAnimationFrame(() => {
-            try {
-              const initialized = ModuleEngine.init(to);
-              console.log('[App] Module init result:', to, initialized);
-              const sec = document.getElementById('module-' + to) || document.getElementById(to);
-              if (sec) {
-                _injectModuleSubNav(sec, to);
-              }
-              _injectModuleNav(to);
-              _currentModuleId = to;
-              setTimeout(_bindCardTilts, 150);
-            } catch (e) {
-              console.error('[App] Error initializing module:', to, e);
-            }
-          });
-        } else {
-          _currentModuleId = null;
-        }
 
-        // Close mobile menu if open
         if (window.innerWidth <= 1024) {
           setTimeout(() => UIManager.toggleSidebar(false), 150);
         }
 
-        // Scroll to top
         requestAnimationFrame(() => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // Announce to screen readers
         const announcer = document.getElementById('sr-announcer');
         if (announcer) {
           const label = to === 'home' ? 'Home' : 'Module ' + to;
           announcer.textContent = 'Now viewing ' + label;
         }
-        
+
         console.log('[App] Route change complete:', to);
-        
+
       } catch (error) {
         console.error('[App] Critical error in route:changed handler:', error);
         console.error('[App] Stack:', error.stack);

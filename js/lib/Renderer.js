@@ -55,7 +55,7 @@ const Renderer = (() => {
 
     showSection(id, animate = true) {
       console.log('[Renderer] Showing section:', id, 'animate:', animate);
-      
+
       const target = _sections.get(id);
       if (!target) {
         console.error('[Renderer] Section not found:', id);
@@ -68,17 +68,21 @@ const Renderer = (() => {
         return false;
       }
 
-      // Hide current section
-      if (_activeSectionId && _activeSectionId !== id) {
+      if (_activeSectionId === id) {
+        target.classList.remove('hidden');
+        target.classList.add('active');
+        target.style.display = 'block';
+        return true;
+      }
+
+      if (_activeSectionId) {
         const current = _sections.get(_activeSectionId);
         if (current) {
           console.log('[Renderer] Hiding current section:', _activeSectionId);
-          // Cancel any running animations
           if (current.getAnimations) current.getAnimations().forEach(a => a.cancel());
-          current.classList.add('hidden');
           current.classList.remove('active');
+          current.classList.add('hidden');
           current.style.display = 'none';
-          // Clear inline styles left by Motion.pageOut
           current.style.opacity = '';
           current.style.transform = '';
           current.style.filter = '';
@@ -86,20 +90,12 @@ const Renderer = (() => {
         }
       }
 
-      // Show target section — guarantee visibility
       target.classList.remove('hidden');
-      target.style.display = 'block';
       target.classList.add('active');
-
-      // Clear any stale inline styles from previous pageOut, then force visible
-      if (target.getAnimations) target.getAnimations().forEach(a => a.cancel());
-      target.style.opacity = '1';
-      target.style.transform = '';
-      target.style.filter = '';
-      target.style.willChange = '';
+      target.style.display = 'block';
 
       _activeSectionId = id;
-      console.log('[Renderer] Section now active and visible:', id);
+      console.log('[Renderer] Section now active:', id);
       return true;
     },
 

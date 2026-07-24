@@ -86,7 +86,8 @@ const Router = (() => {
       // Emit events
       EventManager.emit('route:changing', { from: _previousRoute, to: normId });
       EventManager.emit('route:changed', { from: _previousRoute, to: normId });
-      _isNavigating = false;
+
+      setTimeout(() => { _isNavigating = false; }, 80);
     },
 
     syncFromURL() {
