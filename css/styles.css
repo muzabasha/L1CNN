@@ -229,7 +229,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
 .module-section.active {
   display: block;
-  animation: moduleFadeIn var(--transition-slow) ease forwards;
+  animation: moduleFadeIn var(--transition-slow) ease both;
 }
 
 @keyframes moduleFadeIn {

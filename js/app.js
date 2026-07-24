@@ -140,7 +140,7 @@ const App = (() => {
     console.log('[App] Binding global events...');
     
     // Handle route changes
-    EventManager.on('route:changed', async ({ from, to }) => {
+    EventManager.on('route:changed', ({ from, to }) => {
       console.log('[App] Route changed from', from, 'to', to);
       Motion.sound.playTransition();
       
@@ -148,10 +148,10 @@ const App = (() => {
         const sectionId = to === 'home' ? 'home' : 'module-' + to;
         const prevSectionId = from && from !== 'home' ? 'module-' + from : from === 'home' ? 'home' : null;
         
-        // Animate out previous section if visible
+        // Animate out previous section (fire-and-forget, don't await)
         let prevSection = prevSectionId ? Renderer.getSection(prevSectionId) || document.getElementById(prevSectionId) : null;
         if (prevSection && !prevSection.classList.contains('hidden')) {
-          await Motion.pageOut(prevSection, { duration: 250 });
+          Motion.pageOut(prevSection, { duration: 200 });
         }
         
         // Destroy previous module if leaving a module

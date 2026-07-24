@@ -30,7 +30,7 @@ const ModuleEngine = (() => {
 
       _activeModuleId.current = moduleId;
 
-      StorageManager.addVisitedModule(moduleId);
+      StateManager.recordVisit(moduleId);
       UIManager.updateProgress();
       EventManager.emit('module:init', moduleId);
       return true;

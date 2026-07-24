@@ -68,28 +68,35 @@ const Renderer = (() => {
         return false;
       }
 
-      if (_activeSectionId === id) {
-        console.log('[Renderer] Section already active:', id);
-        return true;
-      }
-
       // Hide current section
-      if (_activeSectionId) {
+      if (_activeSectionId && _activeSectionId !== id) {
         const current = _sections.get(_activeSectionId);
         if (current) {
           console.log('[Renderer] Hiding current section:', _activeSectionId);
+          // Cancel any running animations
+          if (current.getAnimations) current.getAnimations().forEach(a => a.cancel());
           current.classList.add('hidden');
           current.classList.remove('active');
           current.style.display = 'none';
+          // Clear inline styles left by Motion.pageOut
+          current.style.opacity = '';
+          current.style.transform = '';
+          current.style.filter = '';
+          current.style.willChange = '';
         }
       }
 
-      // Show target section
+      // Show target section — guarantee visibility
       target.classList.remove('hidden');
       target.style.display = 'block';
-
-      // Let Motion controller handle the entrance animation
       target.classList.add('active');
+
+      // Clear any stale inline styles from previous pageOut, then force visible
+      if (target.getAnimations) target.getAnimations().forEach(a => a.cancel());
+      target.style.opacity = '1';
+      target.style.transform = '';
+      target.style.filter = '';
+      target.style.willChange = '';
 
       _activeSectionId = id;
       console.log('[Renderer] Section now active and visible:', id);

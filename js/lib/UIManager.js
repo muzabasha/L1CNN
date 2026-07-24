@@ -182,7 +182,7 @@ const UIManager = (() => {
     },
 
     updateProgress() {
-      const pct = StorageManager.getProgress();
+      const pct = StateManager.getProgress();
       if (_progressFill) _progressFill.style.width = `${pct}%`;
       if (_progressText) _progressText.textContent = `${pct}%`;
       const progressBar = document.querySelector('[role="progressbar"]');

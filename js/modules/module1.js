@@ -15,10 +15,9 @@
       
       // Create module header using design system
       var header = Components.createModuleHeader('1', 'Clinical Background');
-      container.appendChild(header);
       
-      // Create content sections
-      container.innerHTML += 
+      // Single innerHTML assignment — header + all content sections
+      container.innerHTML = header.outerHTML + 
         '<div id="module-1-objectives"><div class="objectives-grid"></div></div>' +
         '<div id="module-1-anatomy-wrap"></div>' +
         '<div id="module-1-ctphases-wrap"></div>' +
